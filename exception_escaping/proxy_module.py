@@ -1,5 +1,5 @@
 import sys
-from typing import Callable, Union, Any
+from typing import Callable, Any
 from functools import wraps
 from inspect import iscoroutinefunction
 
