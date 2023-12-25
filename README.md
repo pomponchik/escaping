@@ -8,3 +8,26 @@
 [![PyPI version](https://badge.fury.io/py/exception_escaping.svg)](https://badge.fury.io/py/exception_escaping)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+
+
+If you've just confessed and you can't wait to sin again, try this package. It will help you [hide your mistakes](https://en.wikipedia.org/wiki/Error_hiding) and make your life more carefree.
+
+Install it:
+
+```bash
+pip install exception_escaping
+```
+
+And use:
+
+```python
+import exception_escaping
+
+@exception_escaping
+def function():
+  raise ValueError
+
+function()  # The exception is suppressed.
+```
+
+This is similar to [`contextlib.suppress`](https://docs.python.org/3/library/contextlib.html#contextlib.suppress), but in the form of a decorator.
