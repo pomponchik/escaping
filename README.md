@@ -30,4 +30,4 @@ def function():
 function()  # The exception is suppressed.
 ```
 
-This is similar to [`contextlib.suppress`](https://docs.python.org/3/library/contextlib.html#contextlib.suppress), but in the form of a decorator.
+As you can see, this is similar to [`contextlib.suppress`](https://docs.python.org/3/library/contextlib.html#contextlib.suppress), but in the form of a decorator.
