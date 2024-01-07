@@ -28,6 +28,9 @@ classifiers = [
     'Topic :: Software Development :: Libraries',
 ]
 
+[tool.setuptools.package-data]
+"exception_escaping" = ["py.typed"]
+
 [project.urls]
 'Source' = 'https://github.com/pomponchik/exception_escaping'
 'Tracker' = 'https://github.com/pomponchik/exception_escaping/issues'
