@@ -3,6 +3,7 @@
 [![Downloads](https://static.pepy.tech/badge/exception_escaping/month)](https://pepy.tech/project/exception_escaping)
 [![Downloads](https://static.pepy.tech/badge/exception_escaping)](https://pepy.tech/project/exception_escaping)
 [![codecov](https://codecov.io/gh/pomponchik/exception_escaping/graph/badge.svg?token=q7eAfV5g7q)](https://codecov.io/gh/pomponchik/exception_escaping)
+[![Hits-of-Code](https://hitsofcode.com/github/pomponchik/exception_escaping?branch=main)](https://hitsofcode.com/github/pomponchik/exception_escaping/view?branch=main)
 [![Test-Package](https://github.com/pomponchik/exception_escaping/actions/workflows/tests_and_coverage.yml/badge.svg)](https://github.com/pomponchik/exception_escaping/actions/workflows/tests_and_coverage.yml)
 [![Python versions](https://img.shields.io/pypi/pyversions/exception_escaping.svg)](https://pypi.python.org/pypi/exception_escaping)
 [![PyPI version](https://badge.fury.io/py/exception_escaping.svg)](https://badge.fury.io/py/exception_escaping)
