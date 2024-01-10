@@ -5,7 +5,7 @@ from inspect import iscoroutinefunction
 
 
 class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
-    def __call__(self, function: Callable[[Any], Any]) -> Callable[[Any], Any]:
+    def __call__(self, function: Callable[..., Any]) -> Callable[[Any], Any]:
         @wraps(function)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             try:
