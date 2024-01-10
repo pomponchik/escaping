@@ -30,4 +30,4 @@ class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
         elif len(args) == 0:
             return wrapper_of_wrappers
         else:
-            raise ValueError()
+            raise ValueError('You are using the decorator for the wrong purpose.')
