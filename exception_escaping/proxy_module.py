@@ -11,14 +11,14 @@ class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
             def wrapper(*args: Any, **kwargs: Any) -> Any:
                 try:
                     return function(*args, **kwargs)
-                except Exception:
+                except exceptions:
                     return default_return
 
             @wraps(function)
             async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
                 try:
                     return await function(*args, **kwargs)
-                except Exception:
+                except exceptions:
                     return default_return
 
             if iscoroutinefunction(function):
