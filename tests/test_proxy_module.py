@@ -223,3 +223,11 @@ def test_context_manager_without_breackets_not_muted_exception():
         with pytest.raises(not_muted_exception):
             with exception_escaping:
                 raise not_muted_exception
+
+
+def test_decorator_without_breackets_saves_name_of_function():
+    @exception_escaping
+    def function():
+        pass
+
+    assert function.__name__ == 'function'
