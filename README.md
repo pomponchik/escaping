@@ -13,6 +13,16 @@
 
 If you've just confessed and you can't wait to sin again, try this package. It will help you [hide your mistakes](https://en.wikipedia.org/wiki/Error_hiding) and make your life more carefree.
 
+
+## Table of contents
+
+- [**Quick start**](#quick-start)
+- [**Decorator mode**](#decorator-mode)
+- [**Context manager mode**](#context-manager-mode)
+
+
+## Quick start
+
 Install it:
 
 ```bash
@@ -29,6 +39,71 @@ def function():
   raise ValueError
 
 function()  # The exception is suppressed.
+```
+
+Read about other library features below.
+
+
+## Decorator mode
+
+You can hang the `exception_escaping` decorator on any function, including a routine one. Exceptions that occur internally will be suppressed.
+
+An example with a regular function:
+
+```python
+@exception_escaping
+def function():
+  raise ValueError
+```
+
+And with coroutine one:
+
+```python
+@exception_escaping
+async def coroutine_function():
+  raise ValueError
+```
+
+The decorator will work both with and without brackets:
+
+```python
+@exception_escaping()  # This will work too.
+def function():
+  ...
+```
+
+If an exception occurred inside the function wrapped by the decorator, it will return the default value - `None`. You can specify your own default value:
+
+```python
+@exception_escaping(default_return='some value')
+def function():
+  raise ValueError
+
+assert function() == 'some value'  # It's going to work.
+```
+
+
+## Context manager mode
+
+You can use `exception_escaping` as a context manager. It works almost the same way as [`contextlib.suppress`](https://docs.python.org/3/library/contextlib.html#contextlib.suppress) from the standard library. However, in this case, you can choose whether to use the context manager with or without brackets:
+
+```python
+# Both options work the same way.
+
+with exception_escaping:
+  raise ValueError
+
+with exception_escaping():
+  raise ValueError
+```
+
+However, as you should understand, the default value cannot be specified in this case. If you try to specify a default value for the context manager, get ready to face an exception:
+
+```python
+with exception_escaping(default_return='some value'):
+  ...
+
+# 
 ```
 
 As you can see, this is similar to [`contextlib.suppress`](https://docs.python.org/3/library/contextlib.html#contextlib.suppress), but in the form of a decorator. It works with both regular and coroutine functions.
