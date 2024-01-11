@@ -1,4 +1,4 @@
-from typing import Type, Callable, Tuple, Dict, Optional, Any
+from typing import Type, Callable, Tuple, Optional, Any
 from inspect import iscoroutinefunction
 from functools import wraps
 from types import TracebackType
