@@ -1,6 +1,7 @@
 import sys
-from typing import Type, Tuple, Callable, Union, Optional, Any
+from typing import Type, Tuple, List, Callable, Union, Optional, Any
 from types import TracebackType
+from inspect import isclass
 
 from exception_escaping.wrapper import Wrapper
 
@@ -11,11 +12,21 @@ else:
     muted_by_default_exceptions = (Exception, BaseExceptionGroup)
 
 class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
-    def __call__(self, *args: Callable[..., Any], default_return: Any = None, exceptions: Tuple[Type[BaseException], ...] = muted_by_default_exceptions) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
+    def __call__(self, *args: Callable[..., Any], default_return: Any = None, exceptions: Union[Tuple[Type[BaseException], ...], List[Type[BaseException]]] = muted_by_default_exceptions) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
         """
         https://docs.python.org/3/library/exceptions.html#exception-hierarchy
         """
-        wrapper_of_wrappers = Wrapper(default_return, exceptions)
+        if not isinstance(exceptions, tuple) and not isinstance(exceptions, list):
+            raise ValueError('The list of exception types can be of the list or tuple type.')
+        elif not all(isclass(x) and issubclass(x, BaseException) for x in exceptions):
+            raise ValueError('The list of exception types can contain only exception types.')
+
+        if isinstance(exceptions, list):
+            converted_exceptions: Tuple[Type[BaseException], ...] = tuple(exceptions)
+        else:
+            converted_exceptions = exceptions
+
+        wrapper_of_wrappers = Wrapper(default_return, converted_exceptions)
 
         if len(args) == 1 and callable(args[0]):
             return wrapper_of_wrappers(args[0])
