@@ -33,6 +33,7 @@ class Wrapper:
     def __enter__(self) -> 'Wrapper':
         if self.default_return is not None:
             raise SetDefaultReturnValueForDecoratorError('You cannot set a default value for the context manager. This is only possible for the decorator.')
+
         return self
 
     def __exit__(self, exception_type: Optional[Type[BaseException]], exception_value: Optional[BaseException], traceback: Optional[TracebackType]) -> bool:
