@@ -103,7 +103,7 @@ However, as you should understand, the default value cannot be specified in this
 with exception_escaping(default_return='some value'):
   ...
 
-# 
+# exception_escaping.errors.SetDefaultReturnValueForDecoratorError: You cannot set a default value for the context manager. This is only possible for the decorator.
 ```
 
-As you can see, this is similar to [`contextlib.suppress`](https://docs.python.org/3/library/contextlib.html#contextlib.suppress), but in the form of a decorator. It works with both regular and coroutine functions.
+## Which exceptions are blocked?
