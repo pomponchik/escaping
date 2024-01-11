@@ -19,6 +19,7 @@ If you've just confessed and you can't wait to sin again, try this package. It w
 - [**Quick start**](#quick-start)
 - [**Decorator mode**](#decorator-mode)
 - [**Context manager mode**](#context-manager-mode)
+- [**Which exceptions are escaped?**](#which-exceptions-are-escaped)
 
 
 ## Quick start
@@ -106,4 +107,4 @@ with exception_escaping(default_return='some value'):
 # exception_escaping.errors.SetDefaultReturnValueForDecoratorError: You cannot set a default value for the context manager. This is only possible for the decorator.
 ```
 
-## Which exceptions are blocked?
+## Which exceptions are escaped?
