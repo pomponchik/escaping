@@ -47,7 +47,7 @@ Read about other library features below.
 
 ## Decorator mode
 
-You can hang the `exception_escaping` decorator on any function, including a routine one. Exceptions that occur internally will be suppressed.
+You can hang the `exception_escaping` decorator on any function, including a coroutine one. Exceptions that occur internally will be suppressed.
 
 An example with a regular function:
 
