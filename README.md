@@ -122,7 +122,7 @@ def function():
 
 @exception_escaping(exceptions=[ValueError]):
 def function():
-  raise ValueError  # And this is not.
+  raise KeyError  # And this is not.
 ```
 
 ... and for the [context manager mode](#context-manager-mode):
@@ -131,6 +131,6 @@ def function():
 with exception_escaping(exceptions=[ValueError]):
   raise ValueError  # It will be suppressed.
 
-with exception_escaping(exceptions=[KeyError]):
-  raise ValueError  # And this is not.
+with exception_escaping(exceptions=[ValueError]):
+  raise KeyError  # And this is not.
 ```
