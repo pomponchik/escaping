@@ -1,5 +1,6 @@
 import sys
-from typing import Type, Tuple, Callable, Union, Any
+from typing import Type, Tuple, Callable, Union, Optional, Any
+from types import TracebackType
 
 from exception_escaping.wrapper import Wrapper
 
@@ -22,3 +23,16 @@ class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
             return wrapper_of_wrappers
         else:
             raise ValueError('You are using the decorator for the wrong purpose.')
+
+    def __enter__(self) -> 'ProxyModule':
+        return self
+
+    def __exit__(self, exception_type: Optional[Type[BaseException]], exception_value: Optional[BaseException], traceback: Optional[TracebackType]) -> bool:
+        if exception_type is None:
+            return False
+
+        for muted_exception_type in muted_by_default_exceptions:
+            if issubclass(exception_type, muted_exception_type):
+                return True
+
+        return False

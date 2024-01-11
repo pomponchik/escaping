@@ -210,3 +210,16 @@ def test_context_manager_with_exceptions_parameter_muted_exception():
     for muted_exception in (GeneratorExit, KeyboardInterrupt, SystemExit):
         with exception_escaping(exceptions=(muted_exception,)):
             raise muted_exception
+
+
+def test_context_manager_without_breackets_muted_exception():
+    for muted_exception in (ValueError, KeyError, Exception):
+        with exception_escaping:
+            raise muted_exception
+
+
+def test_context_manager_without_breackets_not_muted_exception():
+    for not_muted_exception in (GeneratorExit, KeyboardInterrupt, SystemExit):
+        with pytest.raises(not_muted_exception):
+            with exception_escaping:
+                raise not_muted_exception
