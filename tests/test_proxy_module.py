@@ -243,6 +243,6 @@ def test_decorator_without_breackets_saves_name_of_coroutine_function():
 
 
 def test_context_manager_with_default_return_value():
-    with pytest.raises(SetDefaultReturnValueForDecoratorError):
+    with pytest.raises(SetDefaultReturnValueForDecoratorError, match='You cannot set a default value for the context manager. This is only possible for the decorator.'):
         with exception_escaping(default_return='lol'):
             ...
