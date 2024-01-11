@@ -1,0 +1,2 @@
+class SetDefaultReturnValueForDecoratorError(Exception):
+    pass

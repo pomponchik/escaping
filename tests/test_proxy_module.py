@@ -3,6 +3,7 @@ import asyncio
 import pytest
 
 import exception_escaping
+from exception_escaping.errors import SetDefaultReturnValueForDecoratorError
 
 
 def test_run_simple_function():
@@ -239,3 +240,9 @@ def test_decorator_without_breackets_saves_name_of_coroutine_function():
         pass
 
     assert function.__name__ == 'function'
+
+
+def test_context_manager_with_default_return_value():
+    with pytest.raises(SetDefaultReturnValueForDecoratorError):
+        with exception_escaping(default_return='lol'):
+            ...
