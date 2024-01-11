@@ -1,29 +1,20 @@
 import sys
-from typing import Tuple, Callable, Union, Any
-from functools import wraps
-from inspect import iscoroutinefunction
+from typing import Type, Tuple, Callable, Union, Any
 
+from exception_escaping.wrapper import Wrapper
+
+
+if sys.version_info < (3, 11):
+    muted_by_default_exceptions: Tuple[Type[BaseException], ...] = (Exception,)
+else:
+    muted_by_default_exceptions = (Exception, BaseExceptionGroup)
 
 class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
-    def __call__(self, *args: Callable[..., Any], default_return: Any = None, exceptions: Tuple[BaseException] = (BaseException, )) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
-        def wrapper_of_wrappers(function: Callable[..., Any]) -> Callable[..., Any]:
-            @wraps(function)
-            def wrapper(*args: Any, **kwargs: Any) -> Any:
-                try:
-                    return function(*args, **kwargs)
-                except exceptions:
-                    return default_return
-
-            @wraps(function)
-            async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
-                try:
-                    return await function(*args, **kwargs)
-                except exceptions:
-                    return default_return
-
-            if iscoroutinefunction(function):
-                return async_wrapper
-            return wrapper
+    def __call__(self, *args: Callable[..., Any], default_return: Any = None, exceptions: Tuple[Type[BaseException], ...] = muted_by_default_exceptions) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
+        """
+        https://docs.python.org/3/library/exceptions.html#exception-hierarchy
+        """
+        wrapper_of_wrappers = Wrapper(default_return, exceptions)
 
         if len(args) == 1 and callable(args[0]):
             return wrapper_of_wrappers(args[0])

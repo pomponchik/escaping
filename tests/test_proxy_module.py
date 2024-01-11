@@ -186,3 +186,27 @@ def test_run_coroutine_function_with_exception_with_default_return():
 def test_wrong_argument_to_decorator():
     with pytest.raises(ValueError, match='You are using the decorator for the wrong purpose.'):
         exception_escaping('kek')
+
+
+def test_context_manager_with_empty_brackets_muted_by_default_exception():
+    with exception_escaping():
+        raise ValueError
+
+
+def test_context_manager_with_empty_brackets_not_muted_by_default_exception():
+    for not_muted_exception in (GeneratorExit, KeyboardInterrupt, SystemExit):
+        with pytest.raises(not_muted_exception):
+            with exception_escaping():
+                raise not_muted_exception
+
+
+def test_context_manager_with_exceptions_parameter_not_muted_exception():
+    with pytest.raises(ValueError):
+        with exception_escaping(exceptions=(ZeroDivisionError,)):
+            raise ValueError
+
+
+def test_context_manager_with_exceptions_parameter_muted_exception():
+    for muted_exception in (GeneratorExit, KeyboardInterrupt, SystemExit):
+        with exception_escaping(exceptions=(muted_exception,)):
+            raise muted_exception
