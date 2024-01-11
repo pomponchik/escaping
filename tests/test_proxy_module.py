@@ -231,3 +231,11 @@ def test_decorator_without_breackets_saves_name_of_function():
         pass
 
     assert function.__name__ == 'function'
+
+
+def test_decorator_without_breackets_saves_name_of_coroutine_function():
+    @exception_escaping
+    async def function():
+        pass
+
+    assert function.__name__ == 'function'
