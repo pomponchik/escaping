@@ -263,3 +263,87 @@ def test_set_exceptions_types_with_bad_typed_value():
 def test_set_exceptions_types_with_bad_typed_exceptions_in_list():
     with pytest.raises(ValueError, match='The list of exception types can contain only exception types.'):
         exception_escaping(exceptions=[ValueError, 'lol'])
+
+
+def test_decorator_with_list_of_muted_exceptions():
+    @exception_escaping(exceptions=[ValueError])
+    def function():
+        raise ValueError
+
+    function()
+
+
+def test_decorator_with_list_of_not_muted_exceptions():
+    @exception_escaping(exceptions=[ValueError])
+    def function():
+        raise KeyError
+
+    with pytest.raises(KeyError):
+        function()
+
+
+def test_decorator_with_tuple_of_muted_exceptions():
+    @exception_escaping(exceptions=(ValueError, ))
+    def function():
+        raise ValueError
+
+    function()
+
+
+def test_decorator_with_list_of_not_muted_exceptions():
+    @exception_escaping(exceptions=(ValueError,))
+    def function():
+        raise KeyError
+
+    with pytest.raises(KeyError):
+        function()
+
+
+def test_async_decorator_with_list_of_muted_exceptions():
+    @exception_escaping(exceptions=[ValueError])
+    async def function():
+        raise ValueError
+
+    asyncio.run(function())
+
+
+def test_async_decorator_with_list_of_not_muted_exceptions():
+    @exception_escaping(exceptions=[ValueError])
+    async def function():
+        raise KeyError
+
+    with pytest.raises(KeyError):
+        asyncio.run(function())
+
+
+def test_async_decorator_with_tuple_of_muted_exceptions():
+    @exception_escaping(exceptions=(ValueError, ))
+    async def function():
+        raise ValueError
+
+    asyncio.run(function())
+
+
+def test_async_decorator_with_list_of_not_muted_exceptions():
+    @exception_escaping(exceptions=(ValueError,))
+    async def function():
+        raise KeyError
+
+    with pytest.raises(KeyError):
+        asyncio.run(function())
+
+
+def test_default_default_value_is_none():
+    @exception_escaping(exceptions=(ValueError,))
+    def function():
+        raise ValueError
+
+    assert function() is None
+
+
+def test_default_default_value_is_none_in_async_case():
+    @exception_escaping(exceptions=(ValueError,))
+    async def function():
+        raise ValueError
+
+    assert asyncio.run(function()) is None
