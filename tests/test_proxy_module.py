@@ -206,10 +206,18 @@ def test_context_manager_with_exceptions_parameter_not_muted_exception():
         with exception_escaping(exceptions=(ZeroDivisionError,)):
             raise ValueError
 
+    with pytest.raises(ValueError):
+        with exception_escaping(exceptions=[ZeroDivisionError]):
+            raise ValueError
+
 
 def test_context_manager_with_exceptions_parameter_muted_exception():
     for muted_exception in (GeneratorExit, KeyboardInterrupt, SystemExit):
         with exception_escaping(exceptions=(muted_exception,)):
+            raise muted_exception
+
+    for muted_exception in (GeneratorExit, KeyboardInterrupt, SystemExit):
+        with exception_escaping(exceptions=[muted_exception]):
             raise muted_exception
 
 
@@ -246,3 +254,12 @@ def test_context_manager_with_default_return_value():
     with pytest.raises(SetDefaultReturnValueForDecoratorError, match='You cannot set a default value for the context manager. This is only possible for the decorator.'):
         with exception_escaping(default_return='lol'):
             ...
+
+def test_set_exceptions_types_with_bad_typed_value():
+    with pytest.raises(ValueError, match='The list of exception types can be of the list or tuple type.'):
+        exception_escaping(exceptions='lol')
+
+
+def test_set_exceptions_types_with_bad_typed_exceptions_in_list():
+    with pytest.raises(ValueError, match='The list of exception types can contain only exception types.'):
+        exception_escaping(exceptions=[ValueError, 'lol'])
