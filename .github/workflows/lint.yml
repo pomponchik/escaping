@@ -25,8 +25,8 @@ jobs:
 
     - name: Run mypy
       shell: bash
-      run: mypy exception_escaping --strict
+      run: mypy escape --strict
 
     - name: Run ruff
       shell: bash
-      run: ruff exception_escaping
+      run: ruff escape
