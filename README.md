@@ -35,7 +35,7 @@ And use:
 ```python
 import escape
 
-@exception_escaping
+@escape
 def function():
   raise ValueError
 
