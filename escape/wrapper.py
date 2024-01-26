@@ -3,7 +3,7 @@ from inspect import iscoroutinefunction
 from functools import wraps
 from types import TracebackType
 
-from exception_escaping.errors import SetDefaultReturnValueForDecoratorError
+from escape.errors import SetDefaultReturnValueForDecoratorError
 
 
 class Wrapper:

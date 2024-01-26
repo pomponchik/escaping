@@ -3,7 +3,7 @@ from typing import Type, Tuple, List, Callable, Union, Optional, Any
 from types import TracebackType
 from inspect import isclass
 
-from exception_escaping.wrapper import Wrapper
+from escape.wrapper import Wrapper
 
 
 if sys.version_info < (3, 11):
