@@ -33,9 +33,9 @@ pip install exception_escaping
 And use:
 
 ```python
-import exception_escaping
+import escape
 
-@exception_escaping
+@escape
 def function():
   raise ValueError
 
@@ -47,12 +47,12 @@ Read about other library features below.
 
 ## Decorator mode
 
-You can hang the `exception_escaping` decorator on any function, including a coroutine one. Exceptions that occur internally will be suppressed.
+You can hang the `escape` decorator on any function, including a coroutine one. Exceptions that occur internally will be suppressed.
 
 An example with a regular function:
 
 ```python
-@exception_escaping
+@escape
 def function():
   raise ValueError
 ```
@@ -60,7 +60,7 @@ def function():
 And with coroutine one:
 
 ```python
-@exception_escaping
+@escape
 async def coroutine_function():
   raise ValueError
 ```
@@ -68,7 +68,7 @@ async def coroutine_function():
 The decorator will work both with and without brackets:
 
 ```python
-@exception_escaping()  # This will work too.
+@escape()  # This will work too.
 def function():
   ...
 ```
@@ -76,7 +76,7 @@ def function():
 If an exception occurred inside the function wrapped by the decorator, it will return the default value - `None`. You can specify your own default value:
 
 ```python
-@exception_escaping(default_return='some value')
+@escape(default='some value')
 def function():
   raise ValueError
 
@@ -86,41 +86,41 @@ assert function() == 'some value'  # It's going to work.
 
 ## Context manager mode
 
-You can use `exception_escaping` as a context manager. It works almost the same way as [`contextlib.suppress`](https://docs.python.org/3/library/contextlib.html#contextlib.suppress) from the standard library. However, in this case, you can choose whether to use the context manager with or without brackets:
+You can use `escape` as a context manager. It works almost the same way as [`contextlib.suppress`](https://docs.python.org/3/library/contextlib.html#contextlib.suppress) from the standard library. However, in this case, you can choose whether to use the context manager with or without brackets:
 
 ```python
 # Both options work the same way.
 
-with exception_escaping:
+with escape:
   raise ValueError
 
-with exception_escaping():
+with escape():
   raise ValueError
 ```
 
 However, as you should understand, the default value cannot be specified in this case. If you try to specify a default value for the context manager, get ready to face an exception:
 
 ```python
-with exception_escaping(default_return='some value'):
+with escape(default='some value'):
   ...
 
-# exception_escaping.errors.SetDefaultReturnValueForDecoratorError: You cannot set a default value for the context manager. This is only possible for the decorator.
+# escape.errors.SetDefaultReturnValueForDecoratorError: You cannot set a default value for the context manager. This is only possible for the decorator.
 ```
 
 ## Which exceptions are escaped?
 
-By default, not all exceptions from the [hierarchy](https://docs.python.org/3/library/exceptions.html#exception-hierarchy) are escaped. This only applies to [`Exception`](https://docs.python.org/3/library/exceptions.html#Exception) and all its descendants. Starting with Python 3.11, [groups of exceptions](https://docs.python.org/3/library/exceptions.html#exception-groups) appear - and they are also escaped by default. However, exceptions such as [`GeneratorExit`](https://docs.python.org/3/library/exceptions.html#GeneratorExit), [`KeyboardInterrupt`](https://docs.python.org/3/library/exceptions.html#KeyboardInterrupt) or [`SystemExit`](https://docs.python.org/3/library/exceptions.html#SystemExit) are not escaped by default. This is due to the fact that in most programs none of them is part of the semantics of the program, but is used exclusively for system needs. For example, if `KeyboardInterrupt` was blocked, you would not be able to stop your program using the `Control-C` keyboard shortcut.
+By default, not all exceptions from the [hierarchy](https://docs.python.org/3/library/exceptions.html#exception-hierarchy) are escaped. This only applies to [`Exception`](https://docs.python.org/3/library/exceptions.html#Exception) and all its descendants. Starting with Python 3.11, [groups of exceptions](https://docs.python.org/3/library/exceptions.html#exception-groups) appear - and they are also escaped by default. However, exceptions [`GeneratorExit`](https://docs.python.org/3/library/exceptions.html#GeneratorExit), [`KeyboardInterrupt`](https://docs.python.org/3/library/exceptions.html#KeyboardInterrupt) and [`SystemExit`](https://docs.python.org/3/library/exceptions.html#SystemExit) are not escaped by default. This is due to the fact that in most programs none of them is part of the semantics of the program, but is used exclusively for system needs. For example, if `KeyboardInterrupt` was blocked, you would not be able to stop your program using the `Control-C` keyboard shortcut.
 
 If you want to expand or narrow the range of escaped exceptions, use the `exceptions` argument. You must pass a list or tuple of exception types.
 
 It works for the [decorator mode](#decorator-mode):
 
 ```python
-@exception_escaping(exceptions=[ValueError]):
+@escape(exceptions=[ValueError]):
 def function():
   raise ValueError  # It will be suppressed.
 
-@exception_escaping(exceptions=[ValueError]):
+@escape(exceptions=[ValueError]):
 def function():
   raise KeyError  # And this is not.
 ```
@@ -128,9 +128,9 @@ def function():
 ... and for the [context manager mode](#context-manager-mode):
 
 ```python
-with exception_escaping(exceptions=[ValueError]):
+with escape(exceptions=[ValueError]):
   raise ValueError  # It will be suppressed.
 
-with exception_escaping(exceptions=[ValueError]):
+with escape(exceptions=[ValueError]):
   raise KeyError  # And this is not.
 ```
