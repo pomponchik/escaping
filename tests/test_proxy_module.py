@@ -125,7 +125,7 @@ def test_run_coroutine_function_with_exception_with_empty_brackets():
 def test_run_simple_function_with_default_return():
     some_value = 'kek'
 
-    @escape(default_return='lol')
+    @escape(default='lol')
     def function():
         return some_value
 
@@ -133,7 +133,7 @@ def test_run_simple_function_with_default_return():
 
 
 def test_run_simple_function_with_some_arguments_with_default_return():
-    @escape(default_return='lol')
+    @escape(default='lol')
     def function(a, b, c=5):
         return a + b + c
 
@@ -146,7 +146,7 @@ def test_run_simple_function_with_some_arguments_with_default_return():
 def test_run_function_with_exception_with_default_return():
     default_value = 13
 
-    @escape(default_return=default_value)
+    @escape(default=default_value)
     def function(a, b, c=5):
         raise ValueError
 
@@ -156,7 +156,7 @@ def test_run_function_with_exception_with_default_return():
 def test_run_coroutine_function_with_default_return():
     some_value = 'kek'
 
-    @escape(default_return='lol')
+    @escape(default='lol')
     async def function():
         return some_value
 
@@ -164,7 +164,7 @@ def test_run_coroutine_function_with_default_return():
 
 
 def test_run_coroutine_function_with_some_arguments_with_default_return():
-    @escape(default_return='lol')
+    @escape(default='lol')
     async def function(a, b, c=5):
         return a + b + c
 
@@ -177,7 +177,7 @@ def test_run_coroutine_function_with_some_arguments_with_default_return():
 def test_run_coroutine_function_with_exception_with_default_return():
     default_value = 13
 
-    @escape(default_return=default_value)
+    @escape(default=default_value)
     async def function(a, b, c=5):
         raise ValueError
 
@@ -252,7 +252,7 @@ def test_decorator_without_breackets_saves_name_of_coroutine_function():
 
 def test_context_manager_with_default_return_value():
     with pytest.raises(SetDefaultReturnValueForDecoratorError, match='You cannot set a default value for the context manager. This is only possible for the decorator.'):
-        with escape(default_return='lol'):
+        with escape(default='lol'):
             ...
 
 def test_set_exceptions_types_with_bad_typed_value():

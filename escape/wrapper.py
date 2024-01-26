@@ -7,8 +7,8 @@ from escape.errors import SetDefaultReturnValueForDecoratorError
 
 
 class Wrapper:
-    def __init__(self, default_return: Any, exceptions: Tuple[Type[BaseException], ...]) -> None:
-        self.default_return: Any = default_return
+    def __init__(self, default: Any, exceptions: Tuple[Type[BaseException], ...]) -> None:
+        self.default: Any = default
         self.exceptions: Tuple[Type[BaseException], ...] = exceptions
 
     def __call__(self, function: Callable[..., Any]) -> Callable[..., Any]:
@@ -17,21 +17,21 @@ class Wrapper:
             try:
                 return function(*args, **kwargs)
             except self.exceptions:
-                return self.default_return
+                return self.default
 
         @wraps(function)
         async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
             try:
                 return await function(*args, **kwargs)
             except self.exceptions:
-                return self.default_return
+                return self.default
 
         if iscoroutinefunction(function):
             return async_wrapper
         return wrapper
 
     def __enter__(self) -> 'Wrapper':
-        if self.default_return is not None:
+        if self.default is not None:
             raise SetDefaultReturnValueForDecoratorError('You cannot set a default value for the context manager. This is only possible for the decorator.')
 
         return self

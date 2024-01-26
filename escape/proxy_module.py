@@ -12,7 +12,7 @@ else:
     muted_by_default_exceptions = (Exception, BaseExceptionGroup)
 
 class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
-    def __call__(self, *args: Callable[..., Any], default_return: Any = None, exceptions: Union[Tuple[Type[BaseException], ...], List[Type[BaseException]]] = muted_by_default_exceptions) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
+    def __call__(self, *args: Callable[..., Any], default: Any = None, exceptions: Union[Tuple[Type[BaseException], ...], List[Type[BaseException]]] = muted_by_default_exceptions) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
         """
         https://docs.python.org/3/library/exceptions.html#exception-hierarchy
         """
@@ -26,7 +26,7 @@ class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
         else:
             converted_exceptions = exceptions
 
-        wrapper_of_wrappers = Wrapper(default_return, converted_exceptions)
+        wrapper_of_wrappers = Wrapper(default, converted_exceptions)
 
         if len(args) == 1 and callable(args[0]):
             return wrapper_of_wrappers(args[0])
