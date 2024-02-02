@@ -37,11 +37,9 @@ class Wrapper:
         return self
 
     def __exit__(self, exception_type: Optional[Type[BaseException]], exception_value: Optional[BaseException], traceback: Optional[TracebackType]) -> bool:
-        if exception_type is None:
-            return False
-
-        for muted_exception_type in self.exceptions:
-            if issubclass(exception_type, muted_exception_type):
-                return True
+        if exception_type is not None:
+            for muted_exception_type in self.exceptions:
+                if issubclass(exception_type, muted_exception_type):
+                    return True
 
         return False

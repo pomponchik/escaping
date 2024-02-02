@@ -8,3 +8,5 @@ venv
 build
 .ruff_cache
 .mypy_cache
+.mutmut-cache
+html

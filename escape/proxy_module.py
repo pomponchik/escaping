@@ -7,7 +7,7 @@ from escape.wrapper import Wrapper
 
 
 if sys.version_info < (3, 11):
-    muted_by_default_exceptions: Tuple[Type[BaseException], ...] = (Exception,)
+    muted_by_default_exceptions: Tuple[Type[BaseException], ...] = (Exception,)  # pragma: no cover
 else:
     muted_by_default_exceptions = (Exception, BaseExceptionGroup)
 
@@ -39,11 +39,9 @@ class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
         return self
 
     def __exit__(self, exception_type: Optional[Type[BaseException]], exception_value: Optional[BaseException], traceback: Optional[TracebackType]) -> bool:
-        if exception_type is None:
-            return False
-
-        for muted_exception_type in muted_by_default_exceptions:
-            if issubclass(exception_type, muted_exception_type):
-                return True
+        if exception_type is not None:
+            for muted_exception_type in muted_by_default_exceptions:
+                if issubclass(exception_type, muted_exception_type):
+                    return True
 
         return False

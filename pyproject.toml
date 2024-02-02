@@ -4,7 +4,7 @@ build-backend = 'setuptools.build_meta'
 
 [project]
 name = 'exception_escaping'
-version = '0.0.5'
+version = '0.0.6'
 authors = [
   { name='Evgeniy Blinov', email='zheni-b@yandex.ru' },
 ]
@@ -30,6 +30,10 @@ classifiers = [
 
 [tool.setuptools.package-data]
 "escape" = ["py.typed"]
+
+[tool.mutmut]
+paths_to_mutate="escape"
+runner="pytest"
 
 [project.urls]
 'Source' = 'https://github.com/pomponchik/exception_escaping'
