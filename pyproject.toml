@@ -31,6 +31,10 @@ classifiers = [
 [tool.setuptools.package-data]
 "escape" = ["py.typed"]
 
+[tool.mutmut]
+paths_to_mutate="escape"
+runner="pytest"
+
 [project.urls]
 'Source' = 'https://github.com/pomponchik/exception_escaping'
 'Tracker' = 'https://github.com/pomponchik/exception_escaping/issues'
