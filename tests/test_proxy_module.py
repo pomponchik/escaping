@@ -347,3 +347,10 @@ def test_default_default_value_is_none_in_async_case():
         raise ValueError
 
     assert asyncio.run(function()) is None
+
+
+def test_context_manager_normal_way():
+    with escape:
+        variable = True
+
+    assert variable
