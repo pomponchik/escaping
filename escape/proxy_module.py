@@ -7,7 +7,7 @@ from escape.wrapper import Wrapper
 
 
 if sys.version_info < (3, 11):
-    muted_by_default_exceptions: Tuple[Type[BaseException], ...] = (Exception,)
+    muted_by_default_exceptions: Tuple[Type[BaseException], ...] = (Exception,)  # pragma: no cover
 else:
     muted_by_default_exceptions = (Exception, BaseExceptionGroup)
 
