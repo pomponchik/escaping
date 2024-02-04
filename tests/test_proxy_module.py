@@ -1,14 +1,10 @@
 import asyncio
-from re import escape as re_escape
 
 import pytest
+import full_match
 
 import escape
 from escape.errors import SetDefaultReturnValueForDecoratorError
-
-
-def full_match_regex(string_to_match: str) -> str:
-    return '^' + re_escape(string_to_match) + '$'
 
 
 def test_run_simple_function():
@@ -190,7 +186,7 @@ def test_run_coroutine_function_with_exception_with_default_return():
 
 
 def test_wrong_argument_to_decorator():
-    with pytest.raises(ValueError, match=full_match_regex('You are using the decorator for the wrong purpose.')):
+    with pytest.raises(ValueError, match=full_match('You are using the decorator for the wrong purpose.')):
         escape('kek')
 
 
@@ -256,17 +252,17 @@ def test_decorator_without_breackets_saves_name_of_coroutine_function():
 
 
 def test_context_manager_with_default_return_value():
-    with pytest.raises(SetDefaultReturnValueForDecoratorError, match=full_match_regex('You cannot set a default value for the context manager. This is only possible for the decorator.')):
+    with pytest.raises(SetDefaultReturnValueForDecoratorError, match=full_match('You cannot set a default value for the context manager. This is only possible for the decorator.')):
         with escape(default='lol'):
             ...
 
 def test_set_exceptions_types_with_bad_typed_value():
-    with pytest.raises(ValueError, match=full_match_regex('The list of exception types can be of the list or tuple type.')):
+    with pytest.raises(ValueError, match=full_match('The list of exception types can be of the list or tuple type.')):
         escape(exceptions='lol')
 
 
 def test_set_exceptions_types_with_bad_typed_exceptions_in_list():
-    with pytest.raises(ValueError, match=full_match_regex('The list of exception types can contain only exception types.')):
+    with pytest.raises(ValueError, match=full_match('The list of exception types can contain only exception types.')):
         escape(exceptions=[ValueError, 'lol'])
 
 
