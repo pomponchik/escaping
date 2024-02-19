@@ -496,17 +496,6 @@ def test_logging_suppressed_in_a_context_exception_with_message():
     assert logger.data.exception[0].message == 'The "ValueError" ("lol kek cheburek") exception was suppressed inside the context.'
 
 
-
-
-
-
-
-
-
-
-
-
-
 def test_logging_not_suppressed_in_a_context_exception_without_message():
     logger = MemoryLogger()
 
