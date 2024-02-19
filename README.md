@@ -140,7 +140,7 @@ with escape(exceptions=[ValueError]):
 
 ## Logging
 
-You can pass a logger object to the `escape`. If an exception is raised inside the context or the function wrapped by the decorator, it will be logged:
+You can pass a logger object to the `escape`. In such case, if an exception is raised inside the context or the function wrapped by the decorator, it will be logged:
 
 ```python
 import logging
