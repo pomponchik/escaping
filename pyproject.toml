@@ -12,7 +12,7 @@ description = 'Try not to stand out'
 readme = 'README.md'
 requires-python = '>=3.7'
 dependencies = [
-    'emptylog>=0.0.3',
+    'emptylog>=0.0.4',
 ]
 classifiers = [
     'Operating System :: OS Independent',
