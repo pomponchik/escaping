@@ -2,6 +2,7 @@ import asyncio
 
 import pytest
 import full_match
+from emptylog import MemoryLogger
 
 import escape
 from escape.errors import SetDefaultReturnValueForDecoratorError
@@ -355,3 +356,165 @@ def test_context_manager_normal_way():
         variable = True
 
     assert variable
+
+
+def test_logging_catched_exception_without_message_usual_function():
+    logger = MemoryLogger()
+
+    @escape(logger=logger, default='kek')
+    def function():
+        raise ValueError
+
+    assert function() == 'kek'
+
+    assert len(logger.data.exception) == 1
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == f'When executing function "function", the exception "ValueError" was suppressed.'
+
+
+def test_logging_catched_exception_with_message_usual_function():
+    logger = MemoryLogger()
+
+    @escape(logger=logger, default='kek')
+    def function():
+        raise ValueError('lol kek cheburek')
+
+    assert function() == 'kek'
+
+    assert len(logger.data.exception) == 1
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == f'When executing function "function", the exception "ValueError" ("lol kek cheburek") was suppressed.'
+
+
+def test_logging_not_catched_exception_without_message_usual_function():
+    logger = MemoryLogger()
+
+    @escape(logger=logger, default='kek', exceptions=[ZeroDivisionError])
+    def function():
+        raise ValueError
+
+    with pytest.raises(ValueError):
+        function()
+
+    assert len(logger.data.exception) == 1
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == f'When executing function "function", the exception "ValueError" was not suppressed.'
+
+
+def test_logging_not_catched_exception_with_message_usual_function():
+    logger = MemoryLogger()
+
+    @escape(logger=logger, default='kek', exceptions=[ZeroDivisionError])
+    def function():
+        raise ValueError('lol kek cheburek')
+
+    with pytest.raises(ValueError, match='lol kek cheburek'):
+        function()
+
+    assert len(logger.data.exception) == 1
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == f'When executing function "function", the exception "ValueError" ("lol kek cheburek") was not suppressed.'
+
+
+def test_logging_catched_exception_without_message_coroutine_function():
+    logger = MemoryLogger()
+
+    @escape(logger=logger, default='kek')
+    async def function():
+        raise ValueError
+
+    assert asyncio.run(function()) == 'kek'
+
+    assert len(logger.data.exception) == 1
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == f'When executing coroutine function "function", the exception "ValueError" was suppressed.'
+
+
+def test_logging_catched_exception_with_message_coroutine_function():
+    logger = MemoryLogger()
+
+    @escape(logger=logger, default='kek')
+    async def function():
+        raise ValueError('lol kek cheburek')
+
+    assert asyncio.run(function()) == 'kek'
+
+    assert len(logger.data.exception) == 1
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == f'When executing coroutine function "function", the exception "ValueError" ("lol kek cheburek") was suppressed.'
+
+
+def test_logging_not_catched_exception_without_message_coroutine_function():
+    logger = MemoryLogger()
+
+    @escape(logger=logger, default='kek', exceptions=[ZeroDivisionError])
+    async def function():
+        raise ValueError
+
+    with pytest.raises(ValueError):
+        asyncio.run(function())
+
+    assert len(logger.data.exception) == 1
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == f'When executing coroutine function "function", the exception "ValueError" was not suppressed.'
+
+
+def test_logging_not_catched_exception_with_message_coroutine_function():
+    logger = MemoryLogger()
+
+    @escape(logger=logger, default='kek', exceptions=[ZeroDivisionError])
+    async def function():
+        raise ValueError('lol kek cheburek')
+
+    with pytest.raises(ValueError, match='lol kek cheburek'):
+        asyncio.run(function())
+
+    assert len(logger.data.exception) == 1
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == f'When executing coroutine function "function", the exception "ValueError" ("lol kek cheburek") was not suppressed.'
+
+
+def test_logging_suppressed_in_a_context_exception_without_message():
+    logger = MemoryLogger()
+
+    with escape(logger=logger):
+        raise ValueError
+
+    assert len(logger.data.exception) == 1
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'The "ValueError" exception was suppressed inside the context.'
+
+
+def test_logging_suppressed_in_a_context_exception_with_message():
+    logger = MemoryLogger()
+
+    with escape(logger=logger):
+        raise ValueError('lol kek cheburek')
+
+    assert len(logger.data.exception) == 1
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'The "ValueError" ("lol kek cheburek") exception was suppressed inside the context.'
+
+
+def test_logging_not_suppressed_in_a_context_exception_without_message():
+    logger = MemoryLogger()
+
+    with pytest.raises(ValueError):
+        with escape(logger=logger, exceptions=[ZeroDivisionError]):
+            raise ValueError
+
+    assert len(logger.data.exception) == 1
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'The "ValueError" exception was not suppressed inside the context.'
+
+
+def test_logging_not_suppressed_in_a_context_exception_with_message():
+    logger = MemoryLogger()
+
+    with pytest.raises(ValueError, match='lol kek cheburek'):
+        with escape(logger=logger, exceptions=[ZeroDivisionError]):
+            raise ValueError('lol kek cheburek')
+
+    assert len(logger.data.exception) == 1
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'The "ValueError" ("lol kek cheburek") exception was not suppressed inside the context.'

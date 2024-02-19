@@ -21,6 +21,7 @@ If you've just confessed and you can't wait to sin again, try this package. It w
 - [**Decorator mode**](#decorator-mode)
 - [**Context manager mode**](#context-manager-mode)
 - [**Which exceptions are escaped?**](#which-exceptions-are-escaped)
+- [**Logging**](#logging)
 
 
 ## Quick start
@@ -38,7 +39,7 @@ import escape
 
 @escape
 def function():
-  raise ValueError
+    raise ValueError
 
 function()  # The exception is suppressed.
 ```
@@ -55,7 +56,7 @@ An example with a regular function:
 ```python
 @escape
 def function():
-  raise ValueError
+    raise ValueError
 ```
 
 And with coroutine one:
@@ -63,7 +64,7 @@ And with coroutine one:
 ```python
 @escape
 async def coroutine_function():
-  raise ValueError
+    raise ValueError
 ```
 
 The decorator will work both with and without brackets:
@@ -71,7 +72,7 @@ The decorator will work both with and without brackets:
 ```python
 @escape()  # This will work too.
 def function():
-  ...
+    ...
 ```
 
 If an exception occurred inside the function wrapped by the decorator, it will return the default value - `None`. You can specify your own default value:
@@ -79,7 +80,7 @@ If an exception occurred inside the function wrapped by the decorator, it will r
 ```python
 @escape(default='some value')
 def function():
-  raise ValueError
+    raise ValueError
 
 assert function() == 'some value'  # It's going to work.
 ```
@@ -93,17 +94,17 @@ You can use `escape` as a context manager. It works almost the same way as [`con
 # Both options work the same way.
 
 with escape:
-  raise ValueError
+    raise ValueError
 
 with escape():
-  raise ValueError
+    raise ValueError
 ```
 
 However, as you should understand, the default value cannot be specified in this case. If you try to specify a default value for the context manager, get ready to face an exception:
 
 ```python
 with escape(default='some value'):
-  ...
+    ...
 
 # escape.errors.SetDefaultReturnValueForDecoratorError: You cannot set a default value for the context manager. This is only possible for the decorator.
 ```
@@ -119,19 +120,48 @@ It works for the [decorator mode](#decorator-mode):
 ```python
 @escape(exceptions=[ValueError]):
 def function():
-  raise ValueError  # It will be suppressed.
+    raise ValueError  # It will be suppressed.
 
 @escape(exceptions=[ValueError]):
 def function():
-  raise KeyError  # And this is not.
+    raise KeyError  # And this is not.
 ```
 
 ... and for the [context manager mode](#context-manager-mode):
 
 ```python
 with escape(exceptions=[ValueError]):
-  raise ValueError  # It will be suppressed.
+    raise ValueError  # It will be suppressed.
 
 with escape(exceptions=[ValueError]):
-  raise KeyError  # And this is not.
+    raise KeyError  # And this is not.
 ```
+
+
+## Logging
+
+You can pass a logger object to the `escape`. In such case, if an exception is raised inside the context or the function wrapped by the decorator, it will be logged:
+
+```python
+import logging
+import escape
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.StreamHandler(),
+    ]
+)
+
+logger = logging.getLogger('logger_name')
+
+with escape(logger=logger):
+    1/0
+
+# You will see a description of the error in the console.
+```
+
+It works in any mode: both in the case of the context manager and the decorator.
+
+Only exceptions are logged. If the code block or function was executed without errors, the log will not be recorded. Also the log is recorded regardless of whether the exception was suppressed or not. However, depending on this, you will see different log messages to distinguish one situation from another.
