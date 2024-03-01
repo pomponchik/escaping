@@ -87,8 +87,8 @@ def test_run_simple_function_with_some_arguments_with_empty_brackets():
     assert function(1, 2, c=8) == 11
 
 
-def test_run_function_with_exception_with_empty_brackets():
-    @escape()
+def test_run_function_with_exception_with_empty_brackets_with_ellipsis():
+    @escape(...)
     def function(a, b, c=5):
         raise ValueError
 
@@ -116,8 +116,8 @@ def test_run_coroutine_function_with_some_arguments_with_empty_brackets():
     assert asyncio.run(function(1, 2, c=8)) == 11
 
 
-def test_run_coroutine_function_with_exception_with_empty_brackets():
-    @escape()
+def test_run_coroutine_function_with_exception_with_empty_brackets_with_ellipsis():
+    @escape(...)
     async def function(a, b, c=5):
         raise ValueError
 
@@ -145,10 +145,10 @@ def test_run_simple_function_with_some_arguments_with_default_return():
     assert function(1, 2, c=8) == 11
 
 
-def test_run_function_with_exception_with_default_return():
+def test_run_function_with_exception_with_default_return_with_ellipsis():
     default_value = 13
 
-    @escape(default=default_value)
+    @escape(..., default=default_value)
     def function(a, b, c=5):
         raise ValueError
 
@@ -176,10 +176,10 @@ def test_run_coroutine_function_with_some_arguments_with_default_return():
     assert asyncio.run(function(1, 2, c=8)) == 11
 
 
-def test_run_coroutine_function_with_exception_with_default_return():
+def test_run_coroutine_function_with_exception_with_default_return_with_ellipsis():
     default_value = 13
 
-    @escape(default=default_value)
+    @escape(..., default=default_value)
     async def function(a, b, c=5):
         raise ValueError
 
@@ -191,8 +191,8 @@ def test_wrong_argument_to_decorator():
         escape('kek')
 
 
-def test_context_manager_with_empty_brackets_muted_by_default_exception():
-    with escape():
+def test_context_manager_with_empty_brackets_muted_by_default_exception_with_ellipsis():
+    with escape(...):
         raise ValueError
 
 
@@ -324,10 +324,10 @@ def test_context_manager_normal_way():
     assert variable
 
 
-def test_logging_catched_exception_without_message_usual_function():
+def test_logging_catched_exception_without_message_usual_function_with_ellipsis():
     logger = MemoryLogger()
 
-    @escape(logger=logger, default='kek')
+    @escape(..., logger=logger, default='kek')
     def function():
         raise ValueError
 
@@ -338,10 +338,10 @@ def test_logging_catched_exception_without_message_usual_function():
     assert logger.data.exception[0].message == f'When executing function "function", the exception "ValueError" was suppressed.'
 
 
-def test_logging_catched_exception_with_message_usual_function():
+def test_logging_catched_exception_with_message_usual_function_with_ellipsis():
     logger = MemoryLogger()
 
-    @escape(logger=logger, default='kek')
+    @escape(..., logger=logger, default='kek')
     def function():
         raise ValueError('lol kek cheburek')
 
@@ -382,10 +382,10 @@ def test_logging_not_catched_exception_with_message_usual_function():
     assert logger.data.exception[0].message == f'When executing function "function", the exception "ValueError" ("lol kek cheburek") was not suppressed.'
 
 
-def test_logging_catched_exception_without_message_coroutine_function():
+def test_logging_catched_exception_without_message_coroutine_function_with_ellipsis():
     logger = MemoryLogger()
 
-    @escape(logger=logger, default='kek')
+    @escape(..., logger=logger, default='kek')
     async def function():
         raise ValueError
 
@@ -396,10 +396,10 @@ def test_logging_catched_exception_without_message_coroutine_function():
     assert logger.data.exception[0].message == f'When executing coroutine function "function", the exception "ValueError" was suppressed.'
 
 
-def test_logging_catched_exception_with_message_coroutine_function():
+def test_logging_catched_exception_with_message_coroutine_function_with_ellipsis():
     logger = MemoryLogger()
 
-    @escape(logger=logger, default='kek')
+    @escape(..., logger=logger, default='kek')
     async def function():
         raise ValueError('lol kek cheburek')
 
@@ -440,10 +440,10 @@ def test_logging_not_catched_exception_with_message_coroutine_function():
     assert logger.data.exception[0].message == f'When executing coroutine function "function", the exception "ValueError" ("lol kek cheburek") was not suppressed.'
 
 
-def test_logging_suppressed_in_a_context_exception_without_message():
+def test_logging_suppressed_in_a_context_exception_with_ellipsis_without_message():
     logger = MemoryLogger()
 
-    with escape(logger=logger):
+    with escape(..., logger=logger):
         raise ValueError
 
     assert len(logger.data.exception) == 1
@@ -451,10 +451,10 @@ def test_logging_suppressed_in_a_context_exception_without_message():
     assert logger.data.exception[0].message == 'The "ValueError" exception was suppressed inside the context.'
 
 
-def test_logging_suppressed_in_a_context_exception_with_message():
+def test_logging_suppressed_in_a_context_exception_with_ellipsis_with_message():
     logger = MemoryLogger()
 
-    with escape(logger=logger):
+    with escape(..., logger=logger):
         raise ValueError('lol kek cheburek')
 
     assert len(logger.data.exception) == 1

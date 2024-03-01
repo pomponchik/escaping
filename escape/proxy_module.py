@@ -2,6 +2,12 @@ import sys
 from typing import Type, Tuple, List, Callable, Union, Optional, Any
 from types import TracebackType
 from inspect import isclass
+from itertools import chain
+
+try:
+    from types import EllipsisType
+except ImportError:
+    EllipsisType = type(...)
 
 from emptylog import LoggerProtocol, EmptyLogger
 
@@ -14,14 +20,17 @@ else:
     muted_by_default_exceptions = (Exception, BaseExceptionGroup)
 
 class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
-    def __call__(self, *args: Union[Callable[..., Any], Type[BaseException]], default: Any = None, exceptions: Union[Tuple[Type[BaseException], ...], List[Type[BaseException]]] = muted_by_default_exceptions, logger: LoggerProtocol = EmptyLogger()) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
+    def __call__(self, *args: Union[Callable[..., Any], Type[BaseException], EllipsisType], default: Any = None, exceptions: Union[Tuple[Type[BaseException], ...], List[Type[BaseException]]] = muted_by_default_exceptions, logger: LoggerProtocol = EmptyLogger()) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
         """
         https://docs.python.org/3/library/exceptions.html#exception-hierarchy
         """
-        if not args or self.are_it_function(args):
+        if self.are_it_function(args):
             exceptions = muted_by_default_exceptions
         else:
-            exceptions = args
+            if self.is_there_ellipsis(args):
+                exceptions = tuple(chain((x for x in args if x is not Ellipsis), muted_by_default_exceptions))
+            else:
+                exceptions = args
 
         wrapper_of_wrappers = Wrapper(default, exceptions, logger)
 
@@ -46,9 +55,13 @@ class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
         return False
 
     @staticmethod
-    def are_it_exceptions(args: Union[Tuple[Type[BaseException]], Tuple[Callable[..., Any]]]) -> bool:
-        return all(isclass(x) and issubclass(x, BaseException) for x in args)
+    def is_there_ellipsis(args: Tuple[Union[Type[BaseException], Callable[..., Any], EllipsisType], ...]) -> bool:
+        return any(x is Ellipsis for x in args)
 
     @staticmethod
-    def are_it_function(args: Union[Tuple[Type[BaseException]], Tuple[Callable[..., Any]]]) -> bool:
+    def are_it_exceptions(args: Tuple[Union[Type[BaseException], Callable[..., Any], EllipsisType], ...]) -> bool:
+        return all((x is Ellipsis) or (isclass(x) and issubclass(x, BaseException)) for x in args)
+
+    @staticmethod
+    def are_it_function(args: Tuple[Union[Type[BaseException], Callable[..., Any], EllipsisType], ...]) -> bool:
         return len(args) == 1 and callable(args[0]) and not (isclass(args[0]) and issubclass(args[0], BaseException))
