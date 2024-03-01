@@ -14,26 +14,23 @@ else:
     muted_by_default_exceptions = (Exception, BaseExceptionGroup)
 
 class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
-    def __call__(self, *args: Callable[..., Any], default: Any = None, exceptions: Union[Tuple[Type[BaseException], ...], List[Type[BaseException]]] = muted_by_default_exceptions, logger: LoggerProtocol = EmptyLogger()) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
+    def __call__(self, *args: Union[Callable[..., Any], Type[BaseException]], default: Any = None, exceptions: Union[Tuple[Type[BaseException], ...], List[Type[BaseException]]] = muted_by_default_exceptions, logger: LoggerProtocol = EmptyLogger()) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
         """
         https://docs.python.org/3/library/exceptions.html#exception-hierarchy
         """
-        if not isinstance(exceptions, tuple) and not isinstance(exceptions, list):
-            raise ValueError('The list of exception types can be of the list or tuple type.')
-        elif not all(isclass(x) and issubclass(x, BaseException) for x in exceptions):
-            raise ValueError('The list of exception types can contain only exception types.')
-
-        if isinstance(exceptions, list):
-            converted_exceptions: Tuple[Type[BaseException], ...] = tuple(exceptions)
+        if not args or self.are_it_function(args):
+            exceptions = muted_by_default_exceptions
         else:
-            converted_exceptions = exceptions
+            exceptions = args
 
-        wrapper_of_wrappers = Wrapper(default, converted_exceptions, logger)
+        wrapper_of_wrappers = Wrapper(default, exceptions, logger)
 
-        if len(args) == 1 and callable(args[0]):
-            return wrapper_of_wrappers(args[0])
-        elif len(args) == 0:
+        if self.are_it_exceptions(args):
             return wrapper_of_wrappers
+
+        elif self.are_it_function(args):
+            return wrapper_of_wrappers(args[0])
+
         else:
             raise ValueError('You are using the decorator for the wrong purpose.')
 
@@ -47,3 +44,11 @@ class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
                     return True
 
         return False
+
+    @staticmethod
+    def are_it_exceptions(args: Union[Tuple[Type[BaseException]], Tuple[Callable[..., Any]]]) -> bool:
+        return all(isclass(x) and issubclass(x, BaseException) for x in args)
+
+    @staticmethod
+    def are_it_function(args: Union[Tuple[Type[BaseException]], Tuple[Callable[..., Any]]]) -> bool:
+        return len(args) == 1 and callable(args[0]) and not (isclass(args[0]) and issubclass(args[0], BaseException))

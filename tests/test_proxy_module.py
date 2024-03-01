@@ -205,21 +205,21 @@ def test_context_manager_with_empty_brackets_not_muted_by_default_exception():
 
 def test_context_manager_with_exceptions_parameter_not_muted_exception():
     with pytest.raises(ValueError):
-        with escape(exceptions=(ZeroDivisionError,)):
+        with escape(ZeroDivisionError):
             raise ValueError
 
     with pytest.raises(ValueError):
-        with escape(exceptions=[ZeroDivisionError]):
+        with escape(ZeroDivisionError):
             raise ValueError
 
 
 def test_context_manager_with_exceptions_parameter_muted_exception():
     for muted_exception in (GeneratorExit, KeyboardInterrupt, SystemExit):
-        with escape(exceptions=(muted_exception,)):
+        with escape(muted_exception):
             raise muted_exception
 
     for muted_exception in (GeneratorExit, KeyboardInterrupt, SystemExit):
-        with escape(exceptions=[muted_exception]):
+        with escape(muted_exception):
             raise muted_exception
 
 
@@ -258,25 +258,25 @@ def test_context_manager_with_default_return_value():
             ...
 
 def test_set_exceptions_types_with_bad_typed_value():
-    with pytest.raises(ValueError, match=full_match('The list of exception types can be of the list or tuple type.')):
-        escape(exceptions='lol')
+    with pytest.raises(ValueError, match=full_match('You are using the decorator for the wrong purpose.')):
+        escape('lol')
 
 
 def test_set_exceptions_types_with_bad_typed_exceptions_in_list():
-    with pytest.raises(ValueError, match=full_match('The list of exception types can contain only exception types.')):
-        escape(exceptions=[ValueError, 'lol'])
+    with pytest.raises(ValueError, match=full_match('You are using the decorator for the wrong purpose.')):
+        escape(ValueError, 'lol')
 
 
-def test_decorator_with_list_of_muted_exceptions():
-    @escape(exceptions=[ValueError])
+def test_decorator_with_muted_exceptions():
+    @escape(ValueError)
     def function():
         raise ValueError
 
     function()
 
 
-def test_decorator_with_list_of_not_muted_exceptions():
-    @escape(exceptions=[ValueError])
+def test_decorator_with_not_muted_exceptions():
+    @escape(ValueError)
     def function():
         raise KeyError
 
@@ -284,50 +284,16 @@ def test_decorator_with_list_of_not_muted_exceptions():
         function()
 
 
-def test_decorator_with_tuple_of_muted_exceptions():
-    @escape(exceptions=(ValueError, ))
-    def function():
-        raise ValueError
-
-    function()
-
-
-def test_decorator_with_list_of_not_muted_exceptions():
-    @escape(exceptions=(ValueError,))
-    def function():
-        raise KeyError
-
-    with pytest.raises(KeyError):
-        function()
-
-
-def test_async_decorator_with_list_of_muted_exceptions():
-    @escape(exceptions=[ValueError])
+def test_async_decorator_with_muted_exceptions():
+    @escape(ValueError)
     async def function():
         raise ValueError
 
     asyncio.run(function())
 
 
-def test_async_decorator_with_list_of_not_muted_exceptions():
-    @escape(exceptions=[ValueError])
-    async def function():
-        raise KeyError
-
-    with pytest.raises(KeyError):
-        asyncio.run(function())
-
-
-def test_async_decorator_with_tuple_of_muted_exceptions():
-    @escape(exceptions=(ValueError, ))
-    async def function():
-        raise ValueError
-
-    asyncio.run(function())
-
-
-def test_async_decorator_with_list_of_not_muted_exceptions():
-    @escape(exceptions=(ValueError,))
+def test_async_decorator_with_not_muted_exceptions():
+    @escape(ValueError)
     async def function():
         raise KeyError
 
@@ -336,7 +302,7 @@ def test_async_decorator_with_list_of_not_muted_exceptions():
 
 
 def test_default_default_value_is_none():
-    @escape(exceptions=(ValueError,))
+    @escape(ValueError)
     def function():
         raise ValueError
 
@@ -344,7 +310,7 @@ def test_default_default_value_is_none():
 
 
 def test_default_default_value_is_none_in_async_case():
-    @escape(exceptions=(ValueError,))
+    @escape(ValueError)
     async def function():
         raise ValueError
 
@@ -389,7 +355,7 @@ def test_logging_catched_exception_with_message_usual_function():
 def test_logging_not_catched_exception_without_message_usual_function():
     logger = MemoryLogger()
 
-    @escape(logger=logger, default='kek', exceptions=[ZeroDivisionError])
+    @escape(ZeroDivisionError, logger=logger, default='kek')
     def function():
         raise ValueError
 
@@ -404,7 +370,7 @@ def test_logging_not_catched_exception_without_message_usual_function():
 def test_logging_not_catched_exception_with_message_usual_function():
     logger = MemoryLogger()
 
-    @escape(logger=logger, default='kek', exceptions=[ZeroDivisionError])
+    @escape(ZeroDivisionError, logger=logger, default='kek')
     def function():
         raise ValueError('lol kek cheburek')
 
@@ -447,7 +413,7 @@ def test_logging_catched_exception_with_message_coroutine_function():
 def test_logging_not_catched_exception_without_message_coroutine_function():
     logger = MemoryLogger()
 
-    @escape(logger=logger, default='kek', exceptions=[ZeroDivisionError])
+    @escape(ZeroDivisionError, logger=logger, default='kek')
     async def function():
         raise ValueError
 
@@ -462,7 +428,7 @@ def test_logging_not_catched_exception_without_message_coroutine_function():
 def test_logging_not_catched_exception_with_message_coroutine_function():
     logger = MemoryLogger()
 
-    @escape(logger=logger, default='kek', exceptions=[ZeroDivisionError])
+    @escape(ZeroDivisionError, logger=logger, default='kek')
     async def function():
         raise ValueError('lol kek cheburek')
 
@@ -500,7 +466,7 @@ def test_logging_not_suppressed_in_a_context_exception_without_message():
     logger = MemoryLogger()
 
     with pytest.raises(ValueError):
-        with escape(logger=logger, exceptions=[ZeroDivisionError]):
+        with escape(ZeroDivisionError, logger=logger):
             raise ValueError
 
     assert len(logger.data.exception) == 1
@@ -512,7 +478,7 @@ def test_logging_not_suppressed_in_a_context_exception_with_message():
     logger = MemoryLogger()
 
     with pytest.raises(ValueError, match='lol kek cheburek'):
-        with escape(logger=logger, exceptions=[ZeroDivisionError]):
+        with escape(ZeroDivisionError, logger=logger):
             raise ValueError('lol kek cheburek')
 
     assert len(logger.data.exception) == 1
