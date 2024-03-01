@@ -335,7 +335,7 @@ def test_logging_catched_exception_without_message_usual_function_with_ellipsis(
 
     assert len(logger.data.exception) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == f'When executing function "function", the exception "ValueError" was suppressed.'
+    assert logger.data.exception[0].message == 'When executing function "function", the exception "ValueError" was suppressed.'
 
 
 def test_logging_catched_exception_with_message_usual_function_with_ellipsis():
@@ -349,7 +349,7 @@ def test_logging_catched_exception_with_message_usual_function_with_ellipsis():
 
     assert len(logger.data.exception) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == f'When executing function "function", the exception "ValueError" ("lol kek cheburek") was suppressed.'
+    assert logger.data.exception[0].message == 'When executing function "function", the exception "ValueError" ("lol kek cheburek") was suppressed.'
 
 
 def test_logging_not_catched_exception_without_message_usual_function():
@@ -364,7 +364,7 @@ def test_logging_not_catched_exception_without_message_usual_function():
 
     assert len(logger.data.exception) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == f'When executing function "function", the exception "ValueError" was not suppressed.'
+    assert logger.data.exception[0].message == 'When executing function "function", the exception "ValueError" was not suppressed.'
 
 
 def test_logging_not_catched_exception_with_message_usual_function():
@@ -379,7 +379,7 @@ def test_logging_not_catched_exception_with_message_usual_function():
 
     assert len(logger.data.exception) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == f'When executing function "function", the exception "ValueError" ("lol kek cheburek") was not suppressed.'
+    assert logger.data.exception[0].message == 'When executing function "function", the exception "ValueError" ("lol kek cheburek") was not suppressed.'
 
 
 def test_logging_catched_exception_without_message_coroutine_function_with_ellipsis():
@@ -393,7 +393,7 @@ def test_logging_catched_exception_without_message_coroutine_function_with_ellip
 
     assert len(logger.data.exception) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == f'When executing coroutine function "function", the exception "ValueError" was suppressed.'
+    assert logger.data.exception[0].message == 'When executing coroutine function "function", the exception "ValueError" was suppressed.'
 
 
 def test_logging_catched_exception_with_message_coroutine_function_with_ellipsis():
@@ -407,7 +407,7 @@ def test_logging_catched_exception_with_message_coroutine_function_with_ellipsis
 
     assert len(logger.data.exception) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == f'When executing coroutine function "function", the exception "ValueError" ("lol kek cheburek") was suppressed.'
+    assert logger.data.exception[0].message == 'When executing coroutine function "function", the exception "ValueError" ("lol kek cheburek") was suppressed.'
 
 
 def test_logging_not_catched_exception_without_message_coroutine_function():
@@ -422,7 +422,7 @@ def test_logging_not_catched_exception_without_message_coroutine_function():
 
     assert len(logger.data.exception) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == f'When executing coroutine function "function", the exception "ValueError" was not suppressed.'
+    assert logger.data.exception[0].message == 'When executing coroutine function "function", the exception "ValueError" was not suppressed.'
 
 
 def test_logging_not_catched_exception_with_message_coroutine_function():
@@ -437,7 +437,7 @@ def test_logging_not_catched_exception_with_message_coroutine_function():
 
     assert len(logger.data.exception) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == f'When executing coroutine function "function", the exception "ValueError" ("lol kek cheburek") was not suppressed.'
+    assert logger.data.exception[0].message == 'When executing coroutine function "function", the exception "ValueError" ("lol kek cheburek") was not suppressed.'
 
 
 def test_logging_suppressed_in_a_context_exception_with_ellipsis_without_message():
