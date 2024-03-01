@@ -34,3 +34,7 @@ jobs:
     - name: Run ruff
       shell: bash
       run: ruff escape
+
+    - name: Run ruff for tests
+      shell: bash
+      run: ruff tests
