@@ -1,4 +1,4 @@
-![logo](https://raw.githubusercontent.com/pomponchik/exception_escaping/develop/docs/assets/logo_7.svg)
+![logo](https://raw.githubusercontent.com/pomponchik/exception_escaping/develop/docs/assets/logo_8.svg)
 
 [![Downloads](https://static.pepy.tech/badge/exception_escaping/month)](https://pepy.tech/project/exception_escaping)
 [![Downloads](https://static.pepy.tech/badge/exception_escaping)](https://pepy.tech/project/exception_escaping)
