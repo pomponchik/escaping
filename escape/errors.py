@@ -1,2 +1,2 @@
-class SetDefaultReturnValueForDecoratorError(Exception):
+class SetDefaultReturnValueForContextManagerError(Exception):
     pass

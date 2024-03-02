@@ -106,7 +106,7 @@ However, as you should understand, the default value cannot be specified in this
 with escape(default='some value'):
     ...
 
-# escape.errors.SetDefaultReturnValueForDecoratorError: You cannot set a default value for the context manager. This is only possible for the decorator.
+# escape.errors.SetDefaultReturnValueForContextManagerError: You cannot set a default value for the context manager. This is only possible for the decorator.
 ```
 
 ## Which exceptions are escaped?
