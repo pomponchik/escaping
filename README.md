@@ -123,7 +123,7 @@ function_2()  # These two functions are completely equivalent.
 
 ## Context manager mode
 
-You can use `escape` as a context manager. It works almost the same way as [`contextlib.suppress`](https://docs.python.org/3/library/contextlib.html#contextlib.suppress) from the standard library. However, in this case, you can choose whether to use the context manager with or without brackets:
+You can use `escape` as a context manager. It works almost the same way as [`contextlib.suppress`](https://docs.python.org/3/library/contextlib.html#contextlib.suppress) from the standard library, but with a bit more opportunities.
 
 ```python
 # Both options work the same way.
