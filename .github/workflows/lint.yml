@@ -31,6 +31,10 @@ jobs:
       shell: bash
       run: mypy escape --strict
 
+    - name: Run mypy
+      shell: bash
+      run: mypy tests
+
     - name: Run ruff
       shell: bash
       run: ruff escape
