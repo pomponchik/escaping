@@ -596,7 +596,7 @@ def test_context_manager_with_empty_breackets_when_exception(exception_type):
 )
 def test_context_manager_with_just_ellipsis_when_escaped_by_default_exception(exception_type):
     with escape(...):
-        raise exception_type(text)
+        raise exception_type('text')
 
 
 @pytest.mark.parametrize(
