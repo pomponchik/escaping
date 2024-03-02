@@ -7,7 +7,7 @@ from itertools import chain
 try:
     from types import EllipsisType
 except ImportError:
-    EllipsisType = type(...)
+    EllipsisType = type(...)  # type: ignore[attr-defined]
 
 from emptylog import LoggerProtocol, EmptyLogger
 
