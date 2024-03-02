@@ -5,7 +5,7 @@ import full_match
 from emptylog import MemoryLogger
 
 import escape
-from escape.errors import SetDefaultReturnValueForDecoratorError
+from escape.errors import SetDefaultReturnValueForContextManagerError
 
 
 def test_run_simple_function():
@@ -253,7 +253,7 @@ def test_decorator_without_breackets_saves_name_of_coroutine_function():
 
 
 def test_context_manager_with_default_return_value():
-    with pytest.raises(SetDefaultReturnValueForDecoratorError, match=full_match('You cannot set a default value for the context manager. This is only possible for the decorator.')):
+    with pytest.raises(SetDefaultReturnValueForContextManagerError, match=full_match('You cannot set a default value for the context manager. This is only possible for the decorator.')):
         with escape(default='lol'):
             ...
 
