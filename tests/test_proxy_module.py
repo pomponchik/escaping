@@ -324,6 +324,13 @@ def test_context_manager_normal_way():
     assert variable
 
 
+def test_context_manager_normal_way_with_empty_breackets():
+    with escape():
+        variable = True
+
+    assert variable
+
+
 def test_logging_catched_exception_without_message_usual_function_with_ellipsis():
     logger = MemoryLogger()
 
@@ -502,4 +509,106 @@ def test_decorator_just_empty_breackets_when_exception(exception_type):
         raise exception_type('text')
 
     with pytest.raises(exception_type, match='text'):
-        function()
+        assert function() is None
+
+
+@pytest.mark.parametrize(
+    'exception_type',
+    [
+        ValueError,
+        ZeroDivisionError,
+        Exception,
+        BaseException,
+        TypeError,
+    ],
+)
+def test_async_decorator_just_empty_breackets_when_exception(exception_type):
+    @escape()
+    async def function():
+        raise exception_type('text')
+
+    with pytest.raises(exception_type, match='text'):
+        assert asyncio.run(function()) is None
+
+
+@pytest.mark.parametrize(
+    'exception_type',
+    [
+        ValueError,
+        ZeroDivisionError,
+        Exception,
+        BaseException,
+        TypeError,
+    ],
+)
+def test_decorator_just_empty_breackets_without_exceptions(exception_type):
+    @escape()
+    def function():
+        raise exception_type('text')
+
+    with pytest.raises(exception_type, match='text'):
+        assert function() is None
+
+
+@pytest.mark.parametrize(
+    'exception_type',
+    [
+        ValueError,
+        ZeroDivisionError,
+        Exception,
+        BaseException,
+        TypeError,
+    ],
+)
+def test_async_decorator_just_empty_breackets_without_exceptions(exception_type):
+    @escape()
+    async def function():
+        raise exception_type('text')
+
+    with pytest.raises(exception_type, match='text'):
+        assert asyncio.run(function()) is None
+
+
+@pytest.mark.parametrize(
+    'exception_type',
+    [
+        ValueError,
+        ZeroDivisionError,
+        Exception,
+        BaseException,
+        TypeError,
+    ],
+)
+def test_context_manager_with_empty_breackets_when_exception(exception_type):
+    with pytest.raises(exception_type, match='text'):
+        with escape():
+            raise exception_type('text')
+
+
+@pytest.mark.parametrize(
+    'exception_type',
+    [
+        ValueError,
+        ZeroDivisionError,
+        Exception,
+        TypeError,
+    ],
+)
+def test_context_manager_with_just_ellipsis_when_escaped_by_default_exception(exception_type):
+    with escape(...):
+        raise exception_type(text)
+
+
+@pytest.mark.parametrize(
+    'exception_type',
+    [
+        BaseException,
+        GeneratorExit,
+        KeyboardInterrupt,
+        SystemExit,
+    ],
+)
+def test_context_manager_with_just_ellipsis_when_not_escaped_by_default_exception(exception_type):
+    with pytest.raises(exception_type, match='text'):
+        with escape(...):
+            raise exception_type('text')
