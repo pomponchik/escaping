@@ -6,8 +6,8 @@ from itertools import chain
 
 try:
     from types import EllipsisType  # type: ignore[attr-defined]
-except ImportError:
-    EllipsisType = type(...)
+except ImportError:  # pragma: no cover
+    EllipsisType = type(...)  # pragma: no cover
 
 from emptylog import LoggerProtocol, EmptyLogger
 
