@@ -484,3 +484,12 @@ def test_logging_not_suppressed_in_a_context_exception_with_message():
     assert len(logger.data.exception) == 1
     assert len(logger.data) == 1
     assert logger.data.exception[0].message == 'The "ValueError" ("lol kek cheburek") exception was not suppressed inside the context.'
+
+
+def test_decorator_just_empty_breackets_when_exception():
+    @escape()
+    def function():
+        raise ValueError('text')
+
+    with pytest.raises(ValueError, match='text'):
+        function()
