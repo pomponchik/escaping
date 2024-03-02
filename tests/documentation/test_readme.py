@@ -1,7 +1,4 @@
 import asyncio
-import logging
-from io import StringIO
-from contextlib import redirect_stdout
 
 import pytest
 import full_match
