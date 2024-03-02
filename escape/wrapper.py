@@ -5,7 +5,7 @@ from types import TracebackType
 
 from emptylog import LoggerProtocol
 
-from escape.errors import SetDefaultReturnValueForDecoratorError
+from escape.errors import SetDefaultReturnValueForContextManagerError
 
 
 class Wrapper:
@@ -47,7 +47,7 @@ class Wrapper:
 
     def __enter__(self) -> 'Wrapper':
         if self.default is not None:
-            raise SetDefaultReturnValueForDecoratorError('You cannot set a default value for the context manager. This is only possible for the decorator.')
+            raise SetDefaultReturnValueForContextManagerError('You cannot set a default value for the context manager. This is only possible for the decorator.')
 
         return self
 

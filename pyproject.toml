@@ -4,7 +4,7 @@ build-backend = 'setuptools.build_meta'
 
 [project]
 name = 'exception_escaping'
-version = '0.0.8'
+version = '0.0.9'
 authors = [
   { name='Evgeniy Blinov', email='zheni-b@yandex.ru' },
 ]
@@ -29,6 +29,7 @@ classifiers = [
     'License :: OSI Approved :: MIT License',
     'Intended Audience :: Developers',
     'Topic :: Software Development :: Libraries',
+    'Typing :: Typed',
 ]
 
 [tool.setuptools.package-data]

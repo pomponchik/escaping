@@ -1,7 +1,13 @@
 import sys
-from typing import Type, Tuple, List, Callable, Union, Optional, Any
+from typing import Type, Tuple, Callable, Union, Optional, Any
 from types import TracebackType
 from inspect import isclass
+from itertools import chain
+
+try:
+    from types import EllipsisType  # type: ignore[attr-defined]
+except ImportError:  # pragma: no cover
+    EllipsisType = type(...)  # pragma: no cover
 
 from emptylog import LoggerProtocol, EmptyLogger
 
@@ -14,26 +20,26 @@ else:
     muted_by_default_exceptions = (Exception, BaseExceptionGroup)
 
 class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
-    def __call__(self, *args: Callable[..., Any], default: Any = None, exceptions: Union[Tuple[Type[BaseException], ...], List[Type[BaseException]]] = muted_by_default_exceptions, logger: LoggerProtocol = EmptyLogger()) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
+    def __call__(self, *args: Union[Callable[..., Any], Type[BaseException], EllipsisType], default: Any = None, logger: LoggerProtocol = EmptyLogger()) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
         """
         https://docs.python.org/3/library/exceptions.html#exception-hierarchy
         """
-        if not isinstance(exceptions, tuple) and not isinstance(exceptions, list):
-            raise ValueError('The list of exception types can be of the list or tuple type.')
-        elif not all(isclass(x) and issubclass(x, BaseException) for x in exceptions):
-            raise ValueError('The list of exception types can contain only exception types.')
-
-        if isinstance(exceptions, list):
-            converted_exceptions: Tuple[Type[BaseException], ...] = tuple(exceptions)
+        if self.are_it_function(args):
+            exceptions: Tuple[Type[BaseException], ...] = muted_by_default_exceptions
         else:
-            converted_exceptions = exceptions
+            if self.is_there_ellipsis(args):
+                exceptions = tuple(chain((x for x in args if x is not Ellipsis), muted_by_default_exceptions))  # type: ignore[misc]
+            else:
+                exceptions = args  # type: ignore[assignment]
 
-        wrapper_of_wrappers = Wrapper(default, converted_exceptions, logger)
+        wrapper_of_wrappers = Wrapper(default, exceptions, logger)
 
-        if len(args) == 1 and callable(args[0]):
-            return wrapper_of_wrappers(args[0])
-        elif len(args) == 0:
+        if self.are_it_exceptions(args):
             return wrapper_of_wrappers
+
+        elif self.are_it_function(args):
+            return wrapper_of_wrappers(args[0])
+
         else:
             raise ValueError('You are using the decorator for the wrong purpose.')
 
@@ -47,3 +53,15 @@ class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
                     return True
 
         return False
+
+    @staticmethod
+    def is_there_ellipsis(args: Tuple[Union[Type[BaseException], Callable[..., Any], EllipsisType], ...]) -> bool:
+        return any(x is Ellipsis for x in args)
+
+    @staticmethod
+    def are_it_exceptions(args: Tuple[Union[Type[BaseException], Callable[..., Any], EllipsisType], ...]) -> bool:
+        return all((x is Ellipsis) or (isclass(x) and issubclass(x, BaseException)) for x in args)
+
+    @staticmethod
+    def are_it_function(args: Tuple[Union[Type[BaseException], Callable[..., Any], EllipsisType], ...]) -> bool:
+        return len(args) == 1 and callable(args[0]) and not (isclass(args[0]) and issubclass(args[0], BaseException))
