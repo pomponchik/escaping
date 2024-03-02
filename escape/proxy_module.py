@@ -20,17 +20,17 @@ else:
     muted_by_default_exceptions = (Exception, BaseExceptionGroup)
 
 class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
-    def __call__(self, *args: Union[Callable[..., Any], Type[BaseException], EllipsisType], default: Any = None, exceptions: Union[Tuple[Type[BaseException], ...], List[Type[BaseException]]] = muted_by_default_exceptions, logger: LoggerProtocol = EmptyLogger()) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
+    def __call__(self, *args: Union[Callable[..., Any], Type[BaseException], EllipsisType], default: Any = None, logger: LoggerProtocol = EmptyLogger()) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
         """
         https://docs.python.org/3/library/exceptions.html#exception-hierarchy
         """
         if self.are_it_function(args):
-            exceptions = muted_by_default_exceptions
+            exceptions: Tuple[Type[BaseException], ...] = muted_by_default_exceptions
         else:
             if self.is_there_ellipsis(args):
-                exceptions = tuple(chain((x for x in args if x is not Ellipsis), muted_by_default_exceptions))
+                exceptions = tuple(chain((x for x in args if x is not Ellipsis), muted_by_default_exceptions))  # type: ignore[misc]
             else:
-                exceptions = args
+                exceptions = args  # type: ignore[assignment]
 
         wrapper_of_wrappers = Wrapper(default, exceptions, logger)
 
