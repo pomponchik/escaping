@@ -612,3 +612,121 @@ def test_context_manager_with_just_ellipsis_when_not_escaped_by_default_exceptio
     with pytest.raises(exception_type, match='text'):
         with escape(...):
             raise exception_type('text')
+
+
+@pytest.mark.parametrize(
+    'exception_type',
+    [
+        ValueError,
+        ZeroDivisionError,
+        Exception,
+        TypeError,
+    ],
+)
+def test_decorator_with_just_ellipsis_when_escaped_by_default_exception(exception_type):
+    @escape(...)
+    def function():
+        raise exception_type('text')
+
+    assert function() is None
+
+
+@pytest.mark.parametrize(
+    'exception_type',
+    [
+        ValueError,
+        ZeroDivisionError,
+        Exception,
+        TypeError,
+    ],
+)
+def test_async_decorator_with_just_ellipsis_when_escaped_by_default_exception(exception_type):
+    @escape(...)
+    async def function():
+        raise exception_type('text')
+
+    assert asyncio.run(function()) is None
+
+
+def test_simple_decorator_normal_way():
+    @escape
+    def function(a, b, c):
+        return a + b + c
+
+    assert function(1, 2, 3) == 6
+
+
+def test_decorator_with_empty_breackets_normal_way():
+    @escape()
+    def function(a, b, c):
+        return a + b + c
+
+    assert function(1, 2, 3) == 6
+
+
+def test_decorator_with_ellipsis_normal_way():
+    @escape(...)
+    def function(a, b, c):
+        return a + b + c
+
+    assert function(1, 2, 3) == 6
+
+
+def test_simple_async_decorator_normal_way():
+    @escape
+    async def function(a, b, c):
+        return a + b + c
+
+    assert asyncio.run(function(1, 2, 3)) == 6
+
+
+def test_async_decorator_with_empty_breackets_normal_way():
+    @escape()
+    async def function(a, b, c):
+        return a + b + c
+
+    assert asyncio.run(function(1, 2, 3)) == 6
+
+
+def test_async_decorator_with_ellipsis_normal_way():
+    @escape(...)
+    async def function(a, b, c):
+        return a + b + c
+
+    assert asyncio.run(function(1, 2, 3)) == 6
+
+
+@pytest.mark.parametrize(
+    'exception_type',
+    [
+        BaseException,
+        GeneratorExit,
+        KeyboardInterrupt,
+        SystemExit,
+    ],
+)
+def test_decorator_with_just_ellipsis_when_not_escaped_by_default_exception(exception_type):
+    @escape(...)
+    def function():
+        raise exception_type('text')
+
+    with pytest.raises(exception_type, match='text'):
+        function()
+
+
+@pytest.mark.parametrize(
+    'exception_type',
+    [
+        BaseException,
+        GeneratorExit,
+        KeyboardInterrupt,
+        SystemExit,
+    ],
+)
+def test_async_decorator_with_just_ellipsis_when_not_escaped_by_default_exception(exception_type):
+    @escape(...)
+    async def function():
+        raise exception_type('text')
+
+    with pytest.raises(exception_type, match='text'):
+        asyncio.run(function())
