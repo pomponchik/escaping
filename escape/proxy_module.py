@@ -1,5 +1,5 @@
 import sys
-from typing import Type, Tuple, List, Callable, Union, Optional, Any
+from typing import Type, Tuple, Callable, Union, Optional, Any
 from types import TracebackType
 from inspect import isclass
 from itertools import chain

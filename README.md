@@ -131,7 +131,7 @@ You can use `escape` as a context manager. It works almost the same way as [`con
 with escape:
     raise ValueError
 
-with escape():
+with escape(...):
     raise ValueError
 ```
 
