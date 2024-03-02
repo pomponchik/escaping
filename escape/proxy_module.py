@@ -5,9 +5,9 @@ from inspect import isclass
 from itertools import chain
 
 try:
-    from types import EllipsisType
+    from types import EllipsisType  # type: ignore[attr-defined]
 except ImportError:
-    EllipsisType = type(...)  # type: ignore[attr-defined]
+    EllipsisType = type(...)
 
 from emptylog import LoggerProtocol, EmptyLogger
 
