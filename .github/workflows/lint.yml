@@ -31,7 +31,7 @@ jobs:
       shell: bash
       run: mypy escape --strict
 
-    - name: Run mypy
+    - name: Run mypy for tests
       shell: bash
       run: mypy tests
 
