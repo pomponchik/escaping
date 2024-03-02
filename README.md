@@ -99,6 +99,27 @@ function()  # Silence still.
 
 In this mode, not all exceptions from the [hierarchy](https://docs.python.org/3/library/exceptions.html#exception-hierarchy) are suppressed, but only those that can be expected in the user code.  [`Exception`](https://docs.python.org/3/library/exceptions.html#Exception) and all its descendants are suppressed, as well as, starting with `Python 3.11`, [groups of exceptions](https://docs.python.org/3/library/exceptions.html#exception-groups). However, exceptions [`GeneratorExit`](https://docs.python.org/3/library/exceptions.html#GeneratorExit), [`KeyboardInterrupt`](https://docs.python.org/3/library/exceptions.html#KeyboardInterrupt) and [`SystemExit`](https://docs.python.org/3/library/exceptions.html#SystemExit) are not escaped in this mode. This is due to the fact that in most programs none of them is part of the semantics of the program, but is used exclusively for system needs. For example, if `KeyboardInterrupt` was blocked, you would not be able to stop your program using the `Control-C` keyboard shortcut.
 
+You can also use the same set of exceptions in parenthesis mode as without parentheses. To do this, use the [`Ellipsis`](https://docs.python.org/dev/library/constants.html#Ellipsis) (three dots):
+
+```python
+@escape(...)
+def function_1():
+    raise ValueError
+
+@escape
+def function_2():
+    raise ValueError
+
+function_1()  # These two functions are completely equivalent.
+function_2()  # These two functions are completely equivalent.
+```
+
+`Ellipsis` can also be used in enumeration, along with other exceptions:
+
+```python
+@escape(GeneratorExit, ...)
+```
+
 
 ## Context manager mode
 
