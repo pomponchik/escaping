@@ -60,7 +60,7 @@ def function():
 
 @escape(ValueError, ZeroDivisionError)
 async def async_function():
-    raise ValueError('oh!')
+    raise ZeroDivisionError('oh!')
 
 function()  # Silence.
 asyncio.run(async_function())  # Silence.
