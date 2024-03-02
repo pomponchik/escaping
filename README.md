@@ -123,10 +123,11 @@ function_2()  # These two functions are completely equivalent.
 
 ## Context manager mode
 
-You can use `escape` as a context manager. It works almost the same way as [`contextlib.suppress`](https://docs.python.org/3/library/contextlib.html#contextlib.suppress) from the standard library, but with a bit more opportunities.
+You can use `escape` as a context manager, which escapes exceptions in the code block wrapped by it. You can call it according to the same rules as the [decorator](#decorator-mode) - pass exceptions or ellipsis there. It also works almost the same way as [`contextlib.suppress`](https://docs.python.org/3/library/contextlib.html#contextlib.suppress) from the standard library, but with a bit more opportunities. Some examples:
 
 ```python
-# Both options work the same way.
+with escape(ValueError):
+    raise ValueError
 
 with escape:
     raise ValueError
@@ -141,7 +142,7 @@ However, as you should understand, the default value cannot be specified in this
 with escape(default='some value'):
     ...
 
-# escape.errors.SetDefaultReturnValueForContextManagerError: You cannot set a default value for the context manager. This is only possible for the decorator.
+# > escape.errors.SetDefaultReturnValueForContextManagerError: You cannot set a default value for the context manager. This is only possible for the decorator.
 ```
 
 
@@ -163,7 +164,7 @@ logging.basicConfig(
 
 logger = logging.getLogger('logger_name')
 
-with escape(logger=logger):
+with escape(..., logger=logger):
     1/0
 
 # You will see a description of the error in the console.
