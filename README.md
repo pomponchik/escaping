@@ -1,6 +1,7 @@
-![logo](https://raw.githubusercontent.com/pomponchik/exception_escaping/develop/docs/assets/logo_9.svg)
+
 
 <div align="center">
+  ![logo](https://raw.githubusercontent.com/pomponchik/exception_escaping/develop/docs/assets/logo_9.svg)
   [![Downloads](https://static.pepy.tech/badge/exception_escaping/month)](https://pepy.tech/project/exception_escaping)
   [![Downloads](https://static.pepy.tech/badge/exception_escaping)](https://pepy.tech/project/exception_escaping)
   [![codecov](https://codecov.io/gh/pomponchik/exception_escaping/graph/badge.svg?token=q7eAfV5g7q)](https://codecov.io/gh/pomponchik/exception_escaping)
