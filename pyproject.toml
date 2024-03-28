@@ -3,8 +3,8 @@ requires = ['setuptools==68.0.0']
 build-backend = 'setuptools.build_meta'
 
 [project]
-name = 'exception_escaping'
-version = '0.0.9'
+name = 'escaping'
+version = '0.0.10'
 authors = [
   { name='Evgeniy Blinov', email='zheni-b@yandex.ru' },
 ]
@@ -40,5 +40,5 @@ paths_to_mutate="escape"
 runner="pytest"
 
 [project.urls]
-'Source' = 'https://github.com/pomponchik/exception_escaping'
-'Tracker' = 'https://github.com/pomponchik/exception_escaping/issues'
+'Source' = 'https://github.com/pomponchik/escaping'
+'Tracker' = 'https://github.com/pomponchik/escaping/issues'
