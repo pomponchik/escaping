@@ -1,4 +1,4 @@
-![logo](https://raw.githubusercontent.com/pomponchik/escaping/develop/docs/assets/logo_12.svg)
+![logo](https://raw.githubusercontent.com/pomponchik/escaping/develop/docs/assets/logo_16.svg)
 
 [![Downloads](https://static.pepy.tech/badge/escaping/month)](https://pepy.tech/project/escaping)
 [![Downloads](https://static.pepy.tech/badge/escaping)](https://pepy.tech/project/escaping)
