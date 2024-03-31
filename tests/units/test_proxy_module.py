@@ -930,27 +930,6 @@ def test_unhandled_error_in_success_callback_in_async_function(muted_exceptions,
     assert logger.data.error[0].message == f'When executing the callback ("success_callback"), the exception "{raised_exception_type.__name__}" ("text") was not suppressed.'
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @pytest.mark.parametrize(
     'muted_exceptions,raised_exception_type',
     [
