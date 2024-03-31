@@ -98,7 +98,7 @@ def test_callbacks_simple_success_callback():
     buffer = StringIO()
 
     with redirect_stdout(buffer):
-        with escape(ValueError, success_callback=lambda: print('The code block ended without errors.')):
+        with escape(success_callback=lambda: print('The code block ended without errors.')):
             pass
 
     assert buffer.getvalue() == 'The code block ended without errors.\n'
