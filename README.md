@@ -21,6 +21,7 @@ If you've just confessed and you can't wait to sin again, try this package. It w
 - [**Decorator mode**](#decorator-mode)
 - [**Context manager mode**](#context-manager-mode)
 - [**Logging**](#logging)
+- [**Callbacks**](#callbacks)
 
 
 ## Quick start
@@ -173,3 +174,19 @@ with escape(..., logger=logger):
 It works in any mode: both in the case of the context manager and the decorator.
 
 Only exceptions are logged. If the code block or function was executed without errors, the log will not be recorded. Also the log is recorded regardless of whether the exception was suppressed or not. However, depending on this, you will see different log messages to distinguish one situation from another.
+
+
+## Callbacks
+
+You can pass [callback](https://en.wikipedia.org/wiki/Callback_(computer_programming)) functions to `escape`, which will be automatically called when the wrapped code block or function has completed.
+
+A callback passed as `success_callback` will be called when the code is executed without errors:
+
+```python
+import escape
+
+with escape(success_callback=lambda: print('The code block ended without errors.')):
+    pass
+```
+
+If an error occurs in one of the callbacks, the exception will be suppressed if it would have been suppressed if it had happened in a wrapped code block or function. You can see the corresponding log entry about this if you [pass the logger object](#logging) for registration. If the error inside the callback has been suppressed, it will not affect the logic that was wrapped by `escape` in any way.

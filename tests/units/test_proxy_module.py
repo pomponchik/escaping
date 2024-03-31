@@ -730,3 +730,249 @@ def test_async_decorator_with_just_ellipsis_when_not_escaped_by_default_exceptio
 
     with pytest.raises(exception_type, match='text'):
         asyncio.run(function())
+
+
+def test_success_callback_for_usual_decorator_when_error():
+    flag = False
+
+    def success_callback():
+        nonlocal flag
+        flag = True
+
+    @escape(success_callback=success_callback)
+    def function():
+        raise ValueError('text')
+
+    with pytest.raises(ValueError, match='text'):
+        function()
+
+    assert not flag
+
+
+def test_success_callback_for_usual_decorator_when_not_error():
+    flags = []
+
+    def success_callback():
+        flags.append(2)
+
+    @escape(success_callback=success_callback)
+    def function():
+        flags.append(1)
+
+    function()
+
+    assert flags == [1, 2]
+
+
+def test_success_callback_for_async_decorator_when_error():
+    flag = False
+
+    def success_callback():
+        nonlocal flag
+        flag = True
+
+    @escape(success_callback=success_callback)
+    async def function():
+        raise ValueError('text')
+
+    with pytest.raises(ValueError, match='text'):
+        asyncio.run(function())
+
+    assert not flag
+
+
+def test_success_callback_for_async_decorator_when_not_error():
+    flags = []
+
+    def success_callback():
+        flags.append(2)
+
+    @escape(success_callback=success_callback)
+    async def function():
+        flags.append(1)
+
+    asyncio.run(function())
+
+    assert flags == [1, 2]
+
+
+def test_success_callback_for_context_manager_when_error():
+    flag = False
+
+    def success_callback():
+        nonlocal flag
+        flag = True
+
+    with pytest.raises(ValueError, match='text'):
+        with escape(success_callback=success_callback):
+            raise ValueError('text')
+
+    assert not flag
+
+
+def test_success_callback_for_context_manager_when_not_error():
+    flags = []
+
+    def success_callback():
+        flags.append(2)
+
+    with escape(success_callback=success_callback):
+        flags.append(1)
+
+    assert flags == [1, 2]
+
+
+@pytest.mark.parametrize(
+    'muted_exceptions,raised_exception_type',
+    [
+        ([...], ZeroDivisionError),
+        ([...], ValueError),
+        ([BaseException], BaseException),
+        ([ZeroDivisionError], ZeroDivisionError),
+        ([Exception], ZeroDivisionError),
+        ([BaseException], ZeroDivisionError),
+    ],
+)
+def test_handled_error_in_success_callback_in_usual_function(muted_exceptions, raised_exception_type):
+    logger = MemoryLogger()
+
+    def success_callback():
+        raise raised_exception_type('text')
+
+    @escape(*muted_exceptions, success_callback=success_callback, logger=logger)
+    def function():
+        pass
+
+    function()
+
+    assert logger.data.exception[0].message == f'When executing the callback ("success_callback"), the exception "{raised_exception_type.__name__}" ("text") was suppressed.'
+    assert len(logger.data) == 1
+
+
+@pytest.mark.parametrize(
+    'muted_exceptions,raised_exception_type',
+    [
+        ([], ZeroDivisionError),
+        ([], ValueError),
+        ([ZeroDivisionError], BaseException),
+        ([ZeroDivisionError], Exception),
+        ([ZeroDivisionError], ValueError),
+    ],
+)
+def test_unhandled_error_in_success_callback_in_usual_function(muted_exceptions, raised_exception_type):
+    logger = MemoryLogger()
+
+    def success_callback():
+        raise raised_exception_type('text')
+
+    @escape(*muted_exceptions, success_callback=success_callback, logger=logger)
+    def function():
+        pass
+
+    with pytest.raises(raised_exception_type, match='text'):
+        function()
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == f'When executing the callback ("success_callback"), the exception "{raised_exception_type.__name__}" ("text") was not suppressed.'
+
+
+@pytest.mark.parametrize(
+    'muted_exceptions,raised_exception_type',
+    [
+        ([...], ZeroDivisionError),
+        ([...], ValueError),
+        ([BaseException], BaseException),
+        ([ZeroDivisionError], ZeroDivisionError),
+        ([Exception], ZeroDivisionError),
+        ([BaseException], ZeroDivisionError),
+    ],
+)
+def test_handled_error_in_success_callback_in_async_function(muted_exceptions, raised_exception_type):
+    logger = MemoryLogger()
+
+    def success_callback():
+        raise raised_exception_type('text')
+
+    @escape(*muted_exceptions, success_callback=success_callback, logger=logger)
+    async def function():
+        pass
+
+    asyncio.run(function())
+
+    assert logger.data.exception[0].message == f'When executing the callback ("success_callback"), the exception "{raised_exception_type.__name__}" ("text") was suppressed.'
+    assert len(logger.data) == 1
+
+
+@pytest.mark.parametrize(
+    'muted_exceptions,raised_exception_type',
+    [
+        ([], ZeroDivisionError),
+        ([], ValueError),
+        ([ZeroDivisionError], BaseException),
+        ([ZeroDivisionError], Exception),
+        ([ZeroDivisionError], ValueError),
+    ],
+)
+def test_unhandled_error_in_success_callback_in_async_function(muted_exceptions, raised_exception_type):
+    logger = MemoryLogger()
+
+    def success_callback():
+        raise raised_exception_type('text')
+
+    @escape(*muted_exceptions, success_callback=success_callback, logger=logger)
+    async def function():
+        pass
+
+    with pytest.raises(raised_exception_type, match='text'):
+        asyncio.run(function())
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == f'When executing the callback ("success_callback"), the exception "{raised_exception_type.__name__}" ("text") was not suppressed.'
+
+
+@pytest.mark.parametrize(
+    'muted_exceptions,raised_exception_type',
+    [
+        ([...], ZeroDivisionError),
+        ([...], ValueError),
+        ([BaseException], BaseException),
+        ([ZeroDivisionError], ZeroDivisionError),
+        ([Exception], ZeroDivisionError),
+        ([BaseException], ZeroDivisionError),
+    ],
+)
+def test_handled_error_in_success_callback_in_context_manager(muted_exceptions, raised_exception_type):
+    logger = MemoryLogger()
+
+    def success_callback():
+        raise raised_exception_type('text')
+
+    with escape(*muted_exceptions, success_callback=success_callback, logger=logger):
+        pass
+
+    assert logger.data.exception[0].message == f'When executing the callback ("success_callback"), the exception "{raised_exception_type.__name__}" ("text") was suppressed.'
+    assert len(logger.data) == 1
+
+
+@pytest.mark.parametrize(
+    'muted_exceptions,raised_exception_type',
+    [
+        ([], ZeroDivisionError),
+        ([], ValueError),
+        ([ZeroDivisionError], BaseException),
+        ([ZeroDivisionError], Exception),
+        ([ZeroDivisionError], ValueError),
+    ],
+)
+def test_unhandled_error_in_success_callback_in_context_manager(muted_exceptions, raised_exception_type):
+    logger = MemoryLogger()
+
+    def success_callback():
+        raise raised_exception_type('text')
+
+    with pytest.raises(raised_exception_type, match='text'):
+        with escape(*muted_exceptions, success_callback=success_callback, logger=logger):
+            pass
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == f'When executing the callback ("success_callback"), the exception "{raised_exception_type.__name__}" ("text") was not suppressed.'
