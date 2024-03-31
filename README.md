@@ -183,7 +183,6 @@ You can pass [callback](https://en.wikipedia.org/wiki/Callback_(computer_program
 A callback passed as `success_callback` will be called when the code is executed without errors:
 
 ```python
-from functools import partial
 import escape
 
 with escape(success_callback=lambda: print('The code block ended without errors.')):
