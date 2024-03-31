@@ -9,37 +9,62 @@ from escape.errors import SetDefaultReturnValueForContextManagerError
 
 
 class Wrapper:
-    def __init__(self, default: Any, exceptions: Tuple[Type[BaseException], ...], logger: LoggerProtocol) -> None:
+    def __init__(self, default: Any, exceptions: Tuple[Type[BaseException], ...], logger: LoggerProtocol, success_callback: Callable[[], Any]) -> None:
         self.default: Any = default
         self.exceptions: Tuple[Type[BaseException], ...] = exceptions
         self.logger: LoggerProtocol = logger
+        self.success_callback: Callable[[], Any] = success_callback
 
     def __call__(self, function: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(function)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
+            result = None
+            success_flag = False
+
             try:
-                return function(*args, **kwargs)
+                result = function(*args, **kwargs)
+                success_flag = True
+
             except self.exceptions as e:
                 exception_massage = '' if not str(e) else f' ("{e}")'
                 self.logger.exception(f'When executing function "{function.__name__}", the exception "{type(e).__name__}"{exception_massage} was suppressed.')
-                return self.default
+                result = self.default
+
             except BaseException as e:
                 exception_massage = '' if not str(e) else f' ("{e}")'
                 self.logger.exception(f'When executing function "{function.__name__}", the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
                 raise e
 
+            if success_flag:
+                self.run_success_callback()
+
+            return result
+
+
         @wraps(function)
         async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
+            result = None
+            success_flag = False
+
             try:
-                return await function(*args, **kwargs)
+                result = await function(*args, **kwargs)
+                success_flag = True
+
             except self.exceptions as e:
                 exception_massage = '' if not str(e) else f' ("{e}")'
                 self.logger.exception(f'When executing coroutine function "{function.__name__}", the exception "{type(e).__name__}"{exception_massage} was suppressed.')
-                return self.default
+                result = self.default
+
             except BaseException as e:
                 exception_massage = '' if not str(e) else f' ("{e}")'
                 self.logger.exception(f'When executing coroutine function "{function.__name__}", the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
                 raise e
+
+            if success_flag:
+                self.run_success_callback()
+
+            return result
+
 
         if iscoroutinefunction(function):
             return async_wrapper
@@ -61,4 +86,18 @@ class Wrapper:
                     return True
             self.logger.exception(f'The "{exception_type.__name__}"{exception_massage} exception was not suppressed inside the context.')
 
+        else:
+            self.run_success_callback()
+
         return False
+
+    def run_success_callback(self) -> None:
+        try:
+            self.success_callback()
+        except self.exceptions as e:
+            exception_massage = '' if not str(e) else f' ("{e}")'
+            self.logger.exception(f'When executing the callback ("{self.success_callback.__name__}"), the exception "{type(e).__name__}"{exception_massage} was suppressed.')
+        except BaseException as e:
+            exception_massage = '' if not str(e) else f' ("{e}")'
+            self.logger.error(f'When executing the callback ("{self.success_callback.__name__}"), the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
+            raise e
