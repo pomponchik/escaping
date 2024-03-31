@@ -1,4 +1,7 @@
 import asyncio
+from functools import partial
+from contextlib import redirect_stdout
+from io import StringIO
 
 import pytest
 import full_match
@@ -89,3 +92,13 @@ def test_context_manager_attempt_to_set_default_value():
     with pytest.raises(escape.errors.SetDefaultReturnValueForContextManagerError, match=full_match('You cannot set a default value for the context manager. This is only possible for the decorator.')):
         with escape(default='some value'):
             ...
+
+
+def test_callbacks_simple_success_callback():
+    buffer = StringIO()
+
+    with redirect_stdout(buffer):
+        with escape(ValueError, success_callback=lambda: print('The code block ended without errors.')):
+            pass
+
+    assert buffer.getvalue() == 'The code block ended without errors.\n'
