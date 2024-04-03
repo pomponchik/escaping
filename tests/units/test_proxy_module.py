@@ -1173,3 +1173,53 @@ def test_success_logging_off_in_simple_decorator(extra_parameters):
     asyncio.run(function())
 
     assert len(logger.data) == 0
+
+
+def test_success_logging_on_in_context_manager_with_users_message():
+    message = 'lol'
+    logger = MemoryLogger()
+
+    with escape(logger=logger, success_logging=True, success_log_message=message):
+        pass
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == success_log_message
+
+
+def test_success_logging_on_in_context_manager_with_users_message():
+    message = 'lol'
+    logger = MemoryLogger()
+
+    with escape(logger=logger, success_logging=True, success_log_message=message):
+        pass
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == message
+
+
+def test_success_logging_on_in_simple_decorator_with_users_message():
+    message = 'lol'
+    logger = MemoryLogger()
+
+    @escape(logger=logger, success_logging=True, success_log_message=message)
+    def function():
+        pass
+
+    function()
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == message
+
+
+def test_success_logging_on_in_async_decorator_with_users_message():
+    message = 'lol'
+    logger = MemoryLogger()
+
+    @escape(logger=logger, success_logging=True, success_log_message=message)
+    async def function():
+        pass
+
+    asyncio.run(function())
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == message
