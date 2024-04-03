@@ -135,16 +135,10 @@ class Wrapper:
             self.success_callback()
 
         except self.exceptions as e:
-            if self.error_log_message is None:
-                exception_massage = '' if not str(e) else f' ("{e}")'
-                self.logger.exception(f'When executing the callback ("{self.success_callback.__name__}"), the exception "{type(e).__name__}"{exception_massage} was suppressed.')
-            else:
-                self.logger.exception(self.error_log_message)
+            exception_massage = '' if not str(e) else f' ("{e}")'
+            self.logger.exception(f'When executing the callback ("{self.success_callback.__name__}"), the exception "{type(e).__name__}"{exception_massage} was suppressed.')
 
         except BaseException as e:
-            if self.error_log_message is None:
-                exception_massage = '' if not str(e) else f' ("{e}")'
-                self.logger.error(f'When executing the callback ("{self.success_callback.__name__}"), the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
-            else:
-                self.logger.error(self.error_log_message)
+            exception_massage = '' if not str(e) else f' ("{e}")'
+            self.logger.error(f'When executing the callback ("{self.success_callback.__name__}"), the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
             raise e
