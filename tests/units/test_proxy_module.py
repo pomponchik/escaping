@@ -1059,20 +1059,30 @@ def test_user_message_for_error_logging_in_async_decorator_if_exception_was_not_
     assert logger.data.error[0].message == error_log_message
 
 
+def test_success_logging_on_in_context_manager():
+    logger = MemoryLogger()
+
+    with escape(logger=logger, success_logging=True):
+        pass
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == 'The code block was executed successfully.'
 
 
+@pytest.mark.parametrize(
+    'extra_parameters',
+    [
+        {'success_logging': False},
+        {},
+    ],
+)
+def test_success_logging_off_in_context_manager(extra_parameters):
+    logger = MemoryLogger()
 
+    with escape(logger=logger, **extra_parameters):
+        pass
 
-
-
-
-
-
-
-
-
-
-
+    assert len(logger.data) == 0
 
 
 def test_success_logging_on_in_context_manager():
@@ -1083,3 +1093,83 @@ def test_success_logging_on_in_context_manager():
 
     assert len(logger.data) == 1
     assert logger.data.info[0].message == 'The code block was executed successfully.'
+
+
+@pytest.mark.parametrize(
+    'extra_parameters',
+    [
+        {'success_logging': False},
+        {},
+    ],
+)
+def test_success_logging_off_in_context_manager(extra_parameters):
+    logger = MemoryLogger()
+
+    with escape(logger=logger, **extra_parameters):
+        pass
+
+    assert len(logger.data) == 0
+
+
+def test_success_logging_on_in_simple_decorator():
+    logger = MemoryLogger()
+
+    @escape(logger=logger, success_logging=True)
+    def function():
+        pass
+
+    function()
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == 'The function "function" completed successfully.'
+
+
+@pytest.mark.parametrize(
+    'extra_parameters',
+    [
+        {'success_logging': False},
+        {},
+    ],
+)
+def test_success_logging_off_in_simple_decorator(extra_parameters):
+    logger = MemoryLogger()
+
+    @escape(logger=logger, **extra_parameters)
+    def function():
+        pass
+
+    function()
+
+    assert len(logger.data) == 0
+
+
+def test_success_logging_on_in_async_decorator():
+    logger = MemoryLogger()
+
+    @escape(logger=logger, success_logging=True)
+    async def function():
+        pass
+
+    asyncio.run(function())
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == 'The coroutine function "function" completed successfully.'
+
+
+@pytest.mark.parametrize(
+    'extra_parameters',
+    [
+        {'success_logging': False},
+        {},
+    ],
+)
+def test_success_logging_off_in_simple_decorator(extra_parameters):
+    logger = MemoryLogger()
+
+    @escape(logger=logger, **extra_parameters)
+    async def function():
+        pass
+
+    asyncio.run(function())
+
+    assert len(logger.data) == 0
