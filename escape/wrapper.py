@@ -9,12 +9,13 @@ from escape.errors import SetDefaultReturnValueForContextManagerError
 
 
 class Wrapper:
-    def __init__(self, default: Any, exceptions: Tuple[Type[BaseException], ...], logger: LoggerProtocol, success_callback: Callable[[], Any], error_log_message: Optional[str]) -> None:
+    def __init__(self, default: Any, exceptions: Tuple[Type[BaseException], ...], logger: LoggerProtocol, success_callback: Callable[[], Any], error_log_message: Optional[str], success_logging: bool) -> None:
         self.default: Any = default
         self.exceptions: Tuple[Type[BaseException], ...] = exceptions
         self.logger: LoggerProtocol = logger
         self.success_callback: Callable[[], Any] = success_callback
         self.error_log_message: Optional[str] = error_log_message
+        self.success_logging: bool = success_logging
 
     def __call__(self, function: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(function)
@@ -43,6 +44,9 @@ class Wrapper:
                 raise e
 
             if success_flag:
+                if self.success_logging:
+                    self.logger.info(f'The function "{function.__name__}" completed successfully.')
+
                 self.run_success_callback()
 
             return result
@@ -74,6 +78,9 @@ class Wrapper:
                 raise e
 
             if success_flag:
+                if self.success_logging:
+                    self.logger.info(f'The coroutine function "{function.__name__}" completed successfully.')
+
                 self.run_success_callback()
 
             return result
@@ -106,6 +113,9 @@ class Wrapper:
                 self.logger.error(self.error_log_message)
 
         else:
+            if self.success_logging:
+                self.logger.info(f'The code block was executed successfully.')
+
             self.run_success_callback()
 
         return False

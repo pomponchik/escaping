@@ -20,7 +20,7 @@ else:
     muted_by_default_exceptions = (Exception, BaseExceptionGroup)
 
 class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
-    def __call__(self, *args: Union[Callable[..., Any], Type[BaseException], EllipsisType], default: Any = None, logger: LoggerProtocol = EmptyLogger(), success_callback: Callable[[], Any] = lambda: None, error_log_message: Optional[str] = None) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
+    def __call__(self, *args: Union[Callable[..., Any], Type[BaseException], EllipsisType], default: Any = None, logger: LoggerProtocol = EmptyLogger(), success_callback: Callable[[], Any] = lambda: None, error_log_message: Optional[str] = None, success_logging: bool = False) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
         """
         https://docs.python.org/3/library/exceptions.html#exception-hierarchy
         """
@@ -32,7 +32,7 @@ class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
             else:
                 exceptions = args  # type: ignore[assignment]
 
-        wrapper_of_wrappers = Wrapper(default, exceptions, logger, success_callback, error_log_message)
+        wrapper_of_wrappers = Wrapper(default, exceptions, logger, success_callback, error_log_message, success_logging)
 
         if self.are_it_exceptions(args):
             return wrapper_of_wrappers
