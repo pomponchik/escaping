@@ -976,3 +976,84 @@ def test_unhandled_error_in_success_callback_in_context_manager(muted_exceptions
 
     assert len(logger.data) == 1
     assert logger.data.error[0].message == f'When executing the callback ("success_callback"), the exception "{raised_exception_type.__name__}" ("text") was not suppressed.'
+
+
+def test_user_message_for_error_logging_in_context_manager_if_exception_was_handled():
+    error_log_message = 'kek'
+    logger = MemoryLogger()
+
+    with escape(ValueError, logger=logger, error_log_message=error_log_message):
+        raise ValueError
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == error_log_message
+
+
+def test_user_message_for_error_logging_in_context_manager_if_exception_was_not_handled():
+    error_log_message = 'kek'
+    logger = MemoryLogger()
+
+    with pytest.raises(KeyError, match='text'):
+        with escape(ValueError, logger=logger, error_log_message=error_log_message):
+            raise KeyError('text')
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == error_log_message
+
+
+def test_user_message_for_error_logging_in_simple_decorator_if_exception_was_handled():
+    error_log_message = 'kek'
+    logger = MemoryLogger()
+
+    @escape(ValueError, logger=logger, error_log_message=error_log_message)
+    def function():
+        raise ValueError
+
+    function()
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == error_log_message
+
+
+def test_user_message_for_error_logging_in_simple_decorator_if_exception_was_not_handled():
+    error_log_message = 'kek'
+    logger = MemoryLogger()
+
+    @escape(ValueError, logger=logger, error_log_message=error_log_message)
+    def function():
+        raise KeyError('text')
+
+    with pytest.raises(KeyError, match='text'):
+        function()
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == error_log_message
+
+
+def test_user_message_for_error_logging_in_async_decorator_if_exception_was_handled():
+    error_log_message = 'kek'
+    logger = MemoryLogger()
+
+    @escape(ValueError, logger=logger, error_log_message=error_log_message)
+    async def function():
+        raise ValueError
+
+    asyncio.run(function())
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == error_log_message
+
+
+def test_user_message_for_error_logging_in_async_decorator_if_exception_was_not_handled():
+    error_log_message = 'kek'
+    logger = MemoryLogger()
+
+    @escape(ValueError, logger=logger, error_log_message=error_log_message)
+    async def function():
+        raise KeyError('text')
+
+    with pytest.raises(KeyError, match='text'):
+        asyncio.run(function())
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == error_log_message
