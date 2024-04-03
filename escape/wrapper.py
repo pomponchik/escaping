@@ -9,12 +9,13 @@ from escape.errors import SetDefaultReturnValueForContextManagerError
 
 
 class Wrapper:
-    def __init__(self, default: Any, exceptions: Tuple[Type[BaseException], ...], logger: LoggerProtocol, success_callback: Callable[[], Any], error_log_message: Optional[str], success_logging: bool) -> None:
+    def __init__(self, default: Any, exceptions: Tuple[Type[BaseException], ...], logger: LoggerProtocol, success_callback: Callable[[], Any], error_log_message: Optional[str], success_logging: bool, success_log_message: Optional[str]) -> None:
         self.default: Any = default
         self.exceptions: Tuple[Type[BaseException], ...] = exceptions
         self.logger: LoggerProtocol = logger
         self.success_callback: Callable[[], Any] = success_callback
         self.error_log_message: Optional[str] = error_log_message
+        self.success_log_message: Optional[str] = success_log_message
         self.success_logging: bool = success_logging
 
     def __call__(self, function: Callable[..., Any]) -> Callable[..., Any]:
@@ -45,7 +46,10 @@ class Wrapper:
 
             if success_flag:
                 if self.success_logging:
-                    self.logger.info(f'The function "{function.__name__}" completed successfully.')
+                    if self.success_log_message is None:
+                        self.logger.info(f'The function "{function.__name__}" completed successfully.')
+                    else:
+                        self.logger.info(self.success_log_message)
 
                 self.run_success_callback()
 
@@ -79,7 +83,10 @@ class Wrapper:
 
             if success_flag:
                 if self.success_logging:
-                    self.logger.info(f'The coroutine function "{function.__name__}" completed successfully.')
+                    if self.success_log_message is None:
+                        self.logger.info(f'The coroutine function "{function.__name__}" completed successfully.')
+                    else:
+                        self.logger.info(self.success_log_message)
 
                 self.run_success_callback()
 
@@ -114,7 +121,10 @@ class Wrapper:
 
         else:
             if self.success_logging:
-                self.logger.info('The code block was executed successfully.')
+                if self.success_log_message is None:
+                    self.logger.info('The code block was executed successfully.')
+                else:
+                    self.logger.info(self.success_log_message)
 
             self.run_success_callback()
 
