@@ -1057,3 +1057,29 @@ def test_user_message_for_error_logging_in_async_decorator_if_exception_was_not_
 
     assert len(logger.data) == 1
     assert logger.data.error[0].message == error_log_message
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def test_success_logging_on_in_context_manager():
+    logger = MemoryLogger()
+
+    with escape(logger=logger, success_logging=True):
+        pass
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == 'The code block was executed successfully.'

@@ -114,7 +114,7 @@ class Wrapper:
 
         else:
             if self.success_logging:
-                self.logger.info(f'The code block was executed successfully.')
+                self.logger.info('The code block was executed successfully.')
 
             self.run_success_callback()
 
