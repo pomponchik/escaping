@@ -37,9 +37,9 @@ class Wrapper:
             except BaseException as e:
                 if self.error_log_message is None:
                     exception_massage = '' if not str(e) else f' ("{e}")'
-                    self.logger.exception(f'When executing function "{function.__name__}", the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
+                    self.logger.error(f'When executing function "{function.__name__}", the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
                 else:
-                    self.logger.exception(self.error_log_message)
+                    self.logger.error(self.error_log_message)
                 raise e
 
             if success_flag:
@@ -68,9 +68,9 @@ class Wrapper:
             except BaseException as e:
                 if self.error_log_message is None:
                     exception_massage = '' if not str(e) else f' ("{e}")'
-                    self.logger.exception(f'When executing coroutine function "{function.__name__}", the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
+                    self.logger.error(f'When executing coroutine function "{function.__name__}", the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
                 else:
-                    self.logger.exception(self.error_log_message)
+                    self.logger.error(self.error_log_message)
                 raise e
 
             if success_flag:
@@ -101,9 +101,9 @@ class Wrapper:
                         self.logger.exception(self.error_log_message)
                     return True
             if self.error_log_message is None:
-                self.logger.exception(f'The "{exception_type.__name__}"{exception_massage} exception was not suppressed inside the context.')
+                self.logger.error(f'The "{exception_type.__name__}"{exception_massage} exception was not suppressed inside the context.')
             else:
-                self.logger.exception(self.error_log_message)
+                self.logger.error(self.error_log_message)
 
         else:
             self.run_success_callback()
@@ -126,5 +126,5 @@ class Wrapper:
                 exception_massage = '' if not str(e) else f' ("{e}")'
                 self.logger.error(f'When executing the callback ("{self.success_callback.__name__}"), the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
             else:
-                self.logger.exception(self.error_log_message)
+                self.logger.error(self.error_log_message)
             raise e
