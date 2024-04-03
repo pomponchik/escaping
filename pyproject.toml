@@ -31,6 +31,13 @@ classifiers = [
     'Topic :: Software Development :: Libraries',
     'Typing :: Typed',
 ]
+keywords = [
+    'exception handling',
+    'exception logging',
+    'containerized code',
+    'safe code',
+    'callbacks',
+]
 
 [tool.setuptools.package-data]
 "escape" = ["py.typed"]
