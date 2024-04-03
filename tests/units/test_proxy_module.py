@@ -369,9 +369,9 @@ def test_logging_not_catched_exception_without_message_usual_function():
     with pytest.raises(ValueError):
         function()
 
-    assert len(logger.data.exception) == 1
+    assert len(logger.data.error) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == 'When executing function "function", the exception "ValueError" was not suppressed.'
+    assert logger.data.error[0].message == 'When executing function "function", the exception "ValueError" was not suppressed.'
 
 
 def test_logging_not_catched_exception_with_message_usual_function():
@@ -384,9 +384,9 @@ def test_logging_not_catched_exception_with_message_usual_function():
     with pytest.raises(ValueError, match='lol kek cheburek'):
         function()
 
-    assert len(logger.data.exception) == 1
+    assert len(logger.data.error) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == 'When executing function "function", the exception "ValueError" ("lol kek cheburek") was not suppressed.'
+    assert logger.data.error[0].message == 'When executing function "function", the exception "ValueError" ("lol kek cheburek") was not suppressed.'
 
 
 def test_logging_catched_exception_without_message_coroutine_function_with_ellipsis():
@@ -427,9 +427,9 @@ def test_logging_not_catched_exception_without_message_coroutine_function():
     with pytest.raises(ValueError):
         asyncio.run(function())
 
-    assert len(logger.data.exception) == 1
+    assert len(logger.data.error) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == 'When executing coroutine function "function", the exception "ValueError" was not suppressed.'
+    assert logger.data.error[0].message == 'When executing coroutine function "function", the exception "ValueError" was not suppressed.'
 
 
 def test_logging_not_catched_exception_with_message_coroutine_function():
@@ -442,9 +442,9 @@ def test_logging_not_catched_exception_with_message_coroutine_function():
     with pytest.raises(ValueError, match='lol kek cheburek'):
         asyncio.run(function())
 
-    assert len(logger.data.exception) == 1
+    assert len(logger.data.error) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == 'When executing coroutine function "function", the exception "ValueError" ("lol kek cheburek") was not suppressed.'
+    assert logger.data.error[0].message == 'When executing coroutine function "function", the exception "ValueError" ("lol kek cheburek") was not suppressed.'
 
 
 def test_logging_suppressed_in_a_context_exception_with_ellipsis_without_message():
@@ -476,9 +476,9 @@ def test_logging_not_suppressed_in_a_context_exception_without_message():
         with escape(ZeroDivisionError, logger=logger):
             raise ValueError
 
-    assert len(logger.data.exception) == 1
+    assert len(logger.data.error) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == 'The "ValueError" exception was not suppressed inside the context.'
+    assert logger.data.error[0].message == 'The "ValueError" exception was not suppressed inside the context.'
 
 
 def test_logging_not_suppressed_in_a_context_exception_with_message():
@@ -488,9 +488,9 @@ def test_logging_not_suppressed_in_a_context_exception_with_message():
         with escape(ZeroDivisionError, logger=logger):
             raise ValueError('lol kek cheburek')
 
-    assert len(logger.data.exception) == 1
+    assert len(logger.data.error) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == 'The "ValueError" ("lol kek cheburek") exception was not suppressed inside the context.'
+    assert logger.data.error[0].message == 'The "ValueError" ("lol kek cheburek") exception was not suppressed inside the context.'
 
 
 @pytest.mark.parametrize(
@@ -998,7 +998,7 @@ def test_user_message_for_error_logging_in_context_manager_if_exception_was_not_
             raise KeyError('text')
 
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == error_log_message
+    assert logger.data.error[0].message == error_log_message
 
 
 def test_user_message_for_error_logging_in_simple_decorator_if_exception_was_handled():
@@ -1027,7 +1027,7 @@ def test_user_message_for_error_logging_in_simple_decorator_if_exception_was_not
         function()
 
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == error_log_message
+    assert logger.data.error[0].message == error_log_message
 
 
 def test_user_message_for_error_logging_in_async_decorator_if_exception_was_handled():
@@ -1056,4 +1056,4 @@ def test_user_message_for_error_logging_in_async_decorator_if_exception_was_not_
         asyncio.run(function())
 
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == error_log_message
+    assert logger.data.error[0].message == error_log_message
