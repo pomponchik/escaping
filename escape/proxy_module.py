@@ -17,7 +17,7 @@ from escape.wrapper import Wrapper
 if sys.version_info < (3, 11):
     muted_by_default_exceptions: Tuple[Type[BaseException], ...] = (Exception,)  # pragma: no cover
 else:
-    muted_by_default_exceptions = (Exception, BaseExceptionGroup)
+    muted_by_default_exceptions = (Exception, BaseExceptionGroup)  # pragma: no cover
 
 class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
     def __call__(self, *args: Union[Callable[..., Any], Type[BaseException], EllipsisType], default: Any = None, logger: LoggerProtocol = EmptyLogger(), success_callback: Callable[[], Any] = lambda: None, error_log_message: Optional[str] = None, success_log_message: Optional[str] = None, success_logging: bool = False) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
