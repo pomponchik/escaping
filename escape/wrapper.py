@@ -9,11 +9,12 @@ from escape.errors import SetDefaultReturnValueForContextManagerError
 
 
 class Wrapper:
-    def __init__(self, default: Any, exceptions: Tuple[Type[BaseException], ...], logger: LoggerProtocol, success_callback: Callable[[], Any], error_log_message: Optional[str], success_logging: bool, success_log_message: Optional[str]) -> None:
+    def __init__(self, default: Any, exceptions: Tuple[Type[BaseException], ...], logger: LoggerProtocol, success_callback: Callable[[], Any], error_log_message: Optional[str], success_logging: bool, success_log_message: Optional[str], error_callback: Callable[[], Any]) -> None:
         self.default: Any = default
         self.exceptions: Tuple[Type[BaseException], ...] = exceptions
         self.logger: LoggerProtocol = logger
         self.success_callback: Callable[[], Any] = success_callback
+        self.error_callback: Callable[[], Any] = error_callback
         self.error_log_message: Optional[str] = error_log_message
         self.success_log_message: Optional[str] = success_log_message
         self.success_logging: bool = success_logging
@@ -51,7 +52,7 @@ class Wrapper:
                     else:
                         self.logger.info(self.success_log_message)
 
-                self.run_success_callback()
+                self.run_callback(self.success_callback)
 
             return result
 
@@ -88,7 +89,7 @@ class Wrapper:
                     else:
                         self.logger.info(self.success_log_message)
 
-                self.run_success_callback()
+                self.run_callback(self.success_callback)
 
             return result
 
@@ -126,19 +127,19 @@ class Wrapper:
                 else:
                     self.logger.info(self.success_log_message)
 
-            self.run_success_callback()
+            self.run_callback(self.success_callback)
 
         return False
 
-    def run_success_callback(self) -> None:
+    def run_callback(self, callback: Callable[[], Any]) -> None:
         try:
-            self.success_callback()
+            callback()
 
         except self.exceptions as e:
             exception_massage = '' if not str(e) else f' ("{e}")'
-            self.logger.exception(f'When executing the callback ("{self.success_callback.__name__}"), the exception "{type(e).__name__}"{exception_massage} was suppressed.')
+            self.logger.exception(f'When executing the callback ("{callback.__name__}"), the exception "{type(e).__name__}"{exception_massage} was suppressed.')
 
         except BaseException as e:
             exception_massage = '' if not str(e) else f' ("{e}")'
-            self.logger.error(f'When executing the callback ("{self.success_callback.__name__}"), the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
+            self.logger.error(f'When executing the callback ("{callback.__name__}"), the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
             raise e
