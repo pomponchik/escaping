@@ -1223,3 +1223,176 @@ def test_success_logging_on_in_async_decorator_with_users_message():
 
     assert len(logger.data) == 1
     assert logger.data.info[0].message == message
+
+
+
+
+
+
+
+
+
+
+
+def test_error_callback_with_handled_exception_in_simple_decorator():
+    lst = []
+
+    def callback():
+        lst.append(2)
+
+    @escape(..., error_callback=callback)
+    def function():
+        lst.append(1)
+        raise ValueError
+
+    function()
+
+    assert lst == [1, 2]
+
+
+def test_error_callback_with_unhandled_exception_in_simple_decorator():
+    lst = []
+
+    def callback():
+        lst.append(2)
+
+    @escape(KeyError, error_callback=callback)
+    def function():
+        lst.append(1)
+        raise ValueError('text')
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        function()
+
+    assert lst == [1, 2]
+
+
+def test_error_callback_is_not_calling_when_success_in_simple_decorator():
+    lst = []
+
+    def callback():
+        lst.append(2)
+
+    @escape(error_callback=callback)
+    def function():
+        lst.append(1)
+
+    function()
+
+    assert lst == [1]
+
+
+
+
+
+
+
+
+def test_error_callback_with_handled_exception_in_async_decorator():
+    lst = []
+
+    def callback():
+        lst.append(2)
+
+    @escape(..., error_callback=callback)
+    async def function():
+        lst.append(1)
+        raise ValueError
+
+    asyncio.run(function())
+
+    assert lst == [1, 2]
+
+
+def test_error_callback_with_unhandled_exception_in_async_decorator():
+    lst = []
+
+    def callback():
+        lst.append(2)
+
+    @escape(KeyError, error_callback=callback)
+    async def function():
+        lst.append(1)
+        raise ValueError('text')
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        asyncio.run(function())
+
+    assert lst == [1, 2]
+
+
+def test_error_callback_is_not_calling_when_success_in_async_decorator():
+    lst = []
+
+    def callback():
+        lst.append(2)
+
+    @escape(error_callback=callback)
+    async def function():
+        lst.append(1)
+
+    asyncio.run(function())
+
+    assert lst == [1]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def test_error_callback_with_handled_exception_in_context_manager():
+    lst = []
+
+    def callback():
+        lst.append(2)
+
+    with escape(..., error_callback=callback):
+        lst.append(1)
+        raise ValueError
+
+    assert lst == [1, 2]
+
+
+def test_error_callback_with_unhandled_exception_in_context_manager():
+    lst = []
+
+    def callback():
+        lst.append(2)
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        with escape(KeyError, error_callback=callback):
+            lst.append(1)
+            raise ValueError('text')
+
+    assert lst == [1, 2]
+
+
+def test_error_callback_is_not_calling_when_success_in_context_manager():
+    lst = []
+
+    def callback():
+        lst.append(2)
+
+    with escape(error_callback=callback):
+        lst.append(1)
+
+    assert lst == [1]
