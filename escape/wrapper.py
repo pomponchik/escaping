@@ -113,6 +113,8 @@ class Wrapper:
         return self
 
     def __exit__(self, exception_type: Optional[Type[BaseException]], exception_value: Optional[BaseException], traceback: Optional[TracebackType]) -> bool:
+        result = False
+
         if exception_type is not None:
             exception_massage = '' if not str(exception_value) else f' ("{exception_value}")'
 
@@ -122,11 +124,15 @@ class Wrapper:
                         self.logger.exception(f'The "{exception_type.__name__}"{exception_massage} exception was suppressed inside the context.')
                     else:
                         self.logger.exception(self.error_log_message)
-                    return True
-            if self.error_log_message is None:
-                self.logger.error(f'The "{exception_type.__name__}"{exception_massage} exception was not suppressed inside the context.')
-            else:
-                self.logger.error(self.error_log_message)
+                    result = True
+
+            if not result:
+                if self.error_log_message is None:
+                    self.logger.error(f'The "{exception_type.__name__}"{exception_massage} exception was not suppressed inside the context.')
+                else:
+                    self.logger.error(self.error_log_message)
+
+            self.run_callback(self.error_callback)
 
         else:
             if self.success_logging:
@@ -137,7 +143,7 @@ class Wrapper:
 
             self.run_callback(self.success_callback)
 
-        return False
+        return result
 
     def run_callback(self, callback: Callable[[], Any]) -> None:
         try:
