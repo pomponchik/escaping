@@ -189,4 +189,11 @@ with escape(success_callback=lambda: print('The code block ended without errors.
     pass
 ```
 
+By analogy, if you pass `error_callback`, this function will be called when an exception is raised inside:
+
+```python
+with escape(error_callback=lambda: print('Attention!')):
+    pass
+```
+
 If an error occurs in one of the callbacks, the exception will be suppressed if it would have been suppressed if it had happened in a wrapped code block or function. You can see the corresponding log entry about this if you [pass the logger object](#logging) for registration. If the error inside the callback has been suppressed, it will not affect the logic that was wrapped by `escape` in any way.
