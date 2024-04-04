@@ -1225,15 +1225,6 @@ def test_success_logging_on_in_async_decorator_with_users_message():
     assert logger.data.info[0].message == message
 
 
-
-
-
-
-
-
-
-
-
 def test_error_callback_with_handled_exception_in_simple_decorator():
     lst = []
 
@@ -1282,12 +1273,6 @@ def test_error_callback_is_not_calling_when_success_in_simple_decorator():
     assert lst == [1]
 
 
-
-
-
-
-
-
 def test_error_callback_with_handled_exception_in_async_decorator():
     lst = []
 
@@ -1334,29 +1319,6 @@ def test_error_callback_is_not_calling_when_success_in_async_decorator():
     asyncio.run(function())
 
     assert lst == [1]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 def test_error_callback_with_handled_exception_in_context_manager():
