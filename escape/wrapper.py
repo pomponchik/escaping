@@ -43,6 +43,7 @@ class Wrapper:
                     self.logger.error(f'When executing function "{function.__name__}", the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
                 else:
                     self.logger.error(self.error_log_message)
+                self.run_callback(self.error_callback)
                 raise e
 
             if success_flag:
@@ -53,6 +54,9 @@ class Wrapper:
                         self.logger.info(self.success_log_message)
 
                 self.run_callback(self.success_callback)
+
+            else:
+                self.run_callback(self.error_callback)
 
             return result
 
@@ -80,6 +84,7 @@ class Wrapper:
                     self.logger.error(f'When executing coroutine function "{function.__name__}", the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
                 else:
                     self.logger.error(self.error_log_message)
+                self.run_callback(self.error_callback)
                 raise e
 
             if success_flag:
@@ -90,6 +95,9 @@ class Wrapper:
                         self.logger.info(self.success_log_message)
 
                 self.run_callback(self.success_callback)
+
+            else:
+                self.run_callback(self.error_callback)
 
             return result
 
