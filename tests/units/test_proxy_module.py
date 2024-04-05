@@ -1085,32 +1085,6 @@ def test_success_logging_off_in_context_manager(extra_parameters):
     assert len(logger.data) == 0
 
 
-def test_success_logging_on_in_context_manager():
-    logger = MemoryLogger()
-
-    with escape(logger=logger, success_logging=True):
-        pass
-
-    assert len(logger.data) == 1
-    assert logger.data.info[0].message == 'The code block was executed successfully.'
-
-
-@pytest.mark.parametrize(
-    'extra_parameters',
-    [
-        {'success_logging': False},
-        {},
-    ],
-)
-def test_success_logging_off_in_context_manager(extra_parameters):
-    logger = MemoryLogger()
-
-    with escape(logger=logger, **extra_parameters):
-        pass
-
-    assert len(logger.data) == 0
-
-
 def test_success_logging_on_in_simple_decorator():
     logger = MemoryLogger()
 
