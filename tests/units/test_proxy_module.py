@@ -1,4 +1,5 @@
 import asyncio
+from inspect import isgeneratorfunction, isgenerator, iscoroutinefunction, iscoroutine
 
 import pytest
 import full_match
@@ -8,18 +9,42 @@ import escape
 from escape.errors import SetDefaultReturnValueForContextManagerError
 
 
-def test_run_simple_function():
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(),
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_run_simple_function(decorator):
     some_value = 'kek'
 
-    @escape
+    @decorator
     def function():
         return some_value
 
     assert function() == some_value
 
 
-def test_run_simple_function_with_some_arguments():
-    @escape
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(),
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_run_simple_function_with_some_arguments(decorator):
+    @decorator
     def function(a, b, c=5):
         return a + b + c
 
@@ -29,26 +54,73 @@ def test_run_simple_function_with_some_arguments():
     assert function(1, 2, c=8) == 11
 
 
-def test_run_function_with_exception():
+def test_run_generator_function_with_some_arguments():
     @escape
+    def function(a, b, c=5):
+        for _ in range(3):
+            yield a + b + c
+
+    assert list(function(1, 2)) == [8, 8, 8]
+    assert list(function(1, 2, 5)) == [8, 8, 8]
+    assert list(function(1, 2, c=5)) == [8, 8, 8]
+    assert list(function(1, 2, c=8)) == [11, 11, 11]
+
+
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_run_function_with_exception(decorator):
+    @decorator
     def function(a, b, c=5):
         raise ValueError
 
     function(1, 2)
 
 
-def test_run_coroutine_function():
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(),
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_run_coroutine_function(decorator):
     some_value = 'kek'
 
-    @escape
+    @decorator
     async def function():
         return some_value
 
     assert asyncio.run(function()) == some_value
 
 
-def test_run_coroutine_function_with_some_arguments():
-    @escape
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(),
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_run_coroutine_function_with_some_arguments(decorator):
+    @decorator
     async def function(a, b, c=5):
         return a + b + c
 
@@ -58,26 +130,61 @@ def test_run_coroutine_function_with_some_arguments():
     assert asyncio.run(function(1, 2, c=8)) == 11
 
 
-def test_run_coroutine_function_with_exception():
-    @escape
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_run_coroutine_function_with_exception(decorator):
+    @decorator
     async def function(a, b, c=5):
         raise ValueError
 
     asyncio.run(function(1, 2))
 
 
-def test_run_simple_function_with_empty_brackets():
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(),
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_run_simple_function_without_exception_and_check_the_result(decorator):
     some_value = 'kek'
 
-    @escape()
+    @decorator
     def function():
         return some_value
 
     assert function() == some_value
 
 
-def test_run_simple_function_with_some_arguments_with_empty_brackets():
-    @escape()
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(),
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_run_simple_function_without_exception_and_check_the_result_with_some_arguments(decorator):
+    @decorator
     def function(a, b, c=5):
         return a + b + c
 
@@ -289,7 +396,10 @@ def test_async_decorator_with_muted_exceptions():
     async def function():
         raise ValueError
 
-    asyncio.run(function())
+    assert iscoroutine(function())
+    assert iscoroutinefunction(function)
+
+    assert asyncio.run(function()) is None
 
 
 def test_async_decorator_with_not_muted_exceptions():
@@ -307,14 +417,6 @@ def test_default_default_value_is_none():
         raise ValueError
 
     assert function() is None
-
-
-def test_default_default_value_is_none_in_async_case():
-    @escape(ValueError)
-    async def function():
-        raise ValueError
-
-    assert asyncio.run(function()) is None
 
 
 def test_context_manager_normal_way():
@@ -369,9 +471,9 @@ def test_logging_not_catched_exception_without_message_usual_function():
     with pytest.raises(ValueError):
         function()
 
-    assert len(logger.data.exception) == 1
+    assert len(logger.data.error) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == 'When executing function "function", the exception "ValueError" was not suppressed.'
+    assert logger.data.error[0].message == 'When executing function "function", the exception "ValueError" was not suppressed.'
 
 
 def test_logging_not_catched_exception_with_message_usual_function():
@@ -384,9 +486,9 @@ def test_logging_not_catched_exception_with_message_usual_function():
     with pytest.raises(ValueError, match='lol kek cheburek'):
         function()
 
-    assert len(logger.data.exception) == 1
+    assert len(logger.data.error) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == 'When executing function "function", the exception "ValueError" ("lol kek cheburek") was not suppressed.'
+    assert logger.data.error[0].message == 'When executing function "function", the exception "ValueError" ("lol kek cheburek") was not suppressed.'
 
 
 def test_logging_catched_exception_without_message_coroutine_function_with_ellipsis():
@@ -427,9 +529,9 @@ def test_logging_not_catched_exception_without_message_coroutine_function():
     with pytest.raises(ValueError):
         asyncio.run(function())
 
-    assert len(logger.data.exception) == 1
+    assert len(logger.data.error) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == 'When executing coroutine function "function", the exception "ValueError" was not suppressed.'
+    assert logger.data.error[0].message == 'When executing coroutine function "function", the exception "ValueError" was not suppressed.'
 
 
 def test_logging_not_catched_exception_with_message_coroutine_function():
@@ -442,9 +544,9 @@ def test_logging_not_catched_exception_with_message_coroutine_function():
     with pytest.raises(ValueError, match='lol kek cheburek'):
         asyncio.run(function())
 
-    assert len(logger.data.exception) == 1
+    assert len(logger.data.error) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == 'When executing coroutine function "function", the exception "ValueError" ("lol kek cheburek") was not suppressed.'
+    assert logger.data.error[0].message == 'When executing coroutine function "function", the exception "ValueError" ("lol kek cheburek") was not suppressed.'
 
 
 def test_logging_suppressed_in_a_context_exception_with_ellipsis_without_message():
@@ -476,9 +578,9 @@ def test_logging_not_suppressed_in_a_context_exception_without_message():
         with escape(ZeroDivisionError, logger=logger):
             raise ValueError
 
-    assert len(logger.data.exception) == 1
+    assert len(logger.data.error) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == 'The "ValueError" exception was not suppressed inside the context.'
+    assert logger.data.error[0].message == 'The "ValueError" exception was not suppressed inside the context.'
 
 
 def test_logging_not_suppressed_in_a_context_exception_with_message():
@@ -488,9 +590,9 @@ def test_logging_not_suppressed_in_a_context_exception_with_message():
         with escape(ZeroDivisionError, logger=logger):
             raise ValueError('lol kek cheburek')
 
-    assert len(logger.data.exception) == 1
+    assert len(logger.data.error) == 1
     assert len(logger.data) == 1
-    assert logger.data.exception[0].message == 'The "ValueError" ("lol kek cheburek") exception was not suppressed inside the context.'
+    assert logger.data.error[0].message == 'The "ValueError" ("lol kek cheburek") exception was not suppressed inside the context.'
 
 
 @pytest.mark.parametrize(
@@ -976,3 +1078,403 @@ def test_unhandled_error_in_success_callback_in_context_manager(muted_exceptions
 
     assert len(logger.data) == 1
     assert logger.data.error[0].message == f'When executing the callback ("success_callback"), the exception "{raised_exception_type.__name__}" ("text") was not suppressed.'
+
+
+def test_user_message_for_error_logging_in_context_manager_if_exception_was_handled():
+    error_log_message = 'kek'
+    logger = MemoryLogger()
+
+    with escape(ValueError, logger=logger, error_log_message=error_log_message):
+        raise ValueError
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == error_log_message
+
+
+def test_user_message_for_error_logging_in_context_manager_if_exception_was_not_handled():
+    error_log_message = 'kek'
+    logger = MemoryLogger()
+
+    with pytest.raises(KeyError, match='text'):
+        with escape(ValueError, logger=logger, error_log_message=error_log_message):
+            raise KeyError('text')
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == error_log_message
+
+
+def test_user_message_for_error_logging_in_simple_decorator_if_exception_was_handled():
+    error_log_message = 'kek'
+    logger = MemoryLogger()
+
+    @escape(ValueError, logger=logger, error_log_message=error_log_message)
+    def function():
+        raise ValueError
+
+    function()
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == error_log_message
+
+
+def test_user_message_for_error_logging_in_simple_decorator_if_exception_was_not_handled():
+    error_log_message = 'kek'
+    logger = MemoryLogger()
+
+    @escape(ValueError, logger=logger, error_log_message=error_log_message)
+    def function():
+        raise KeyError('text')
+
+    with pytest.raises(KeyError, match='text'):
+        function()
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == error_log_message
+
+
+def test_user_message_for_error_logging_in_async_decorator_if_exception_was_handled():
+    error_log_message = 'kek'
+    logger = MemoryLogger()
+
+    @escape(ValueError, logger=logger, error_log_message=error_log_message)
+    async def function():
+        raise ValueError
+
+    asyncio.run(function())
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == error_log_message
+
+
+def test_user_message_for_error_logging_in_async_decorator_if_exception_was_not_handled():
+    error_log_message = 'kek'
+    logger = MemoryLogger()
+
+    @escape(ValueError, logger=logger, error_log_message=error_log_message)
+    async def function():
+        raise KeyError('text')
+
+    with pytest.raises(KeyError, match='text'):
+        asyncio.run(function())
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == error_log_message
+
+
+def test_success_logging_on_in_context_manager():
+    logger = MemoryLogger()
+
+    with escape(logger=logger, success_logging=True):
+        pass
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == 'The code block was executed successfully.'
+
+
+@pytest.mark.parametrize(
+    'extra_parameters',
+    [
+        {'success_logging': False},
+        {},
+    ],
+)
+def test_success_logging_off_in_context_manager(extra_parameters):
+    logger = MemoryLogger()
+
+    with escape(logger=logger, **extra_parameters):
+        pass
+
+    assert len(logger.data) == 0
+
+
+def test_success_logging_on_in_simple_decorator():
+    logger = MemoryLogger()
+
+    @escape(logger=logger, success_logging=True)
+    def function():
+        pass
+
+    function()
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == 'The function "function" completed successfully.'
+
+
+@pytest.mark.parametrize(
+    'extra_parameters',
+    [
+        {'success_logging': False},
+        {},
+    ],
+)
+def test_success_logging_off_in_simple_decorator(extra_parameters):
+    logger = MemoryLogger()
+
+    @escape(logger=logger, **extra_parameters)
+    def function():
+        pass
+
+    function()
+
+    assert len(logger.data) == 0
+
+
+def test_success_logging_on_in_async_decorator():
+    logger = MemoryLogger()
+
+    @escape(logger=logger, success_logging=True)
+    async def function():
+        pass
+
+    asyncio.run(function())
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == 'The coroutine function "function" completed successfully.'
+
+
+@pytest.mark.parametrize(
+    'extra_parameters',
+    [
+        {'success_logging': False},
+        {},
+    ],
+)
+def test_success_logging_off_in_async_decorator(extra_parameters):
+    logger = MemoryLogger()
+
+    @escape(logger=logger, **extra_parameters)
+    async def function():
+        pass
+
+    asyncio.run(function())
+
+    assert len(logger.data) == 0
+
+
+def test_success_logging_on_in_context_manager_with_users_message():
+    message = 'lol'
+    logger = MemoryLogger()
+
+    with escape(logger=logger, success_logging=True, success_log_message=message):
+        pass
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == message
+
+
+def test_success_logging_on_in_simple_decorator_with_users_message():
+    message = 'lol'
+    logger = MemoryLogger()
+
+    @escape(logger=logger, success_logging=True, success_log_message=message)
+    def function():
+        pass
+
+    function()
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == message
+
+
+def test_success_logging_on_in_async_decorator_with_users_message():
+    message = 'lol'
+    logger = MemoryLogger()
+
+    @escape(logger=logger, success_logging=True, success_log_message=message)
+    async def function():
+        pass
+
+    asyncio.run(function())
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == message
+
+
+def test_error_callback_with_handled_exception_in_simple_decorator():
+    lst = []
+
+    def callback():
+        lst.append(2)
+
+    @escape(..., error_callback=callback)
+    def function():
+        lst.append(1)
+        raise ValueError
+
+    function()
+
+    assert lst == [1, 2]
+
+
+def test_error_callback_with_unhandled_exception_in_simple_decorator():
+    lst = []
+
+    def callback():
+        lst.append(2)
+
+    @escape(KeyError, error_callback=callback)
+    def function():
+        lst.append(1)
+        raise ValueError('text')
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        function()
+
+    assert lst == [1, 2]
+
+
+def test_error_callback_is_not_calling_when_success_in_simple_decorator():
+    lst = []
+
+    def callback():
+        lst.append(2)
+
+    @escape(error_callback=callback)
+    def function():
+        lst.append(1)
+
+    function()
+
+    assert lst == [1]
+
+
+def test_error_callback_with_handled_exception_in_async_decorator():
+    lst = []
+
+    def callback():
+        lst.append(2)
+
+    @escape(..., error_callback=callback)
+    async def function():
+        lst.append(1)
+        raise ValueError
+
+    asyncio.run(function())
+
+    assert lst == [1, 2]
+
+
+def test_error_callback_with_unhandled_exception_in_async_decorator():
+    lst = []
+
+    def callback():
+        lst.append(2)
+
+    @escape(KeyError, error_callback=callback)
+    async def function():
+        lst.append(1)
+        raise ValueError('text')
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        asyncio.run(function())
+
+    assert lst == [1, 2]
+
+
+def test_error_callback_is_not_calling_when_success_in_async_decorator():
+    lst = []
+
+    def callback():
+        lst.append(2)
+
+    @escape(error_callback=callback)
+    async def function():
+        lst.append(1)
+
+    asyncio.run(function())
+
+    assert lst == [1]
+
+
+def test_error_callback_with_handled_exception_in_context_manager():
+    lst = []
+
+    def callback():
+        lst.append(2)
+
+    with escape(..., error_callback=callback):
+        lst.append(1)
+        raise ValueError
+
+    assert lst == [1, 2]
+
+
+def test_error_callback_with_unhandled_exception_in_context_manager():
+    lst = []
+
+    def callback():
+        lst.append(2)
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        with escape(KeyError, error_callback=callback):
+            lst.append(1)
+            raise ValueError('text')
+
+    assert lst == [1, 2]
+
+
+def test_error_callback_is_not_calling_when_success_in_context_manager():
+    lst = []
+
+    def callback():
+        lst.append(2)
+
+    with escape(error_callback=callback):
+        lst.append(1)
+
+    assert lst == [1]
+
+
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape(),
+        escape(ZeroDivisionError),
+    ],
+)
+def test_breacked_not_escaped_decorator_for_generator_function(decorator):
+    strings = []
+
+    @decorator
+    def something():
+        lst = ['lol', 'kek', 'cheburek']
+        yield from lst
+        raise ValueError('text')
+
+    assert isgeneratorfunction(something)
+    assert isgenerator(something())
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        for string in something():
+            strings.append(string)
+
+    assert strings == ['lol', 'kek', 'cheburek']
+
+
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_breacked_escaped_decorator_for_generator_function(decorator):
+    strings = []
+
+    @decorator
+    def something():
+        lst = ['lol', 'kek', 'cheburek']
+        yield from lst
+        raise ValueError('text')
+
+    assert isgeneratorfunction(something)
+    assert isgenerator(something())
+
+    for string in something():
+        strings.append(string)
+
+    assert strings == ['lol', 'kek', 'cheburek']

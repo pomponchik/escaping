@@ -12,7 +12,11 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 
-If you've just confessed and you can't wait to sin again, try this package. It will help you [hide your mistakes](https://en.wikipedia.org/wiki/Error_hiding) and make your life more carefree.
+If you've just confessed and you can't wait to sin again, try this package. It will help you [hide your mistakes](https://en.wikipedia.org/wiki/Error_hiding) and make your life more carefree :) Seriously, the library allows you to solve the problem of exception handling in a more adult way by providing:
+
+- 🛡️ A universal interface for the decorator and context manager.
+- 🛡️ Built-in logging.
+- 🛡️ Calling callbacks.
 
 
 ## Table of contents
@@ -49,7 +53,7 @@ Read about other library features below.
 
 ## Decorator mode
 
-The `@escape` decorator suppresses exceptions in a wrapped function (including a coroutine one), which are passed in parentheses. In this way, you can pass any number of exceptions, for example:
+The `@escape` decorator suppresses exceptions in a wrapped function (including generator and coroutine ones), which are passed in parentheses. In this way, you can pass any number of exceptions, for example:
 
 ```python
 import asyncio
@@ -173,7 +177,37 @@ with escape(..., logger=logger):
 
 It works in any mode: both in the case of the context manager and the decorator.
 
-Only exceptions are logged. If the code block or function was executed without errors, the log will not be recorded. Also the log is recorded regardless of whether the exception was suppressed or not. However, depending on this, you will see different log messages to distinguish one situation from another.
+By default only exceptions are logged. If the code block or function was executed without errors, the log will not be recorded. Also the log is recorded regardless of whether the exception was suppressed or not. However, depending on this, you will see different log messages to distinguish one situation from another.
+
+But! You can change the standard logging behavior.
+
+If you want the log to be recorded for any outcome, including the one where no errors occurred, specify the `success_logging=True` flag (messages will be recorded with the `info` level):
+
+```python
+with escape(success_logging=True, logger=logger):
+    pass
+    # > The code block was executed successfully.
+```
+
+In addition, you can change the standard messages that you see in the logs. Keep in mind that this feature narrows down the variety of standard messages, which differ depending on where the error occurred (in a regular function, in a generator or asynchronous function, or perhaps in a block of code wrapped by a context manager), or whether the error was intercepted. You can define your own messages for only two types of situations: when the code was executed without exceptions, and when with an exception.
+
+Pass your message as `error_log_message` if you want to see it when an error occurred inside the code:
+
+```python
+with escape(..., error_log_message='Oh my God!', logger=logger):
+    raise ValueError
+    # > Oh my God!
+```
+
+By analogy, pass `success_log_message` as a message if there are no errors in the code block (but don't forget to set `success_logging=True`!):
+
+```python
+with escape(success_log_message='Good news, everyone!', success_logging=True, logger=logger):
+    pass
+    # > Good news, everyone!
+```
+
+In addition, if the exception was suppressed inside the `escape`, the log will be recorded using the `exception` method - this means that the trace will be saved. Otherwise, the `error` method will be used - without saving the traceback, because otherwise, if you catch this exception somewhere else and pledge the traceback, there will be several duplicate tracebacks in your log file.
 
 
 ## Callbacks
@@ -183,9 +217,14 @@ You can pass [callback](https://en.wikipedia.org/wiki/Callback_(computer_program
 A callback passed as `success_callback` will be called when the code is executed without errors:
 
 ```python
-import escape
-
 with escape(success_callback=lambda: print('The code block ended without errors.')):
+    pass
+```
+
+By analogy, if you pass `error_callback`, this function will be called when an exception is raised inside:
+
+```python
+with escape(error_callback=lambda: print('Attention!')):
     pass
 ```
 
