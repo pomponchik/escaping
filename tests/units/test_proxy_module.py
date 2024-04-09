@@ -1,4 +1,5 @@
 import asyncio
+from inspect import isgeneratorfunction, isgenerator, iscoroutinefunction, iscoroutine
 
 import pytest
 import full_match
@@ -395,7 +396,10 @@ def test_async_decorator_with_muted_exceptions():
     async def function():
         raise ValueError
 
-    asyncio.run(function())
+    assert iscoroutine(function())
+    assert iscoroutinefunction(function)
+
+    assert asyncio.run(function()) is None
 
 
 def test_async_decorator_with_not_muted_exceptions():
@@ -413,14 +417,6 @@ def test_default_default_value_is_none():
         raise ValueError
 
     assert function() is None
-
-
-def test_default_default_value_is_none_in_async_case():
-    @escape(ValueError)
-    async def function():
-        raise ValueError
-
-    assert asyncio.run(function()) is None
 
 
 def test_context_manager_normal_way():
@@ -1456,6 +1452,8 @@ def test_breacked_not_escaped_decorator_for_generator_function(decorator):
         yield from lst
         raise ValueError('text')
 
+    assert isgeneratorfunction(something)
+    assert isgenerator(something())
 
     with pytest.raises(ValueError, match=full_match('text')):
         for string in something():
@@ -1484,6 +1482,8 @@ def test_breacked_escaped_decorator_for_generator_function(decorator):
         yield from lst
         raise ValueError('text')
 
+    assert isgeneratorfunction(something)
+    assert isgenerator(something())
 
     for string in something():
         strings.append(string)
