@@ -177,7 +177,7 @@ By default only exceptions are logged. If the code block or function was execute
 
 But! You can change the standard logging behavior.
 
-If you want the log to be recorded for any outcome, including the one where no errors occurred, specify the `success_logging=True` flag:
+If you want the log to be recorded for any outcome, including the one where no errors occurred, specify the `success_logging=True` flag (messages will be recorded with the `info` level):
 
 ```python
 with escape(success_logging=True, logger=logger):
