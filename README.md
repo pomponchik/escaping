@@ -49,7 +49,7 @@ Read about other library features below.
 
 ## Decorator mode
 
-The `@escape` decorator suppresses exceptions in a wrapped function (including a coroutine one), which are passed in parentheses. In this way, you can pass any number of exceptions, for example:
+The `@escape` decorator suppresses exceptions in a wrapped function (including generator and coroutine ones), which are passed in parentheses. In this way, you can pass any number of exceptions, for example:
 
 ```python
 import asyncio
