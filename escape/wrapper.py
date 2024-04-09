@@ -1,5 +1,5 @@
 from typing import Type, Callable, Tuple, Optional, Any
-from inspect import iscoroutinefunction
+from inspect import iscoroutinefunction, isgeneratorfunction
 from functools import wraps
 from types import TracebackType
 
@@ -101,9 +101,51 @@ class Wrapper:
 
             return result
 
+        @wraps(function)
+        def generator_wrapper(*args: Any, **kwargs: Any) -> Any:
+            result = None
+            success_flag = False
+
+            try:
+                yield from function(*args, **kwargs)
+                success_flag = True
+
+            except self.exceptions as e:
+                if self.error_log_message is None:
+                    exception_massage = '' if not str(e) else f' ("{e}")'
+                    self.logger.exception(f'When executing generator function "{function.__name__}", the exception "{type(e).__name__}"{exception_massage} was suppressed.')
+                else:
+                    self.logger.exception(self.error_log_message)
+                result = self.default
+
+            except BaseException as e:
+                if self.error_log_message is None:
+                    exception_massage = '' if not str(e) else f' ("{e}")'
+                    self.logger.error(f'When executing generator function "{function.__name__}", the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
+                else:
+                    self.logger.error(self.error_log_message)
+                self.run_callback(self.error_callback)
+                raise e
+
+            if success_flag:
+                if self.success_logging:
+                    if self.success_log_message is None:
+                        self.logger.info(f'The generator function "{function.__name__}" completed successfully.')
+                    else:
+                        self.logger.info(self.success_log_message)
+
+                self.run_callback(self.success_callback)
+
+            else:
+                self.run_callback(self.error_callback)
+
+            return result
+
 
         if iscoroutinefunction(function):
             return async_wrapper
+        elif isgeneratorfunction(function):
+            return generator_wrapper
         return wrapper
 
     def __enter__(self) -> 'Wrapper':
