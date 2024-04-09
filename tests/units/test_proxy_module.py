@@ -8,18 +8,42 @@ import escape
 from escape.errors import SetDefaultReturnValueForContextManagerError
 
 
-def test_run_simple_function():
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(),
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_run_simple_function(decorator):
     some_value = 'kek'
 
-    @escape
+    @decorator
     def function():
         return some_value
 
     assert function() == some_value
 
 
-def test_run_simple_function_with_some_arguments():
-    @escape
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(),
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_run_simple_function_with_some_arguments(decorator):
+    @decorator
     def function(a, b, c=5):
         return a + b + c
 
@@ -29,26 +53,73 @@ def test_run_simple_function_with_some_arguments():
     assert function(1, 2, c=8) == 11
 
 
-def test_run_function_with_exception():
+def test_run_generator_function_with_some_arguments():
     @escape
+    def function(a, b, c=5):
+        for _ in range(3):
+            yield a + b + c
+
+    assert list(function(1, 2)) == [8, 8, 8]
+    assert list(function(1, 2, 5)) == [8, 8, 8]
+    assert list(function(1, 2, c=5)) == [8, 8, 8]
+    assert list(function(1, 2, c=8)) == [11, 11, 11]
+
+
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_run_function_with_exception(decorator):
+    @decorator
     def function(a, b, c=5):
         raise ValueError
 
     function(1, 2)
 
 
-def test_run_coroutine_function():
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(),
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_run_coroutine_function(decorator):
     some_value = 'kek'
 
-    @escape
+    @decorator
     async def function():
         return some_value
 
     assert asyncio.run(function()) == some_value
 
 
-def test_run_coroutine_function_with_some_arguments():
-    @escape
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(),
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_run_coroutine_function_with_some_arguments(decorator):
+    @decorator
     async def function(a, b, c=5):
         return a + b + c
 
@@ -58,26 +129,61 @@ def test_run_coroutine_function_with_some_arguments():
     assert asyncio.run(function(1, 2, c=8)) == 11
 
 
-def test_run_coroutine_function_with_exception():
-    @escape
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_run_coroutine_function_with_exception(decorator):
+    @decorator
     async def function(a, b, c=5):
         raise ValueError
 
     asyncio.run(function(1, 2))
 
 
-def test_run_simple_function_with_empty_brackets():
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(),
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_run_simple_function_without_exception_and_check_the_result(decorator):
     some_value = 'kek'
 
-    @escape()
+    @decorator
     def function():
         return some_value
 
     assert function() == some_value
 
 
-def test_run_simple_function_with_some_arguments_with_empty_brackets():
-    @escape()
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(),
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_run_simple_function_without_exception_and_check_the_result_with_some_arguments(decorator):
+    @decorator
     def function(a, b, c=5):
         return a + b + c
 
@@ -1332,3 +1438,54 @@ def test_error_callback_is_not_calling_when_success_in_context_manager():
         lst.append(1)
 
     assert lst == [1]
+
+
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape(),
+        escape(ZeroDivisionError),
+    ],
+)
+def test_breacked_not_escaped_decorator_for_generator_function(decorator):
+    strings = []
+
+    @decorator
+    def something():
+        lst = ['lol', 'kek', 'cheburek']
+        yield from lst
+        raise ValueError('text')
+
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        for string in something():
+            strings.append(string)
+
+    assert strings == ['lol', 'kek', 'cheburek']
+
+
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_breacked_escaped_decorator_for_generator_function(decorator):
+    strings = []
+
+    @decorator
+    def something():
+        lst = ['lol', 'kek', 'cheburek']
+        yield from lst
+        raise ValueError('text')
+
+
+    for string in something():
+        strings.append(string)
+
+    assert strings == ['lol', 'kek', 'cheburek']
