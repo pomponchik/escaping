@@ -173,7 +173,35 @@ with escape(..., logger=logger):
 
 It works in any mode: both in the case of the context manager and the decorator.
 
-Only exceptions are logged. If the code block or function was executed without errors, the log will not be recorded. Also the log is recorded regardless of whether the exception was suppressed or not. However, depending on this, you will see different log messages to distinguish one situation from another.
+By default only exceptions are logged. If the code block or function was executed without errors, the log will not be recorded. Also the log is recorded regardless of whether the exception was suppressed or not. However, depending on this, you will see different log messages to distinguish one situation from another.
+
+But! You can change the standard logging behavior.
+
+If you want the log to be recorded for any outcome, including the one where no errors occurred, specify the `success_logging=True` flag:
+
+```python
+with escape(success_logging=True, logger=logger):
+    pass
+    # > The code block was executed successfully.
+```
+
+In addition, you can change the standard messages that you see in the logs. Keep in mind that this feature narrows down the variety of standard messages, which differ depending on where the error occurred (in a regular function, in a generator or asynchronous function, or perhaps in a block of code wrapped by a context manager), or whether the error was intercepted. You can define your own messages for only two types of situations: when the code was executed without exceptions, and when with an exception.
+
+Pass your message as `error_log_message` if you want to see it when an error occurred inside the code:
+
+```python
+with escape(..., error_log_message='Oh my God!', logger=logger):
+    raise ValueError
+    # > Oh my God!
+```
+
+By analogy, pass `success_log_message` as a message if there are no errors in the code block (but don't forget to set `success_logging=True`!):
+
+```python
+with escape(success_log_message='Good news, everyone!', success_logging=True, logger=logger):
+    pass
+    # > Good news, everyone!
+```
 
 In addition, if the exception was suppressed inside the `escape`, the log will be recorded using the `exception` method - this means that the trace will be saved. Otherwise, the `error` method will be used - without saving the traceback, because otherwise, if you catch this exception somewhere else and pledge the traceback, there will be several duplicate tracebacks in your log file.
 
