@@ -12,7 +12,11 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 
-If you've just confessed and you can't wait to sin again, try this package. It will help you [hide your mistakes](https://en.wikipedia.org/wiki/Error_hiding) and make your life more carefree.
+If you've just confessed and you can't wait to sin again, try this package. It will help you [hide your mistakes](https://en.wikipedia.org/wiki/Error_hiding) and make your life more carefree :) Seriously, the library allows you to solve the problem of exception handling in a more adult way by providing:
+
+- 🛡️ A universal interface for the decorator and context manager.
+- 🛡️ Built-in logging.
+- 🛡️ Calling callbacks.
 
 
 ## Table of contents
