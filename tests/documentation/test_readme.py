@@ -112,3 +112,23 @@ def test_example_success_logging_on_in_context_manager():
 
     assert len(logger.data) == 1
     assert logger.data.info[0].message == 'The code block was executed successfully.'
+
+
+def test_example_own_message_for_errors():
+    logger = MemoryLogger()
+
+    with escape(..., error_log_message='Oh my God!', logger=logger):
+        raise ValueError
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'Oh my God!'
+
+
+def test_example_own_message_for_success():
+    logger = MemoryLogger()
+
+    with escape(success_log_message='Good news, everyone!', success_logging=True, logger=logger):
+        pass
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == 'Good news, everyone!'
