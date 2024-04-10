@@ -363,18 +363,62 @@ def test_context_manager_without_breackets_not_muted_exception():
                 raise not_muted_exception
 
 
-def test_decorator_without_breackets_saves_name_of_function():
-    @escape
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(),
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_decorator_without_breackets_saves_name_of_function(decorator):
+    @decorator
     def function():
         pass
 
     assert function.__name__ == 'function'
 
 
-def test_decorator_without_breackets_saves_name_of_coroutine_function():
-    @escape
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(),
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_decorator_without_breackets_saves_name_of_coroutine_function(decorator):
+    @decorator
     async def function():
         pass
+
+    assert function.__name__ == 'function'
+
+
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
+        escape(),
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_decorator_without_breackets_saves_name_of_generator_function(decorator):
+    @decorator
+    def function():
+        yield
 
     assert function.__name__ == 'function'
 
@@ -416,7 +460,10 @@ def test_async_decorator_with_muted_exceptions():
     async def function():
         raise ValueError
 
-    assert iscoroutine(function())
+    coroutine = function()
+    assert iscoroutine(coroutine)
+    asyncio.run(coroutine)  # to awoid a warning
+
     assert iscoroutinefunction(function)
 
     assert asyncio.run(function()) is None
