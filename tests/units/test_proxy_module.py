@@ -89,6 +89,26 @@ def test_run_function_with_exception(decorator):
     'decorator',
     [
         escape,
+        escape(...),
+        escape(ValueError),
+        escape(ValueError, ZeroDivisionError),
+        escape(Exception),
+        escape(BaseException),
+    ],
+)
+def test_run_generator_function_with_exception(decorator):
+    @decorator
+    def function(a, b, c=5):
+        yield
+        raise ValueError
+
+    all(function(1, 2))
+
+
+@pytest.mark.parametrize(
+    'decorator',
+    [
+        escape,
         escape(),
         escape(...),
         escape(ValueError),
