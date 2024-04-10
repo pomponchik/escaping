@@ -6,7 +6,7 @@ import full_match
 from emptylog import MemoryLogger
 
 import escape
-from escape.errors import SetDefaultReturnValueForContextManagerError
+from escape.errors import SetDefaultReturnValueForContextManagerError, SetDefaultReturnValueForGeneratorFunctionError
 
 
 @pytest.mark.parametrize(
@@ -512,6 +512,13 @@ def test_logging_catched_exception_without_message_usual_function_with_ellipsis(
     assert len(logger.data.exception) == 1
     assert len(logger.data) == 1
     assert logger.data.exception[0].message == 'When executing function "function", the exception "ValueError" was suppressed.'
+
+
+def test_default_value_is_forbidden_for_generator_function():
+    with pytest.raises(SetDefaultReturnValueForGeneratorFunctionError, match=full_match('You cannot set the default return value for the generator function. This is only possible for normal and coroutine functions.')):
+        @escape(..., default='kek')
+        def function():
+            yield
 
 
 def test_logging_catched_exception_with_message_usual_function_with_ellipsis():

@@ -5,7 +5,7 @@ from types import TracebackType
 
 from emptylog import LoggerProtocol
 
-from escape.errors import SetDefaultReturnValueForContextManagerError
+from escape.errors import SetDefaultReturnValueForContextManagerError, SetDefaultReturnValueForGeneratorFunctionError
 
 
 class Wrapper:
@@ -145,6 +145,8 @@ class Wrapper:
         if iscoroutinefunction(function):
             return async_wrapper
         elif isgeneratorfunction(function):
+            if self.default is not None:
+                raise SetDefaultReturnValueForGeneratorFunctionError('You cannot set the default return value for the generator function. This is only possible for normal and coroutine functions.')
             return generator_wrapper
         return wrapper
 
