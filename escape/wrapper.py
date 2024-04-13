@@ -9,12 +9,13 @@ from escape.errors import SetDefaultReturnValueForContextManagerError, SetDefaul
 
 
 class Wrapper:
-    def __init__(self, default: Any, exceptions: Tuple[Type[BaseException], ...], logger: LoggerProtocol, success_callback: Callable[[], Any], error_log_message: Optional[str], success_logging: bool, success_log_message: Optional[str], error_callback: Callable[[], Any]) -> None:
+    def __init__(self, default: Any, exceptions: Tuple[Type[BaseException], ...], logger: LoggerProtocol, success_callback: Callable[[], Any], before: Callable[[], Any], error_log_message: Optional[str], success_logging: bool, success_log_message: Optional[str], error_callback: Callable[[], Any]) -> None:
         self.default: Any = default
         self.exceptions: Tuple[Type[BaseException], ...] = exceptions
         self.logger: LoggerProtocol = logger
         self.success_callback: Callable[[], Any] = success_callback
         self.error_callback: Callable[[], Any] = error_callback
+        self.before: Callable[[], Any] = before
         self.error_log_message: Optional[str] = error_log_message
         self.success_log_message: Optional[str] = success_log_message
         self.success_logging: bool = success_logging
@@ -22,6 +23,8 @@ class Wrapper:
     def __call__(self, function: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(function)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
+            self.run_callback(self.before)
+
             result = None
             success_flag = False
 
