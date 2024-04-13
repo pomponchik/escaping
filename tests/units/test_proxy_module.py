@@ -1901,3 +1901,18 @@ def test_breacked_escaped_decorator_for_generator_function(decorator):
         strings.append(string)
 
     assert strings == ['lol', 'kek', 'cheburek']
+
+
+def test_successful_before_callback_when_success_in_simple_function():
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    @escape(before=callback)
+    def function():
+        lst.append(2)
+
+    function()
+
+    assert lst == [1, 2]
