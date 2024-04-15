@@ -1,5 +1,6 @@
 import asyncio
 from inspect import isgeneratorfunction, isgenerator, iscoroutinefunction, iscoroutine
+from functools import partial
 
 import pytest
 import full_match
@@ -1903,6 +1904,13 @@ def test_breacked_escaped_decorator_for_generator_function(decorator):
     assert strings == ['lol', 'kek', 'cheburek']
 
 
+
+
+
+
+
+
+
 def test_successful_before_callback_when_success_in_simple_function():
     lst = []
 
@@ -1914,5 +1922,57 @@ def test_successful_before_callback_when_success_in_simple_function():
         lst.append(2)
 
     function()
+
+    assert lst == [1, 2]
+
+
+@pytest.mark.parametrize(
+    'decorator_factory',
+    [
+        partial(escape, ...),
+        partial(escape, ValueError),
+        partial(escape, ValueError, ZeroDivisionError),
+        partial(escape, Exception),
+        partial(escape, BaseException),
+    ],
+)
+def test_not_successful_but_with_handled_exception_before_callback_when_success_in_simple_function(decorator_factory):
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    @decorator_factory(before=callback)
+    def function():
+        lst.append(2)
+        raise ValueError
+
+    function()
+
+    assert lst == [1, 2]
+
+
+@pytest.mark.parametrize(
+    'decorator_factory',
+    [
+        partial(escape),
+        partial(escape, ZeroDivisionError),
+        partial(escape, ZeroDivisionError, RuntimeError),
+        partial(escape, GeneratorExit),
+    ],
+)
+def test_not_successful_but_with_not_handled_exception_before_callback_when_success_in_simple_function(decorator_factory):
+    lst = []
+
+    def callback():
+        lst.append(1)
+        raise ValueError('text')
+
+    @decorator_factory(before=callback)
+    def function():
+        lst.append(2)
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        function()
 
     assert lst == [1, 2]
