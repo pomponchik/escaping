@@ -5,16 +5,17 @@ from types import TracebackType
 
 from emptylog import LoggerProtocol
 
-from escape.errors import SetDefaultReturnValueForContextManagerError
+from escape.errors import SetDefaultReturnValueForContextManagerError, SetDefaultReturnValueForGeneratorFunctionError
 
 
 class Wrapper:
-    def __init__(self, default: Any, exceptions: Tuple[Type[BaseException], ...], logger: LoggerProtocol, success_callback: Callable[[], Any], error_log_message: Optional[str], success_logging: bool, success_log_message: Optional[str], error_callback: Callable[[], Any]) -> None:
+    def __init__(self, default: Any, exceptions: Tuple[Type[BaseException], ...], logger: LoggerProtocol, success_callback: Callable[[], Any], before: Callable[[], Any], error_log_message: Optional[str], success_logging: bool, success_log_message: Optional[str], error_callback: Callable[[], Any]) -> None:
         self.default: Any = default
         self.exceptions: Tuple[Type[BaseException], ...] = exceptions
         self.logger: LoggerProtocol = logger
         self.success_callback: Callable[[], Any] = success_callback
         self.error_callback: Callable[[], Any] = error_callback
+        self.before: Callable[[], Any] = before
         self.error_log_message: Optional[str] = error_log_message
         self.success_log_message: Optional[str] = success_log_message
         self.success_logging: bool = success_logging
@@ -22,6 +23,8 @@ class Wrapper:
     def __call__(self, function: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(function)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
+            self.run_callback(self.before)
+
             result = None
             success_flag = False
 
@@ -63,6 +66,8 @@ class Wrapper:
 
         @wraps(function)
         async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
+            self.run_callback(self.before)
+
             result = None
             success_flag = False
 
@@ -103,6 +108,8 @@ class Wrapper:
 
         @wraps(function)
         def generator_wrapper(*args: Any, **kwargs: Any) -> Any:
+            self.run_callback(self.before)
+            
             result = None
             success_flag = False
 
@@ -145,12 +152,16 @@ class Wrapper:
         if iscoroutinefunction(function):
             return async_wrapper
         elif isgeneratorfunction(function):
+            if self.default is not None:
+                raise SetDefaultReturnValueForGeneratorFunctionError('You cannot set the default return value for the generator function. This is only possible for normal and coroutine functions.')
             return generator_wrapper
         return wrapper
 
     def __enter__(self) -> 'Wrapper':
         if self.default is not None:
             raise SetDefaultReturnValueForContextManagerError('You cannot set a default value for the context manager. This is only possible for the decorator.')
+
+        self.run_callback(self.before)
 
         return self
 
