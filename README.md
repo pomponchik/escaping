@@ -22,6 +22,7 @@ If you've just confessed and you can't wait to sin again, try this package. It w
 ## Table of contents
 
 - [**Quick start**](#quick-start)
+- [**About**](#about)
 - [**Decorator mode**](#decorator-mode)
 - [**Context manager mode**](#context-manager-mode)
 - [**Logging**](#logging)
@@ -49,6 +50,39 @@ function()  # The exception is suppressed.
 ```
 
 Read about other library features below.
+
+
+## About
+
+This project is dedicated to the most important problem in programming - how do we need to handle errors? Here are some answers to this question that it gives:
+
+- This should be done in a standardized way. You can decide for yourself how errors will be handled, but with this project, any method you choose can easily become the standard.
+
+- Mistakes should not be hidden. Even if the exception is suppressed, you should be aware of it.
+
+An interesting solution that is proposed here is that you are provided with a single interface for error suppression, which can be used as a context manager for any block of code, as well as as a decorator for ordinary, coroutine and generator functions. Wherever you need to suppress an error, you do it the same way, according to the same rules:
+
+```python
+import escape
+
+@escape
+def function():
+    ...
+
+@escape
+async def function():
+    ...
+
+@escape
+def function():
+    yield something
+    ...
+
+with escape:
+    ...
+```
+
+The rules by which you want to suppress errors can be "baked" into a special object so that you don't duplicate it in different parts of the code later. This means that you can come up with error suppression rules once, and then use them everywhere, without duplicating code, which is assumed when using ordinary `try-except` blocks.
 
 
 ## Decorator mode
