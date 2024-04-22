@@ -1975,3 +1975,613 @@ def test_not_successful_but_with_not_handled_exception_before_callback_when_succ
         function()
 
     assert lst == [1]
+
+
+def test_successful_before_callback_when_not_handled_error_in_simple_function():
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    @escape(before=callback)
+    def function():
+        lst.append(2)
+        raise ValueError('text')
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        function()
+
+    assert lst == [1, 2]
+
+
+def test_successful_before_callback_when_handled_error_in_simple_function():
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    @escape(..., before=callback)
+    def function():
+        lst.append(2)
+        raise ValueError('text')
+
+    function()
+
+    assert lst == [1, 2]
+
+
+@pytest.mark.parametrize(
+    'decorator_factory',
+    [
+        partial(escape, ...),  # type: ignore[arg-type]
+        partial(escape, ValueError),  # type: ignore[arg-type]
+        partial(escape, ValueError, ZeroDivisionError),  # type: ignore[arg-type]
+        partial(escape, Exception),  # type: ignore[arg-type]
+        partial(escape, BaseException),  # type: ignore[arg-type]
+    ],
+)
+def test_not_successful_but_with_handled_exception_before_callback_when_handled_error_in_simple_function(decorator_factory):
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    @decorator_factory(before=callback)
+    def function():
+        lst.append(2)
+        raise ValueError('text')
+
+    function()
+
+    assert lst == [1, 2]
+
+
+@pytest.mark.parametrize(
+    'decorator_factory',
+    [
+        partial(escape),  # type: ignore[arg-type]
+        partial(escape, ZeroDivisionError),  # type: ignore[arg-type]
+        partial(escape, ZeroDivisionError, RuntimeError),  # type: ignore[arg-type]
+        partial(escape, GeneratorExit),  # type: ignore[arg-type]
+    ],
+)
+def test_not_successful_but_with_not_handled_exception_before_callback_when_error_in_simple_function(decorator_factory):
+    lst = []
+
+    def callback():
+        lst.append(1)
+        raise ValueError('text')
+
+    @decorator_factory(before=callback)
+    def function():
+        lst.append(2)
+        raise ValueError('text2')
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        function()
+
+    assert lst == [1]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def test_successful_before_callback_when_success_in_context_manager():
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    with escape(before=callback):
+        lst.append(2)
+
+    assert lst == [1, 2]
+
+
+@pytest.mark.parametrize(
+    'decorator_factory',
+    [
+        partial(escape, ...),  # type: ignore[arg-type]
+        partial(escape, ValueError),  # type: ignore[arg-type]
+        partial(escape, ValueError, ZeroDivisionError),  # type: ignore[arg-type]
+        partial(escape, Exception),  # type: ignore[arg-type]
+        partial(escape, BaseException),  # type: ignore[arg-type]
+    ],
+)
+def test_not_successful_but_with_handled_exception_before_callback_when_success_in_context_manager(decorator_factory):
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    @decorator_factory(before=callback)
+    def function():
+        lst.append(2)
+
+    function()
+
+    assert lst == [1, 2]
+
+
+@pytest.mark.parametrize(
+    'decorator_factory',
+    [
+        partial(escape),  # type: ignore[arg-type]
+        partial(escape, ZeroDivisionError),  # type: ignore[arg-type]
+        partial(escape, ZeroDivisionError, RuntimeError),  # type: ignore[arg-type]
+        partial(escape, GeneratorExit),  # type: ignore[arg-type]
+    ],
+)
+def test_not_successful_but_with_not_handled_exception_before_callback_when_success_in_context_manager(decorator_factory):
+    lst = []
+
+    def callback():
+        lst.append(1)
+        raise ValueError('text')
+
+    @decorator_factory(before=callback)
+    def function():
+        lst.append(2)
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        function()
+
+    assert lst == [1]
+
+
+def test_successful_before_callback_when_not_handled_error_in_context_manager():
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    @escape(before=callback)
+    def function():
+        lst.append(2)
+        raise ValueError('text')
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        function()
+
+    assert lst == [1, 2]
+
+
+def test_successful_before_callback_when_handled_error_in_context_manager():
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    @escape(..., before=callback)
+    def function():
+        lst.append(2)
+        raise ValueError('text')
+
+    function()
+
+    assert lst == [1, 2]
+
+
+@pytest.mark.parametrize(
+    'decorator_factory',
+    [
+        partial(escape, ...),  # type: ignore[arg-type]
+        partial(escape, ValueError),  # type: ignore[arg-type]
+        partial(escape, ValueError, ZeroDivisionError),  # type: ignore[arg-type]
+        partial(escape, Exception),  # type: ignore[arg-type]
+        partial(escape, BaseException),  # type: ignore[arg-type]
+    ],
+)
+def test_not_successful_but_with_handled_exception_before_callback_when_handled_error_in_context_manager(decorator_factory):
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    @decorator_factory(before=callback)
+    def function():
+        lst.append(2)
+        raise ValueError('text')
+
+    function()
+
+    assert lst == [1, 2]
+
+
+@pytest.mark.parametrize(
+    'decorator_factory',
+    [
+        partial(escape),  # type: ignore[arg-type]
+        partial(escape, ZeroDivisionError),  # type: ignore[arg-type]
+        partial(escape, ZeroDivisionError, RuntimeError),  # type: ignore[arg-type]
+        partial(escape, GeneratorExit),  # type: ignore[arg-type]
+    ],
+)
+def test_not_successful_but_with_not_handled_exception_before_callback_when_error_in_context_manager(decorator_factory):
+    lst = []
+
+    def callback():
+        lst.append(1)
+        raise ValueError('text')
+
+    @decorator_factory(before=callback)
+    def function():
+        lst.append(2)
+        raise ValueError('text2')
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        function()
+
+    assert lst == [1]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def test_successful_before_callback_when_success_in_async_function():
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    @escape(before=callback)
+    def function():
+        lst.append(2)
+
+
+    function()
+
+    assert lst == [1, 2]
+
+
+@pytest.mark.parametrize(
+    'decorator_factory',
+    [
+        partial(escape, ...),  # type: ignore[arg-type]
+        partial(escape, ValueError),  # type: ignore[arg-type]
+        partial(escape, ValueError, ZeroDivisionError),  # type: ignore[arg-type]
+        partial(escape, Exception),  # type: ignore[arg-type]
+        partial(escape, BaseException),  # type: ignore[arg-type]
+    ],
+)
+def test_not_successful_but_with_handled_exception_before_callback_when_success_in_async_function(decorator_factory):
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    @decorator_factory(before=callback)
+    def function():
+        lst.append(2)
+
+    function()
+
+    assert lst == [1, 2]
+
+
+@pytest.mark.parametrize(
+    'decorator_factory',
+    [
+        partial(escape),  # type: ignore[arg-type]
+        partial(escape, ZeroDivisionError),  # type: ignore[arg-type]
+        partial(escape, ZeroDivisionError, RuntimeError),  # type: ignore[arg-type]
+        partial(escape, GeneratorExit),  # type: ignore[arg-type]
+    ],
+)
+def test_not_successful_but_with_not_handled_exception_before_callback_when_success_in_async_function(decorator_factory):
+    lst = []
+
+    def callback():
+        lst.append(1)
+        raise ValueError('text')
+
+    @decorator_factory(before=callback)
+    def function():
+        lst.append(2)
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        function()
+
+    assert lst == [1]
+
+
+def test_successful_before_callback_when_not_handled_error_in_async_function():
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    @escape(before=callback)
+    def function():
+        lst.append(2)
+        raise ValueError('text')
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        function()
+
+    assert lst == [1, 2]
+
+
+def test_successful_before_callback_when_handled_error_in_async_function():
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    @escape(..., before=callback)
+    def function():
+        lst.append(2)
+        raise ValueError('text')
+
+    function()
+
+    assert lst == [1, 2]
+
+
+@pytest.mark.parametrize(
+    'decorator_factory',
+    [
+        partial(escape, ...),  # type: ignore[arg-type]
+        partial(escape, ValueError),  # type: ignore[arg-type]
+        partial(escape, ValueError, ZeroDivisionError),  # type: ignore[arg-type]
+        partial(escape, Exception),  # type: ignore[arg-type]
+        partial(escape, BaseException),  # type: ignore[arg-type]
+    ],
+)
+def test_not_successful_but_with_handled_exception_before_callback_when_handled_error_in_async_function(decorator_factory):
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    @decorator_factory(before=callback)
+    def function():
+        lst.append(2)
+        raise ValueError('text')
+
+    function()
+
+    assert lst == [1, 2]
+
+
+@pytest.mark.parametrize(
+    'decorator_factory',
+    [
+        partial(escape),  # type: ignore[arg-type]
+        partial(escape, ZeroDivisionError),  # type: ignore[arg-type]
+        partial(escape, ZeroDivisionError, RuntimeError),  # type: ignore[arg-type]
+        partial(escape, GeneratorExit),  # type: ignore[arg-type]
+    ],
+)
+def test_not_successful_but_with_not_handled_exception_before_callback_when_error_in_async_function(decorator_factory):
+    lst = []
+
+    def callback():
+        lst.append(1)
+        raise ValueError('text')
+
+    @decorator_factory(before=callback)
+    def function():
+        lst.append(2)
+        raise ValueError('text2')
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        function()
+
+    assert lst == [1]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def test_successful_before_callback_when_success_in_generator_function():
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    @escape(before=callback)
+    def function():
+        lst.append(2)
+
+
+    function()
+
+    assert lst == [1, 2]
+
+
+@pytest.mark.parametrize(
+    'decorator_factory',
+    [
+        partial(escape, ...),  # type: ignore[arg-type]
+        partial(escape, ValueError),  # type: ignore[arg-type]
+        partial(escape, ValueError, ZeroDivisionError),  # type: ignore[arg-type]
+        partial(escape, Exception),  # type: ignore[arg-type]
+        partial(escape, BaseException),  # type: ignore[arg-type]
+    ],
+)
+def test_not_successful_but_with_handled_exception_before_callback_when_success_in_generator_function(decorator_factory):
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    @decorator_factory(before=callback)
+    def function():
+        lst.append(2)
+
+    function()
+
+    assert lst == [1, 2]
+
+
+@pytest.mark.parametrize(
+    'decorator_factory',
+    [
+        partial(escape),  # type: ignore[arg-type]
+        partial(escape, ZeroDivisionError),  # type: ignore[arg-type]
+        partial(escape, ZeroDivisionError, RuntimeError),  # type: ignore[arg-type]
+        partial(escape, GeneratorExit),  # type: ignore[arg-type]
+    ],
+)
+def test_not_successful_but_with_not_handled_exception_before_callback_when_success_in_generator_function(decorator_factory):
+    lst = []
+
+    def callback():
+        lst.append(1)
+        raise ValueError('text')
+
+    @decorator_factory(before=callback)
+    def function():
+        lst.append(2)
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        function()
+
+    assert lst == [1]
+
+
+def test_successful_before_callback_when_not_handled_error_in_generator_function():
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    @escape(before=callback)
+    def function():
+        lst.append(2)
+        raise ValueError('text')
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        function()
+
+    assert lst == [1, 2]
+
+
+def test_successful_before_callback_when_handled_error_in_generator_function():
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    @escape(..., before=callback)
+    def function():
+        lst.append(2)
+        raise ValueError('text')
+
+    function()
+
+    assert lst == [1, 2]
+
+
+@pytest.mark.parametrize(
+    'decorator_factory',
+    [
+        partial(escape, ...),  # type: ignore[arg-type]
+        partial(escape, ValueError),  # type: ignore[arg-type]
+        partial(escape, ValueError, ZeroDivisionError),  # type: ignore[arg-type]
+        partial(escape, Exception),  # type: ignore[arg-type]
+        partial(escape, BaseException),  # type: ignore[arg-type]
+    ],
+)
+def test_not_successful_but_with_handled_exception_before_callback_when_handled_error_in_generator_function(decorator_factory):
+    lst = []
+
+    def callback():
+        lst.append(1)
+
+    @decorator_factory(before=callback)
+    def function():
+        lst.append(2)
+        raise ValueError('text')
+
+    function()
+
+    assert lst == [1, 2]
+
+
+@pytest.mark.parametrize(
+    'decorator_factory',
+    [
+        partial(escape),  # type: ignore[arg-type]
+        partial(escape, ZeroDivisionError),  # type: ignore[arg-type]
+        partial(escape, ZeroDivisionError, RuntimeError),  # type: ignore[arg-type]
+        partial(escape, GeneratorExit),  # type: ignore[arg-type]
+    ],
+)
+def test_not_successful_but_with_not_handled_exception_before_callback_when_error_in_generator_function(decorator_factory):
+    lst = []
+
+    def callback():
+        lst.append(1)
+        raise ValueError('text')
+
+    @decorator_factory(before=callback)
+    def function():
+        lst.append(2)
+        raise ValueError('text2')
+
+    with pytest.raises(ValueError, match=full_match('text')):
+        function()
+
+    assert lst == [1]
