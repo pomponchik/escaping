@@ -157,6 +157,8 @@ class Wrapper:
         if self.default is not None:
             raise SetDefaultReturnValueForContextManagerError('You cannot set a default value for the context manager. This is only possible for the decorator.')
 
+        self.run_callback(self.before)
+
         return self
 
     def __exit__(self, exception_type: Optional[Type[BaseException]], exception_value: Optional[BaseException], traceback: Optional[TracebackType]) -> bool:
