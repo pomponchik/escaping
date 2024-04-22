@@ -1941,6 +1941,7 @@ def test_not_successful_but_with_handled_exception_before_callback_when_success_
 
     def callback():
         lst.append(1)
+        raise ValueError('text')
 
     @decorator_factory(before=callback)
     def function():
@@ -2098,7 +2099,7 @@ def test_successful_before_callback_when_success_in_context_manager():
 
 
 @pytest.mark.parametrize(
-    'decorator_factory',
+    'context_manager_factory',
     [
         partial(escape, ...),  # type: ignore[arg-type]
         partial(escape, ValueError),  # type: ignore[arg-type]
@@ -2107,23 +2108,21 @@ def test_successful_before_callback_when_success_in_context_manager():
         partial(escape, BaseException),  # type: ignore[arg-type]
     ],
 )
-def test_not_successful_but_with_handled_exception_before_callback_when_success_in_context_manager(decorator_factory):
+def test_not_successful_but_with_handled_exception_before_callback_when_success_in_context_manager(context_manager_factory):
     lst = []
 
     def callback():
         lst.append(1)
+        raise ValueError('text')
 
-    @decorator_factory(before=callback)
-    def function():
+    with context_manager_factory(before=callback):
         lst.append(2)
-
-    function()
 
     assert lst == [1, 2]
 
 
 @pytest.mark.parametrize(
-    'decorator_factory',
+    'context_manager_factory',
     [
         partial(escape),  # type: ignore[arg-type]
         partial(escape, ZeroDivisionError),  # type: ignore[arg-type]
@@ -2131,19 +2130,16 @@ def test_not_successful_but_with_handled_exception_before_callback_when_success_
         partial(escape, GeneratorExit),  # type: ignore[arg-type]
     ],
 )
-def test_not_successful_but_with_not_handled_exception_before_callback_when_success_in_context_manager(decorator_factory):
+def test_not_successful_but_with_not_handled_exception_before_callback_when_success_in_context_manager(context_manager_factory):
     lst = []
 
     def callback():
         lst.append(1)
         raise ValueError('text')
 
-    @decorator_factory(before=callback)
-    def function():
-        lst.append(2)
-
     with pytest.raises(ValueError, match=full_match('text')):
-        function()
+        with context_manager_factory(before=callback):
+            lst.append(2)
 
     assert lst == [1]
 
@@ -2154,13 +2150,10 @@ def test_successful_before_callback_when_not_handled_error_in_context_manager():
     def callback():
         lst.append(1)
 
-    @escape(before=callback)
-    def function():
-        lst.append(2)
-        raise ValueError('text')
-
     with pytest.raises(ValueError, match=full_match('text')):
-        function()
+        with escape(before=callback):
+            lst.append(2)
+            raise ValueError('text')
 
     assert lst == [1, 2]
 
@@ -2171,18 +2164,15 @@ def test_successful_before_callback_when_handled_error_in_context_manager():
     def callback():
         lst.append(1)
 
-    @escape(..., before=callback)
-    def function():
+    with escape(..., before=callback):
         lst.append(2)
         raise ValueError('text')
-
-    function()
 
     assert lst == [1, 2]
 
 
 @pytest.mark.parametrize(
-    'decorator_factory',
+    'context_manager_factory',
     [
         partial(escape, ...),  # type: ignore[arg-type]
         partial(escape, ValueError),  # type: ignore[arg-type]
@@ -2191,24 +2181,21 @@ def test_successful_before_callback_when_handled_error_in_context_manager():
         partial(escape, BaseException),  # type: ignore[arg-type]
     ],
 )
-def test_not_successful_but_with_handled_exception_before_callback_when_handled_error_in_context_manager(decorator_factory):
+def test_not_successful_but_with_handled_exception_before_callback_when_handled_error_in_context_manager(context_manager_factory):
     lst = []
 
     def callback():
         lst.append(1)
 
-    @decorator_factory(before=callback)
-    def function():
+    with context_manager_factory(before=callback):
         lst.append(2)
         raise ValueError('text')
-
-    function()
 
     assert lst == [1, 2]
 
 
 @pytest.mark.parametrize(
-    'decorator_factory',
+    'context_manager_factory',
     [
         partial(escape),  # type: ignore[arg-type]
         partial(escape, ZeroDivisionError),  # type: ignore[arg-type]
@@ -2216,20 +2203,17 @@ def test_not_successful_but_with_handled_exception_before_callback_when_handled_
         partial(escape, GeneratorExit),  # type: ignore[arg-type]
     ],
 )
-def test_not_successful_but_with_not_handled_exception_before_callback_when_error_in_context_manager(decorator_factory):
+def test_not_successful_but_with_not_handled_exception_before_callback_when_error_in_context_manager(context_manager_factory):
     lst = []
 
     def callback():
         lst.append(1)
         raise ValueError('text')
 
-    @decorator_factory(before=callback)
-    def function():
-        lst.append(2)
-        raise ValueError('text2')
-
     with pytest.raises(ValueError, match=full_match('text')):
-        function()
+        with context_manager_factory(before=callback):
+            lst.append(2)
+            raise ValueError('text2')
 
     assert lst == [1]
 
@@ -2265,11 +2249,10 @@ def test_successful_before_callback_when_success_in_async_function():
         lst.append(1)
 
     @escape(before=callback)
-    def function():
+    async def function():
         lst.append(2)
 
-
-    function()
+    asyncio.run(function())
 
     assert lst == [1, 2]
 
@@ -2289,6 +2272,7 @@ def test_not_successful_but_with_handled_exception_before_callback_when_success_
 
     def callback():
         lst.append(1)
+        raise ValueError('text')
 
     @decorator_factory(before=callback)
     def function():
@@ -2465,6 +2449,7 @@ def test_not_successful_but_with_handled_exception_before_callback_when_success_
 
     def callback():
         lst.append(1)
+        raise ValueError('text')
 
     @decorator_factory(before=callback)
     def function():
