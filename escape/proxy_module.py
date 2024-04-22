@@ -3,6 +3,7 @@ from typing import Type, Tuple, Callable, Union, Optional, Any
 from types import TracebackType
 from inspect import isclass
 from itertools import chain
+from functools import partial
 
 try:
     from types import EllipsisType  # type: ignore[attr-defined]
@@ -65,3 +66,6 @@ class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
     @staticmethod
     def are_it_function(args: Tuple[Union[Type[BaseException], Callable[..., Any], EllipsisType], ...]) -> bool:
         return len(args) == 1 and callable(args[0]) and not (isclass(args[0]) and issubclass(args[0], BaseException))
+
+    def bake(self, *args: Union[Callable[..., Any], Type[BaseException], EllipsisType], default: Any = None, logger: LoggerProtocol = EmptyLogger(), success_callback: Callable[[], Any] = lambda: None, error_callback: Callable[[], Any] = lambda: None, before: Callable[[], Any] = lambda: None, error_log_message: Optional[str] = None, success_log_message: Optional[str] = None, success_logging: bool = False) -> Callable[[...], Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]]:
+        return partial(self, *args, default=default, logger=logger, success_callback=success_callback, error_callback=error_callback, before=before, error_log_message=error_log_message, success_log_message=success_log_message, success_logging=success_logging)
