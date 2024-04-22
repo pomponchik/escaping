@@ -66,6 +66,8 @@ class Wrapper:
 
         @wraps(function)
         async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
+            self.run_callback(self.before)
+            
             result = None
             success_flag = False
 
