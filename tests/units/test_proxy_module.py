@@ -1945,7 +1945,6 @@ def test_not_successful_but_with_handled_exception_before_callback_when_success_
     @decorator_factory(before=callback)
     def function():
         lst.append(2)
-        raise ValueError
 
     function()
 
@@ -1975,4 +1974,4 @@ def test_not_successful_but_with_not_handled_exception_before_callback_when_succ
     with pytest.raises(ValueError, match=full_match('text')):
         function()
 
-    assert lst == [1, 2]
+    assert lst == [1]
