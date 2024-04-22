@@ -1929,11 +1929,11 @@ def test_successful_before_callback_when_success_in_simple_function():
 @pytest.mark.parametrize(
     'decorator_factory',
     [
-        partial(escape, ...),
-        partial(escape, ValueError),
-        partial(escape, ValueError, ZeroDivisionError),
-        partial(escape, Exception),
-        partial(escape, BaseException),
+        partial(escape, ...),  # type: ignore[arg-type]
+        partial(escape, ValueError),  # type: ignore[arg-type]
+        partial(escape, ValueError, ZeroDivisionError),  # type: ignore[arg-type]
+        partial(escape, Exception),  # type: ignore[arg-type]
+        partial(escape, BaseException),  # type: ignore[arg-type]
     ],
 )
 def test_not_successful_but_with_handled_exception_before_callback_when_success_in_simple_function(decorator_factory):
@@ -1954,10 +1954,10 @@ def test_not_successful_but_with_handled_exception_before_callback_when_success_
 @pytest.mark.parametrize(
     'decorator_factory',
     [
-        partial(escape),
-        partial(escape, ZeroDivisionError),
-        partial(escape, ZeroDivisionError, RuntimeError),
-        partial(escape, GeneratorExit),
+        partial(escape),  # type: ignore[arg-type]
+        partial(escape, ZeroDivisionError),  # type: ignore[arg-type]
+        partial(escape, ZeroDivisionError, RuntimeError),  # type: ignore[arg-type]
+        partial(escape, GeneratorExit),  # type: ignore[arg-type]
     ],
 )
 def test_not_successful_but_with_not_handled_exception_before_callback_when_success_in_simple_function(decorator_factory):
