@@ -2353,7 +2353,7 @@ def test_successful_before_callback_when_success_in_generator_function():
         lst.append(2)
         yield
 
-    all(function())
+    [x for x in function()]
 
     assert lst == [1, 2]
 
@@ -2380,7 +2380,7 @@ def test_not_successful_but_with_handled_exception_before_callback_when_success_
         lst.append(2)
         yield
 
-    all(function())
+    [x for x in function()]
 
     assert lst == [1, 2]
 
@@ -2408,7 +2408,7 @@ def test_not_successful_but_with_not_handled_exception_before_callback_when_succ
         yield
 
     with pytest.raises(ValueError, match=full_match('text')):
-        all(function())
+        [x for x in function()]
 
     assert lst == [1]
 
@@ -2443,7 +2443,7 @@ def test_successful_before_callback_when_handled_error_in_generator_function():
         yield
         raise ValueError('text')
 
-    all(function())
+    [x for x in function()]
 
     assert lst == [1, 2]
 
@@ -2470,7 +2470,7 @@ def test_not_successful_but_with_handled_exception_before_callback_when_handled_
         yield
         raise ValueError('text')
 
-    all(function())
+    [x for x in function()]
 
     assert lst == [1, 2]
 
@@ -2498,6 +2498,6 @@ def test_not_successful_but_with_not_handled_exception_before_callback_when_erro
         raise ValueError('text2')
 
     with pytest.raises(ValueError, match=full_match('text')):
-        all(function())
+        [x for x in function()]
 
     assert lst == [1]
