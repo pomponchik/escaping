@@ -2427,9 +2427,9 @@ def test_successful_before_callback_when_success_in_generator_function():
     @escape(before=callback)
     def function():
         lst.append(2)
+        yield
 
-
-    function()
+    all(function())
 
     assert lst == [1, 2]
 
@@ -2454,8 +2454,9 @@ def test_not_successful_but_with_handled_exception_before_callback_when_success_
     @decorator_factory(before=callback)
     def function():
         lst.append(2)
+        yield
 
-    function()
+    all(function())
 
     assert lst == [1, 2]
 
@@ -2478,10 +2479,12 @@ def test_not_successful_but_with_not_handled_exception_before_callback_when_succ
 
     @decorator_factory(before=callback)
     def function():
+        yield
         lst.append(2)
+        yield
 
     with pytest.raises(ValueError, match=full_match('text')):
-        function()
+        all(function())
 
     assert lst == [1]
 
@@ -2495,10 +2498,11 @@ def test_successful_before_callback_when_not_handled_error_in_generator_function
     @escape(before=callback)
     def function():
         lst.append(2)
+        yield
         raise ValueError('text')
 
     with pytest.raises(ValueError, match=full_match('text')):
-        function()
+        all(function())
 
     assert lst == [1, 2]
 
@@ -2512,9 +2516,10 @@ def test_successful_before_callback_when_handled_error_in_generator_function():
     @escape(..., before=callback)
     def function():
         lst.append(2)
+        yield
         raise ValueError('text')
 
-    function()
+    all(function())
 
     assert lst == [1, 2]
 
@@ -2538,9 +2543,10 @@ def test_not_successful_but_with_handled_exception_before_callback_when_handled_
     @decorator_factory(before=callback)
     def function():
         lst.append(2)
+        yield
         raise ValueError('text')
 
-    function()
+    all(function())
 
     assert lst == [1, 2]
 
@@ -2564,9 +2570,10 @@ def test_not_successful_but_with_not_handled_exception_before_callback_when_erro
     @decorator_factory(before=callback)
     def function():
         lst.append(2)
+        yield
         raise ValueError('text2')
 
     with pytest.raises(ValueError, match=full_match('text')):
-        function()
+        all(function())
 
     assert lst == [1]
