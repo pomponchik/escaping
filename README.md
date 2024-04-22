@@ -27,6 +27,7 @@ If you've just confessed and you can't wait to sin again, try this package. It w
 - [**Context manager mode**](#context-manager-mode)
 - [**Logging**](#logging)
 - [**Callbacks**](#callbacks)
+- [**Baking rules**](#baking-rules)
 
 
 ## Quick start
@@ -272,3 +273,6 @@ with escape(before=lambda: print('Attention!')):
 Notice, if an error occurs in this callback that will not be suppressed, the main code will not be executed - an exception will be raised before it starts executing.
 
 If an error occurs in one of the callbacks, the exception will be suppressed if it would have been suppressed if it had happened in a wrapped code block or function. You can see the corresponding log entry about this if you [pass the logger object](#logging) for registration. If the error inside the callback has been suppressed, it will not affect the logic that was wrapped by `escape` in any way.
+
+
+## Baking rules
