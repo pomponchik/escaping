@@ -61,7 +61,7 @@ This project is dedicated to the most important problem in programming - how do 
 
 - Mistakes should not be hidden. Even if the exception is suppressed, you should be aware of it.
 
-An interesting solution that is proposed here is that you are provided with a single interface for error suppression, which can be used as a context manager for any block of code, as well as as a decorator for ordinary, coroutine and generator functions. Wherever you need to suppress an error, you do it the same way, according to the same rules:
+An interesting solution that is proposed here is that you are provided with a single interface for error suppression, which can be used as a [context manager](#context-manager-mode) for any block of code, as well as as a [decorator](#decorator-mode) for ordinary, coroutine and generator functions. Wherever you need to suppress an error, you do it the same way, according to the same rules:
 
 ```python
 import escape
