@@ -1904,13 +1904,6 @@ def test_breacked_escaped_decorator_for_generator_function(decorator):
     assert strings == ['lol', 'kek', 'cheburek']
 
 
-
-
-
-
-
-
-
 def test_successful_before_callback_when_success_in_simple_function():
     lst = []
 
@@ -2064,28 +2057,6 @@ def test_not_successful_but_with_not_handled_exception_before_callback_when_erro
     assert lst == [1]
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def test_successful_before_callback_when_success_in_context_manager():
     lst = []
 
@@ -2216,30 +2187,6 @@ def test_not_successful_but_with_not_handled_exception_before_callback_when_erro
             raise ValueError('text2')
 
     assert lst == [1]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 def test_successful_before_callback_when_success_in_async_function():
@@ -2395,29 +2342,6 @@ def test_not_successful_but_with_not_handled_exception_before_callback_when_erro
     assert lst == [1]
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def test_successful_before_callback_when_success_in_generator_function():
     lst = []
 
@@ -2502,7 +2426,7 @@ def test_successful_before_callback_when_not_handled_error_in_generator_function
         raise ValueError('text')
 
     with pytest.raises(ValueError, match=full_match('text')):
-        all(function())
+        [x for x in function()]
 
     assert lst == [1, 2]
 
