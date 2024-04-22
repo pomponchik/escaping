@@ -2275,10 +2275,10 @@ def test_not_successful_but_with_handled_exception_before_callback_when_success_
         raise ValueError('text')
 
     @decorator_factory(before=callback)
-    def function():
+    async def function():
         lst.append(2)
 
-    function()
+    asyncio.run(function())
 
     assert lst == [1, 2]
 
@@ -2300,11 +2300,11 @@ def test_not_successful_but_with_not_handled_exception_before_callback_when_succ
         raise ValueError('text')
 
     @decorator_factory(before=callback)
-    def function():
+    async def function():
         lst.append(2)
 
     with pytest.raises(ValueError, match=full_match('text')):
-        function()
+        asyncio.run(function())
 
     assert lst == [1]
 
@@ -2316,12 +2316,12 @@ def test_successful_before_callback_when_not_handled_error_in_async_function():
         lst.append(1)
 
     @escape(before=callback)
-    def function():
+    async def function():
         lst.append(2)
         raise ValueError('text')
 
     with pytest.raises(ValueError, match=full_match('text')):
-        function()
+        asyncio.run(function())
 
     assert lst == [1, 2]
 
@@ -2333,11 +2333,11 @@ def test_successful_before_callback_when_handled_error_in_async_function():
         lst.append(1)
 
     @escape(..., before=callback)
-    def function():
+    async def function():
         lst.append(2)
         raise ValueError('text')
 
-    function()
+    asyncio.run(function())
 
     assert lst == [1, 2]
 
@@ -2359,11 +2359,11 @@ def test_not_successful_but_with_handled_exception_before_callback_when_handled_
         lst.append(1)
 
     @decorator_factory(before=callback)
-    def function():
+    async def function():
         lst.append(2)
         raise ValueError('text')
 
-    function()
+    asyncio.run(function())
 
     assert lst == [1, 2]
 
@@ -2385,12 +2385,12 @@ def test_not_successful_but_with_not_handled_exception_before_callback_when_erro
         raise ValueError('text')
 
     @decorator_factory(before=callback)
-    def function():
+    async def function():
         lst.append(2)
         raise ValueError('text2')
 
     with pytest.raises(ValueError, match=full_match('text')):
-        function()
+        asyncio.run(function())
 
     assert lst == [1]
 
