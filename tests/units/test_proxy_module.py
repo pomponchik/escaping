@@ -2503,6 +2503,22 @@ def test_not_successful_but_with_not_handled_exception_before_callback_when_erro
     assert lst == [1]
 
 
+@pytest.mark.parametrize(
+    'wrong_argument',
+    [
+        lambda x: None,
+        lambda: None,
+        partial,
+        1,
+        None,
+        'kek',
+    ],
+)
+def test_bake_wrong_positional_argument(wrong_argument):
+    with pytest.raises(ValueError, match=full_match('You are using the baked escaper object for the wrong purpose.')):
+        escape.bake(wrong_argument)
+
+
 def test_bake_and_call_simple_function_with_handled_exception_and_empty_brackets():
     before_flag = False
     error_flag = False
