@@ -253,21 +253,21 @@ A callback passed as `success_callback` will be called when the code is executed
 
 ```python
 with escape(success_callback=lambda: print('The code block ended without errors.')):
-    pass
+    ...
 ```
 
 By analogy, if you pass `error_callback`, this function will be called when an exception is raised inside:
 
 ```python
 with escape(error_callback=lambda: print('Attention!')):
-    pass
+    ...
 ```
 
 If you pass a callback as a `before` parameter, it'll be called before the code block anyway:
 
 ```python
-with escape(before=lambda: print('Attention!')):
-    pass
+with escape(before=lambda: print('Something is going to happen now...')):
+    ...
 ```
 
 Notice, if an error occurs in this callback that will not be suppressed, the main code will not be executed - an exception will be raised before it starts executing.
