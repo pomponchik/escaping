@@ -3,7 +3,6 @@ from typing import Type, Tuple, Callable, Union, Optional, Any
 from types import TracebackType
 from inspect import isclass
 from itertools import chain
-from functools import partial
 
 try:
     from types import EllipsisType  # type: ignore[attr-defined]

@@ -5,8 +5,6 @@ try:
 except ImportError:  # pragma: no cover
     EllipsisType = type(...)  # pragma: no cover
 
-from escape.wrapper import Wrapper
-
 
 class BakedEscaper:
     def __init__(self, escaper: 'ProxyModule') -> None:  # type: ignore[name-defined]
