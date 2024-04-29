@@ -2501,3 +2501,37 @@ def test_not_successful_but_with_not_handled_exception_before_callback_when_erro
         [x for x in function()]
 
     assert lst == [1]
+
+
+def test_bake_and_call_simple_function_with_handled_exception_and_empty_brackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper()
+    def function():
+        raise ValueError
+
+    function()
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
