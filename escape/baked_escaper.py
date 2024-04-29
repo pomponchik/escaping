@@ -9,13 +9,13 @@ from escape.wrapper import Wrapper
 
 
 class BakedEscaper:
-    def __init__(self, escaper: 'ProxyModule') -> None:
+    def __init__(self, escaper: 'ProxyModule') -> None:  # type: ignore[name-defined]
         self.escaper = escaper
 
         self.args: List[Union[Callable[..., Any], Type[BaseException], EllipsisType]] = []
         self.kwargs: Dict[str, Any] = {}
 
-    def __call__(self, *args: Union[Callable[..., Any], Type[BaseException], EllipsisType], **kwargs: Any):
+    def __call__(self, *args: Union[Callable[..., Any], Type[BaseException], EllipsisType], **kwargs: Any) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
         copy_args = self.args.copy()
         copy_args.extend(args)
         copy_kwargs = self.kwargs.copy()
