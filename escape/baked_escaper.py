@@ -22,10 +22,10 @@ class BakedEscaper:
         copy_kwargs.update(kwargs)
 
         if self.escaper.are_it_exceptions(args):
-            return self.escaper(*(copy_args), **(copy_kwargs))
+            return self.escaper(*(copy_args), **(copy_kwargs))  # type: ignore[no-any-return]
 
         elif self.escaper.are_it_function(args):
-            return self.escaper(*(self.args), **(copy_kwargs))(*args)
+            return self.escaper(*(self.args), **(copy_kwargs))(*args)  # type: ignore[no-any-return]
 
         else:
             raise ValueError('You are using the escaper incorrectly.')
