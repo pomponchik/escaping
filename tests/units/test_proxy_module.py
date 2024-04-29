@@ -2519,6 +2519,20 @@ def test_bake_wrong_positional_argument(wrong_argument):
         escape.bake(wrong_argument)
 
 
+@pytest.mark.parametrize(
+    'wrong_argument',
+    [
+        1,
+        None,
+        'kek',
+    ],
+)
+def test_wrong_positional_argument_when_calling_baked_escaper(wrong_argument):
+    with pytest.raises(ValueError, match=full_match('You are using the escaper incorrectly.')):
+        escaper = escape.bake()
+        escaper(wrong_argument)
+
+
 def test_bake_and_call_simple_function_with_handled_exception_and_empty_brackets():
     before_flag = False
     error_flag = False
