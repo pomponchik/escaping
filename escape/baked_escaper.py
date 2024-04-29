@@ -32,7 +32,7 @@ class BakedEscaper:
 
     def notify_arguments(self, *args: Union[Callable[..., Any], Type[BaseException], EllipsisType], **kwargs: Any) -> None:
         for argument in args:
-            if not callable(argument) and not issubclass(argument, BaseException) and not isinstance(argument, EllipsisType):
+            if not issubclass(argument, BaseException) and not isinstance(argument, EllipsisType):
                 raise ValueError('You are using the baked escaper object for the wrong purpose.')
             self.args.append(argument)
 
