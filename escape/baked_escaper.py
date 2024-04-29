@@ -5,6 +5,8 @@ try:
 except ImportError:  # pragma: no cover
     EllipsisType = type(...)  # pragma: no cover
 
+from inspect import isclass
+
 
 class BakedEscaper:
     def __init__(self, escaper: 'ProxyModule') -> None:  # type: ignore[name-defined]
@@ -30,7 +32,7 @@ class BakedEscaper:
 
     def notify_arguments(self, *args: Union[Callable[..., Any], Type[BaseException], EllipsisType], **kwargs: Any) -> None:
         for argument in args:
-            if not issubclass(argument, BaseException) and not isinstance(argument, EllipsisType):
+            if not (isclass(argument) and issubclass(argument, BaseException)) and not isinstance(argument, EllipsisType):
                 raise ValueError('You are using the baked escaper object for the wrong purpose.')
             self.args.append(argument)
 
