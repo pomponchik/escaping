@@ -2514,7 +2514,7 @@ def test_not_successful_but_with_not_handled_exception_before_callback_when_erro
         'kek',
     ],
 )
-def test_bake_wrong_positional_argument(wrong_argument):
+def test_bake_initialization_with_wrong_positional_argument(wrong_argument):
     with pytest.raises(ValueError, match=full_match('You are using the baked escaper object for the wrong purpose.')):
         escape.bake(wrong_argument)
 
