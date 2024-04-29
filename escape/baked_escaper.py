@@ -27,6 +27,9 @@ class BakedEscaper:
         elif self.escaper.are_it_function(args):
             return self.escaper(*(self.args), **(copy_kwargs))(*args)
 
+        else:
+            raise ValueError('You are using the escaper incorrectly.')
+
     def notify_arguments(self, *args: Union[Callable[..., Any], Type[BaseException], EllipsisType], **kwargs: Any) -> None:
         for argument in args:
             if not callable(argument) and not issubclass(argument, BaseException) and not isinstance(argument, EllipsisType):
