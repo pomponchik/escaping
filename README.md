@@ -83,7 +83,7 @@ with escape:
     ...
 ```
 
-The rules by which you want to suppress errors can be "baked" into a special object so that you don't duplicate it in different parts of the code later. This means that you can come up with error suppression rules once, and then use them everywhere, without duplicating code, which is assumed when using ordinary `try-except` blocks.
+The rules by which you want to suppress errors can be "[baked](#baking-rules)" into a special object so that you don't duplicate it in different parts of the code later. This means that you can come up with error suppression rules once, and then use them everywhere, without duplicating code, which is assumed when using ordinary `try-except` blocks.
 
 
 ## Decorator mode
