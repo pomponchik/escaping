@@ -1,4 +1,5 @@
-from typing import List, Dict, Type, Union, Callable, Any
+from typing import List, Dict, Type, Union, Callable, Optional, Any
+from types import TracebackType
 
 try:
     from types import EllipsisType  # type: ignore[attr-defined]
@@ -6,6 +7,7 @@ except ImportError:  # pragma: no cover
     EllipsisType = type(...)  # pragma: no cover
 
 from inspect import isclass
+from escape.wrapper import Wrapper
 
 
 class BakedEscaper:
@@ -14,6 +16,8 @@ class BakedEscaper:
 
         self.args: List[Union[Callable[..., Any], Type[BaseException], EllipsisType]] = []
         self.kwargs: Dict[str, Any] = {}
+
+        self.wrapper_for_simple_contexts: Wrapper = self.escaper(*(self.args), **(self.kwargs))
 
     def __call__(self, *args: Union[Callable[..., Any], Type[BaseException], EllipsisType], **kwargs: Any) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
         copy_args = self.args.copy()
@@ -38,3 +42,12 @@ class BakedEscaper:
 
         for name, argument in kwargs.items():
             self.kwargs[name] = argument
+
+        self.wrapper_for_simple_contexts: Wrapper = self.escaper(*(self.args), **(self.kwargs))
+
+    def __enter__(self) -> 'ProxyModule':
+        print(self.wrapper_for_simple_contexts)
+        return self.wrapper_for_simple_contexts.__enter__()
+
+    def __exit__(self, exception_type: Optional[Type[BaseException]], exception_value: Optional[BaseException], traceback: Optional[TracebackType]) -> bool:
+        return self.wrapper_for_simple_contexts.__exit__(exception_type, exception_value, traceback)
