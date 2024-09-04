@@ -5,7 +5,7 @@ from inspect import isclass
 from itertools import chain
 
 try:
-    from types import EllipsisType  # type: ignore[attr-defined]
+    from types import EllipsisType  # type: ignore[attr-defined, unused-ignore]
 except ImportError:  # pragma: no cover
     EllipsisType = type(...)  # pragma: no cover
 

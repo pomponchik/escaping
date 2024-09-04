@@ -2,7 +2,7 @@ from typing import List, Dict, Type, Union, Callable, Optional, Any
 from types import TracebackType
 
 try:
-    from types import EllipsisType  # type: ignore[attr-defined]
+    from types import EllipsisType  # type: ignore[attr-defined, unused-ignore]
 except ImportError:  # pragma: no cover
     EllipsisType = type(...)  # pragma: no cover
 
