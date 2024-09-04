@@ -2532,6 +2532,20 @@ def test_wrong_positional_argument_when_calling_baked_escaper(wrong_argument):
         escaper = escape.bake()
         escaper(wrong_argument)
 
+# options:
+# 1. decorator:
+# 1.1. with raised exception:
+# 1.1.1. simple function - function with arguments
+# 1.1.2. handled exception - not handled one
+# 1.1.3. empty breackets - without_breackets - breackets with ellipsis - breackets with exception when the exception is raised - breackets with exception when baked exception is raised
+
+# 1.2. without raised exception:
+# 1.2.1. empty breackets - without_breackets - breackets with ellipsis - breackets with one exception - breackets with two exceptions
+
+# 2. context manager:
+# 2.2. handled exception - not handled one
+# 2.3. empty breackets - without_breackets - breackets with ellipsis - breackets with exception when the exception is raised - breackets with exception when baked exception is raised
+
 
 def test_bake_and_call_simple_function_with_handled_exception_and_empty_brackets():
     before_flag = False
@@ -2559,6 +2573,793 @@ def test_bake_and_call_simple_function_with_handled_exception_and_empty_brackets
         raise ValueError
 
     function()
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_function_with_args_and_kwargs_with_handled_exception_and_empty_brackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper()
+    def function(arg, kwarg=''):
+        raise ValueError(arg + kwarg)
+
+    function('mes', kwarg = 'sage')
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_simple_function_with_not_handled_exception_and_empty_brackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper()
+    def function():
+        raise NameError
+
+    with pytest.raises(NameError):
+        function()
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_function_with_args_and_kwargs_with_not_handled_exception_and_empty_brackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper()
+    def function(arg, kwarg=''):
+        raise NameError(arg + kwarg)
+
+    with pytest.raises(NameError, match=full_match('message')):
+        function('mes', kwarg = 'sage')
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_simple_function_with_handled_exception_and_without_breackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper
+    def function():
+        raise ValueError
+
+    function()
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_function_with_args_and_kwargs_with_handled_exception_and_without_breackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper
+    def function(arg, kwarg=''):
+        raise ValueError(arg + kwarg)
+
+    function('mes', kwarg = 'sage')
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_simple_function_with_not_handled_exception_and_without_breackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper
+    def function():
+        raise NameError
+
+    with pytest.raises(NameError):
+        function()
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_function_with_args_and_kwargs_with_not_handled_exception_and_without_breackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper
+    def function(arg, kwarg=''):
+        raise NameError(arg + kwarg)
+
+    with pytest.raises(NameError, match=full_match('message')):
+        function('mes', kwarg = 'sage')
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_simple_function_with_handled_exception_and_with_breackets_with_ellipsis():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(...)
+    def function():
+        raise ValueError
+
+    function()
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_function_with_args_and_kwargs_with_handled_exception_and_with_breackets_with_ellipsis():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(...)
+    def function(arg, kwarg=''):
+        raise ValueError(arg + kwarg)
+
+    function('mes', kwarg = 'sage')
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_simple_function_with_not_handled_exception_and_with_breackets_with_ellipsis():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(...)
+    def function():
+        raise GeneratorExit
+
+    with pytest.raises(GeneratorExit):
+        function()
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_function_with_args_and_kwargs_with_not_handled_exception_and_with_breackets_with_ellipsis():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(...)
+    def function(arg, kwarg=''):
+        raise GeneratorExit(arg + kwarg)
+
+    with pytest.raises(GeneratorExit, match=full_match('message')):
+        function('mes', kwarg = 'sage')
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_simple_function_with_handled_exception_that_is_passed_as_argument_and_without_breackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(ValueError)
+    def function():
+        raise ValueError
+
+    function()
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_simple_function_without_exceptions_and_empty_brackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+    function_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper()
+    def function():
+        nonlocal function_flag
+        function_flag = True
+
+    function()
+
+    assert before_flag
+    assert not error_flag
+    assert success_flag
+
+    assert not len(logger.data)
+
+    assert function_flag
+
+
+def test_bake_and_call_simple_function_without_exceptions_without_brackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+    function_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper
+    def function():
+        nonlocal function_flag
+        function_flag = True
+
+    function()
+
+    assert before_flag
+    assert not error_flag
+    assert success_flag
+
+    assert not len(logger.data)
+
+    assert function_flag
+
+
+def test_bake_and_call_simple_function_without_exceptions_with_breackets_with_ellipsis():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+    function_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper()
+    def function():
+        nonlocal function_flag
+        function_flag = True
+
+    function()
+
+    assert before_flag
+    assert not error_flag
+    assert success_flag
+
+    assert not len(logger.data)
+
+    assert function_flag
+
+
+def test_bake_and_call_simple_function_without_exceptions_with_breackets_with_exception():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+    function_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(NameError)
+    def function():
+        nonlocal function_flag
+        function_flag = True
+
+    function()
+
+    assert before_flag
+    assert not error_flag
+    assert success_flag
+
+    assert not len(logger.data)
+
+    assert function_flag
+
+
+def test_bake_and_call_simple_function_without_exceptions_with_breackets_with_two_exceptions():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+    function_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(NameError, RuntimeError)
+    def function():
+        nonlocal function_flag
+        function_flag = True
+
+    function()
+
+    assert before_flag
+    assert not error_flag
+    assert success_flag
+
+    assert not len(logger.data)
+
+    assert function_flag
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def test_bake_and_use_context_manager_with_handled_exception_and_empty_breackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    with escaper():
+        raise ValueError
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_use_context_manager_with_not_handled_exception_and_empty_breackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    with pytest.raises(ZeroDivisionError):
+        with escaper():
+            raise ZeroDivisionError
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def test_bake_and_use_context_manager_with_handled_exception_and_without_breackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    with escaper:
+        raise ValueError
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_use_context_manager_with_not_handled_exception_and_without_breackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    with pytest.raises(ZeroDivisionError):
+        with escaper:
+            raise ZeroDivisionError
 
     assert before_flag
     assert error_flag
