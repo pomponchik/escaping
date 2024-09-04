@@ -7,7 +7,7 @@ from itertools import chain
 try:
     from types import EllipsisType  # type: ignore[attr-defined, unused-ignore]
 except ImportError:  # pragma: no cover
-    EllipsisType = type(...)  # pragma: no cover
+    EllipsisType = type(...)  # type: ignore[misc] # pragma: no cover
 
 from emptylog import LoggerProtocol, EmptyLogger
 
@@ -39,7 +39,7 @@ class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
             return wrapper_of_wrappers
 
         elif self.are_it_function(args):
-            return wrapper_of_wrappers(args[0])
+            return wrapper_of_wrappers(args[0])  # type: ignore[arg-type]
 
         else:
             raise ValueError('You are using the decorator for the wrong purpose.')
