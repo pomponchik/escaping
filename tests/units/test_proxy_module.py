@@ -3496,3 +3496,33 @@ def test_bake_and_use_context_manager_with_handled_exception_and_with_breackets_
     assert not success_flag
 
     assert len(logger.data)
+
+
+def test_baked_escaper_with_default_for_simple_function_without_breackets():
+    escaper = escape.bake(..., default=5)
+
+    @escaper
+    def function():
+        raise ValueError
+
+    assert function() == 5
+
+
+def test_baked_escaper_with_default_for_simple_function_with_empty_breackets():
+    escaper = escape.bake(..., default=5)
+
+    @escaper()
+    def function():
+        raise ValueError
+
+    assert function() == 5
+
+
+def test_baked_escaper_with_default_for_simple_function_with_breackets_with_escaped_exception():
+    escaper = escape.bake(default=5)
+
+    @escaper(ValueError)
+    def function():
+        raise ValueError
+
+    assert function() == 5
