@@ -11,7 +11,7 @@ from escape.wrapper import Wrapper
 
 
 class BakedEscaper:
-    def __init__(self, escaper: 'ProxyModule') -> None:  # type: ignore[name-defined]
+    def __init__(self, escaper: 'ProxyModule') -> None:  # type: ignore[name-defined] # noqa: F821
         self.escaper = escaper
 
         self.args: List[Union[Callable[..., Any], Type[BaseException], EllipsisType]] = []
@@ -45,7 +45,7 @@ class BakedEscaper:
 
         self.wrapper_for_simple_contexts = self.escaper(*(self.args), **(self.kwargs))
 
-    def __enter__(self) -> 'ProxyModule':  # type: ignore[name-defined]
+    def __enter__(self) -> 'ProxyModule':  # type: ignore[name-defined] # noqa: F821
         print(self.wrapper_for_simple_contexts)
         return self.wrapper_for_simple_contexts.__enter__()
 
