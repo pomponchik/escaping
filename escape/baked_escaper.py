@@ -4,7 +4,7 @@ from types import TracebackType
 try:
     from types import EllipsisType  # type: ignore[attr-defined, unused-ignore]
 except ImportError:  # pragma: no cover
-    EllipsisType = type(...)  # type: ignore[misc] # pragma: no cover
+    EllipsisType = type(...)  # type: ignore[misc, unused-ignore] # pragma: no cover
 
 from inspect import isclass
 from escape.wrapper import Wrapper
