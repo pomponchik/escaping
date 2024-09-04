@@ -43,7 +43,7 @@ class BakedEscaper:
         for name, argument in kwargs.items():
             self.kwargs[name] = argument
 
-        self.wrapper_for_simple_contexts: Wrapper = self.escaper(*(self.args), **(self.kwargs))
+        self.wrapper_for_simple_contexts = self.escaper(*(self.args), **(self.kwargs))
 
     def __enter__(self) -> 'ProxyModule':
         print(self.wrapper_for_simple_contexts)
