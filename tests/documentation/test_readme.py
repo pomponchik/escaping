@@ -7,6 +7,7 @@ import full_match
 from emptylog import MemoryLogger
 
 import escape
+from escape.baked_escaper import BakedEscaper
 
 
 def test_example_quick_start():
@@ -132,3 +133,9 @@ def test_example_own_message_for_success():
 
     assert len(logger.data) == 1
     assert logger.data.info[0].message == 'Good news, everyone!'
+
+
+def test_get_escaper():
+    escaper = escape.bake(ValueError)
+
+    assert isinstance(escaper, BakedEscaper)
