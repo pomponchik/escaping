@@ -287,12 +287,32 @@ Creating this object, you can pass all the same arguments as when using `escape`
 
 ```python
 with escaper:
-    raise ValueError
+    raise ValueError  # It will be suppressed.
 ```
 ```python
 @escaper
 def function():
-    raise ValueError
+    raise ValueError  # It will be suppressed too.
 
 function()
 ```
+
+If necessary, you can combine "baked" arguments and arguments that are passed on demand (executing the sample code requires pre-installation of the [`emptylog`](https://github.com/pomponchik/emptylog?tab=readme-ov-file#printing-logger) library):
+
+```python
+import escape
+from emptylog import PrintingLogger
+
+escaper = escape.bake(logger=PrintingLogger())
+
+@escaper(ValueError)
+def function():
+    raise ValueError  # It will be suppressed too.
+
+function()
+#> 2024-09-06 14:45:19.606267 | EXCEPTION | When executing function "function", the exception "ValueError" was suppressed.
+```
+
+In this way, you can add additional exceptions that need to be suppressed - they will be added to the general list of suppressed ones. In addition, you can override some of the named arguments that are "baked" into the object on demand - in this case, the argument that was passed later will be used.
+
+Arguments baking is an extremely powerful tool, useful for large programs. It allows you to get rid of multiple duplications of code that are often encountered during error handling. In addition, with its help, you can describe the error handling policy centrally, in one place for the entire program, which makes maintaining or changing the program a much easier task.
