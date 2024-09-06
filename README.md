@@ -22,10 +22,12 @@ If you've just confessed and you can't wait to sin again, try this package. It w
 ## Table of contents
 
 - [**Quick start**](#quick-start)
+- [**About**](#about)
 - [**Decorator mode**](#decorator-mode)
 - [**Context manager mode**](#context-manager-mode)
 - [**Logging**](#logging)
 - [**Callbacks**](#callbacks)
+- [**Baking rules**](#baking-rules)
 
 
 ## Quick start
@@ -49,6 +51,39 @@ function()  # The exception is suppressed.
 ```
 
 Read about other library features below.
+
+
+## About
+
+This project is dedicated to the most important problem in programming - how do we need to handle errors? Here are some answers to this question that it gives:
+
+- This should be done in a standardized way. You can decide for yourself how errors will be handled, but with this project, any method you choose can easily become the standard.
+
+- Mistakes should not be hidden. Even if the exception is suppressed, you should be aware of it.
+
+An interesting solution that is proposed here is that you are provided with a single interface for error suppression, which can be used as a [context manager](#context-manager-mode) for any block of code, as well as as a [decorator](#decorator-mode) for ordinary, coroutine and generator functions. Wherever you need to suppress an error, you do it the same way, according to the same rules:
+
+```python
+import escape
+
+@escape
+def function():
+    ...
+
+@escape
+async def function():
+    ...
+
+@escape
+def function():
+    yield something
+    ...
+
+with escape:
+    ...
+```
+
+The rules by which you want to suppress errors can be "[baked](#baking-rules)" into a special object so that you don't duplicate it in different parts of the code later. This means that you can come up with error suppression rules once, and then use them everywhere, without duplicating code, which is assumed when using ordinary `try-except` blocks.
 
 
 ## Decorator mode
@@ -218,23 +253,66 @@ A callback passed as `success_callback` will be called when the code is executed
 
 ```python
 with escape(success_callback=lambda: print('The code block ended without errors.')):
-    pass
+    ...
 ```
 
 By analogy, if you pass `error_callback`, this function will be called when an exception is raised inside:
 
 ```python
 with escape(error_callback=lambda: print('Attention!')):
-    pass
+    ...
 ```
 
 If you pass a callback as a `before` parameter, it'll be called before the code block anyway:
 
 ```python
-with escape(before=lambda: print('Attention!')):
-    pass
+with escape(before=lambda: print('Something is going to happen now...')):
+    ...
 ```
 
 Notice, if an error occurs in this callback that will not be suppressed, the main code will not be executed - an exception will be raised before it starts executing.
 
 If an error occurs in one of the callbacks, the exception will be suppressed if it would have been suppressed if it had happened in a wrapped code block or function. You can see the corresponding log entry about this if you [pass the logger object](#logging) for registration. If the error inside the callback has been suppressed, it will not affect the logic that was wrapped by `escape` in any way.
+
+
+## Baking rules
+
+You can set up an error escaping policy once and then reuse it in different situations. To do this, get a special object through the `bake` method:
+
+```python
+escaper = escape.bake(ValueError)
+```
+
+Creating this object, you can pass all the same arguments as when using `escape` directly as a [decorator](#decorator-mode) or a [context manager](#context-manager-mode): exceptions, [callbacks](#callbacks), or a [logger](#logging). The object "remembers" these arguments until the moment you decide to use it:
+
+```python
+with escaper:
+    raise ValueError  # It will be suppressed.
+```
+```python
+@escaper
+def function():
+    raise ValueError  # It will be suppressed too.
+
+function()
+```
+
+If necessary, you can combine "baked" arguments and arguments that are passed on demand (executing the sample code requires pre-installation of the [`emptylog`](https://github.com/pomponchik/emptylog?tab=readme-ov-file#printing-logger) library):
+
+```python
+import escape
+from emptylog import PrintingLogger
+
+escaper = escape.bake(logger=PrintingLogger())
+
+@escaper(ValueError)
+def function():
+    raise ValueError  # It will be suppressed too.
+
+function()
+#> 2024-09-06 14:45:19.606267 | EXCEPTION | When executing function "function", the exception "ValueError" was suppressed.
+```
+
+In this way, you can add additional exceptions that need to be suppressed - they will be added to the general list of suppressed ones. In addition, you can override some of the named arguments that are "baked" into the object on demand - in this case, the argument that was passed later will be used.
+
+Arguments baking is an extremely powerful tool, useful for large programs. It allows you to get rid of multiple duplications of code that are often encountered during error handling. In addition, with its help, you can describe the error handling policy centrally, in one place for the entire program, which makes maintaining or changing the program a much easier task.

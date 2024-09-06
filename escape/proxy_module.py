@@ -5,13 +5,14 @@ from inspect import isclass
 from itertools import chain
 
 try:
-    from types import EllipsisType  # type: ignore[attr-defined]
+    from types import EllipsisType  # type: ignore[attr-defined, unused-ignore]
 except ImportError:  # pragma: no cover
-    EllipsisType = type(...)  # pragma: no cover
+    EllipsisType = type(...)  # type: ignore[misc, unused-ignore] # pragma: no cover
 
 from emptylog import LoggerProtocol, EmptyLogger
 
 from escape.wrapper import Wrapper
+from escape.baked_escaper import BakedEscaper
 
 
 if sys.version_info < (3, 11):
@@ -38,7 +39,7 @@ class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
             return wrapper_of_wrappers
 
         elif self.are_it_function(args):
-            return wrapper_of_wrappers(args[0])
+            return wrapper_of_wrappers(args[0])  # type: ignore[arg-type, unused-ignore]
 
         else:
             raise ValueError('You are using the decorator for the wrong purpose.')
@@ -65,3 +66,18 @@ class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
     @staticmethod
     def are_it_function(args: Tuple[Union[Type[BaseException], Callable[..., Any], EllipsisType], ...]) -> bool:
         return len(args) == 1 and callable(args[0]) and not (isclass(args[0]) and issubclass(args[0], BaseException))
+
+    def bake(self, *args: Union[Callable[..., Any], Type[BaseException], EllipsisType], default: Any = None, logger: LoggerProtocol = EmptyLogger(), success_callback: Callable[[], Any] = lambda: None, error_callback: Callable[[], Any] = lambda: None, before: Callable[[], Any] = lambda: None, error_log_message: Optional[str] = None, success_log_message: Optional[str] = None, success_logging: bool = False) -> Callable[..., Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]]:
+        escaper = BakedEscaper(self)
+        escaper.notify_arguments(
+            *args,
+            default=default,
+            logger=logger,
+            success_callback=success_callback,
+            error_callback=error_callback,
+            before=before,
+            error_log_message=error_log_message,
+            success_log_message=success_log_message,
+            success_logging=success_logging,
+        )
+        return escaper
