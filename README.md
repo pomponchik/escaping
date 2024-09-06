@@ -276,3 +276,23 @@ If an error occurs in one of the callbacks, the exception will be suppressed if 
 
 
 ## Baking rules
+
+You can set up an error escaping policy once and then reuse it in different situations. To do this, get a special object through the `bake` method:
+
+```python
+escaper = escape.bake(ValueError)
+```
+
+Creating this object, you can pass all the same arguments as when using `escape` directly as a [decorator](#decorator-mode) or a [context manager](#context-manager-mode): exceptions, [callbacks](#callbacks), or a [logger](#logging). The object "remembers" these arguments until the moment you decide to use it:
+
+```python
+with escaper:
+    raise ValueError
+```
+```python
+@escaper
+def function():
+    raise ValueError
+
+function()
+```
