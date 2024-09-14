@@ -9,7 +9,7 @@ from escape.errors import SetDefaultReturnValueForContextManagerError, SetDefaul
 
 
 class Wrapper:
-    def __init__(self, default: Any, exceptions: Tuple[Type[BaseException], ...], logger: LoggerProtocol, success_callback: Callable[[], Any], before: Callable[[], Any], error_log_message: Optional[str], success_logging: bool, success_log_message: Optional[str], error_callback: Callable[[], Any]) -> None:
+    def __init__(self, default: Any, exceptions: Tuple[Type[BaseException], ...], logger: LoggerProtocol, success_callback: Callable[[], Any], before: Callable[[], Any], error_log_message: Optional[str], success_logging: bool, success_log_message: Optional[str], error_callback: Callable[[], Any], doc: Optional[str] = None) -> None:
         self.default: Any = default
         self.exceptions: Tuple[Type[BaseException], ...] = exceptions
         self.logger: LoggerProtocol = logger
@@ -19,6 +19,7 @@ class Wrapper:
         self.error_log_message: Optional[str] = error_log_message
         self.success_log_message: Optional[str] = success_log_message
         self.success_logging: bool = success_logging
+        self.doc: Optional[str] = doc
 
     def __call__(self, function: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(function)
@@ -27,6 +28,7 @@ class Wrapper:
 
             result = None
             success_flag = False
+            wrapped_doc = '' if self.doc is None else f' ({self.doc})'
 
             try:
                 result = function(*args, **kwargs)
@@ -35,7 +37,7 @@ class Wrapper:
             except self.exceptions as e:
                 if self.error_log_message is None:
                     exception_massage = '' if not str(e) else f' ("{e}")'
-                    self.logger.exception(f'When executing function "{function.__name__}", the exception "{type(e).__name__}"{exception_massage} was suppressed.')
+                    self.logger.exception(f'When executing function "{function.__name__}"{wrapped_doc}, the exception "{type(e).__name__}"{exception_massage} was suppressed.')
                 else:
                     self.logger.exception(self.error_log_message)
                 result = self.default
@@ -43,7 +45,7 @@ class Wrapper:
             except BaseException as e:
                 if self.error_log_message is None:
                     exception_massage = '' if not str(e) else f' ("{e}")'
-                    self.logger.error(f'When executing function "{function.__name__}", the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
+                    self.logger.error(f'When executing function "{function.__name__}"{wrapped_doc}, the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
                 else:
                     self.logger.error(self.error_log_message)
                 self.run_callback(self.error_callback)
@@ -52,7 +54,7 @@ class Wrapper:
             if success_flag:
                 if self.success_logging:
                     if self.success_log_message is None:
-                        self.logger.info(f'The function "{function.__name__}" completed successfully.')
+                        self.logger.info(f'The function "{function.__name__}"{wrapped_doc} completed successfully.')
                     else:
                         self.logger.info(self.success_log_message)
 
@@ -70,6 +72,7 @@ class Wrapper:
 
             result = None
             success_flag = False
+            wrapped_doc = '' if self.doc is None else f' ({self.doc})'
 
             try:
                 result = await function(*args, **kwargs)
@@ -78,7 +81,7 @@ class Wrapper:
             except self.exceptions as e:
                 if self.error_log_message is None:
                     exception_massage = '' if not str(e) else f' ("{e}")'
-                    self.logger.exception(f'When executing coroutine function "{function.__name__}", the exception "{type(e).__name__}"{exception_massage} was suppressed.')
+                    self.logger.exception(f'When executing coroutine function "{function.__name__}"{wrapped_doc}, the exception "{type(e).__name__}"{exception_massage} was suppressed.')
                 else:
                     self.logger.exception(self.error_log_message)
                 result = self.default
@@ -86,7 +89,7 @@ class Wrapper:
             except BaseException as e:
                 if self.error_log_message is None:
                     exception_massage = '' if not str(e) else f' ("{e}")'
-                    self.logger.error(f'When executing coroutine function "{function.__name__}", the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
+                    self.logger.error(f'When executing coroutine function "{function.__name__}"{wrapped_doc}, the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
                 else:
                     self.logger.error(self.error_log_message)
                 self.run_callback(self.error_callback)
@@ -95,7 +98,7 @@ class Wrapper:
             if success_flag:
                 if self.success_logging:
                     if self.success_log_message is None:
-                        self.logger.info(f'The coroutine function "{function.__name__}" completed successfully.')
+                        self.logger.info(f'The coroutine function "{function.__name__}"{wrapped_doc} completed successfully.')
                     else:
                         self.logger.info(self.success_log_message)
 
@@ -109,9 +112,10 @@ class Wrapper:
         @wraps(function)
         def generator_wrapper(*args: Any, **kwargs: Any) -> Any:
             self.run_callback(self.before)
-            
+
             result = None
             success_flag = False
+            wrapped_doc = '' if self.doc is None else f' ({self.doc})'
 
             try:
                 yield from function(*args, **kwargs)
@@ -120,7 +124,7 @@ class Wrapper:
             except self.exceptions as e:
                 if self.error_log_message is None:
                     exception_massage = '' if not str(e) else f' ("{e}")'
-                    self.logger.exception(f'When executing generator function "{function.__name__}", the exception "{type(e).__name__}"{exception_massage} was suppressed.')
+                    self.logger.exception(f'When executing generator function "{function.__name__}"{wrapped_doc}, the exception "{type(e).__name__}"{exception_massage} was suppressed.')
                 else:
                     self.logger.exception(self.error_log_message)
                 result = self.default
@@ -128,7 +132,7 @@ class Wrapper:
             except BaseException as e:
                 if self.error_log_message is None:
                     exception_massage = '' if not str(e) else f' ("{e}")'
-                    self.logger.error(f'When executing generator function "{function.__name__}", the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
+                    self.logger.error(f'When executing generator function "{function.__name__}"{wrapped_doc}, the exception "{type(e).__name__}"{exception_massage} was not suppressed.')
                 else:
                     self.logger.error(self.error_log_message)
                 self.run_callback(self.error_callback)
@@ -137,7 +141,7 @@ class Wrapper:
             if success_flag:
                 if self.success_logging:
                     if self.success_log_message is None:
-                        self.logger.info(f'The generator function "{function.__name__}" completed successfully.')
+                        self.logger.info(f'The generator function "{function.__name__}"{wrapped_doc} completed successfully.')
                     else:
                         self.logger.info(self.success_log_message)
 
