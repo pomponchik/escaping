@@ -3526,3 +3526,1373 @@ def test_baked_escaper_with_default_for_simple_function_with_breackets_with_esca
         raise ValueError
 
     assert function() == 5
+
+
+def test_bake_and_call_generator_function_with_handled_exception_and_empty_brackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper()
+    def function():
+        raise ValueError
+        yield
+
+    for _ in function():
+        pass
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_async_function_with_handled_exception_and_empty_brackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper()
+    async def function():
+        raise ValueError
+
+    asyncio.run(function())
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_generator_function_with_args_and_kwargs_with_handled_exception_and_empty_brackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper()
+    def function(arg, kwarg=''):
+        raise ValueError(arg + kwarg)
+        yield
+
+    for _ in function('mes', kwarg = 'sage'):
+        pass
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_async_function_with_args_and_kwargs_with_handled_exception_and_empty_brackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper()
+    async def function(arg, kwarg=''):
+        raise ValueError(arg + kwarg)
+
+    asyncio.run(function('mes', kwarg = 'sage'))
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_generator_function_with_not_handled_exception_and_empty_brackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper()
+    def function():
+        raise NameError
+        yield
+
+    with pytest.raises(NameError):
+        for _ in function():
+            pass
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_async_function_with_not_handled_exception_and_empty_brackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper()
+    async def function():
+        raise NameError
+
+    with pytest.raises(NameError):
+        asyncio.run(function())
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_generator_function_with_args_and_kwargs_with_not_handled_exception_and_empty_brackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper()
+    def function(arg, kwarg=''):
+        raise NameError(arg + kwarg)
+        yield
+
+    with pytest.raises(NameError, match=full_match('message')):
+        for _ in function('mes', kwarg = 'sage'):
+            pass
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_async_function_with_args_and_kwargs_with_not_handled_exception_and_empty_brackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper()
+    async def function(arg, kwarg=''):
+        raise NameError(arg + kwarg)
+
+    with pytest.raises(NameError, match=full_match('message')):
+        asyncio.run(function('mes', kwarg = 'sage'))
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_generator_function_with_handled_exception_and_without_breackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper
+    def function():
+        raise ValueError
+        yield
+
+    for _ in function():
+        pass
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_async_function_with_handled_exception_and_without_breackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper
+    async def function():
+        raise ValueError
+
+    asyncio.run(function())
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_generator_function_with_args_and_kwargs_with_handled_exception_and_without_breackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper
+    def function(arg, kwarg=''):
+        raise ValueError(arg + kwarg)
+        yield
+
+    for _ in function('mes', kwarg = 'sage'):
+        pass
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_async_function_with_args_and_kwargs_with_handled_exception_and_without_breackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper
+    async def function(arg, kwarg=''):
+        raise ValueError(arg + kwarg)
+
+    asyncio.run(function('mes', kwarg = 'sage'))
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_generator_function_with_not_handled_exception_and_without_breackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper
+    def function():
+        raise NameError
+        yield
+
+    with pytest.raises(NameError):
+        for _ in function():
+            pass
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_async_function_with_not_handled_exception_and_without_breackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper
+    async def function():
+        raise NameError
+
+    with pytest.raises(NameError):
+        asyncio.run(function())
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_generator_function_with_args_and_kwargs_with_not_handled_exception_and_without_breackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper
+    def function(arg, kwarg=''):
+        raise NameError(arg + kwarg)
+        yield
+
+    with pytest.raises(NameError, match=full_match('message')):
+        for _ in function('mes', kwarg = 'sage'):
+            pass
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_async_function_with_args_and_kwargs_with_not_handled_exception_and_without_breackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper
+    async def function(arg, kwarg=''):
+        raise NameError(arg + kwarg)
+
+    with pytest.raises(NameError, match=full_match('message')):
+        asyncio.run(function('mes', kwarg = 'sage'))
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_generator_function_with_handled_exception_and_with_breackets_with_ellipsis():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(...)
+    def function():
+        raise ValueError
+        yield
+
+    for _ in function():
+        pass
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_async_function_with_handled_exception_and_with_breackets_with_ellipsis():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(...)
+    async def function():
+        raise ValueError
+
+    asyncio.run(function())
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_generator_function_with_args_and_kwargs_with_handled_exception_and_with_breackets_with_ellipsis():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(...)
+    def function(arg, kwarg=''):
+        raise ValueError(arg + kwarg)
+        yield
+
+    for _ in function('mes', kwarg = 'sage'):
+        pass
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_async_function_with_args_and_kwargs_with_handled_exception_and_with_breackets_with_ellipsis():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(...)
+    async def function(arg, kwarg=''):
+        raise ValueError(arg + kwarg)
+
+    asyncio.run(function('mes', kwarg = 'sage'))
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_generator_function_with_not_handled_exception_and_with_breackets_with_ellipsis():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(...)
+    def function():
+        raise GeneratorExit
+
+    with pytest.raises(GeneratorExit):
+        function()
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_async_function_with_not_handled_exception_and_with_breackets_with_ellipsis():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(...)
+    async def function():
+        raise GeneratorExit
+
+    with pytest.raises(GeneratorExit):
+        asyncio.run(function())
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_generator_function_with_args_and_kwargs_with_not_handled_exception_and_with_breackets_with_ellipsis():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(...)
+    def function(arg, kwarg=''):
+        raise KeyboardInterrupt(arg + kwarg)
+        yield
+
+    with pytest.raises(KeyboardInterrupt, match=full_match('message')):
+        for _ in function('mes', kwarg = 'sage'):
+            pass
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_async_function_with_args_and_kwargs_with_not_handled_exception_and_with_breackets_with_ellipsis():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(...)
+    async def function(arg, kwarg=''):
+        raise GeneratorExit(arg + kwarg)
+
+    with pytest.raises(GeneratorExit, match=full_match('message')):
+        asyncio.run(function('mes', kwarg = 'sage'))
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_generator_function_with_handled_exception_that_is_passed_as_argument_and_without_breackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(ValueError)
+    def function():
+        raise ValueError
+        yield
+
+    for _ in function():
+        pass
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_async_function_with_handled_exception_that_is_passed_as_argument_and_without_breackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(ValueError)
+    async def function():
+        raise ValueError
+
+    asyncio.run(function())
+
+    assert before_flag
+    assert error_flag
+    assert not success_flag
+
+    assert len(logger.data)
+
+
+def test_bake_and_call_generator_function_without_exceptions_and_empty_brackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+    function_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper()
+    def function():
+        nonlocal function_flag
+        function_flag = True
+        yield
+
+    for _ in function():
+        pass
+
+    assert before_flag
+    assert not error_flag
+    assert success_flag
+
+    assert not len(logger.data)
+
+    assert function_flag
+
+
+def test_bake_and_call_async_function_without_exceptions_and_empty_brackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+    function_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper()
+    async def function():
+        nonlocal function_flag
+        function_flag = True
+
+    asyncio.run(function())
+
+    assert before_flag
+    assert not error_flag
+    assert success_flag
+
+    assert not len(logger.data)
+
+    assert function_flag
+
+
+def test_bake_and_call_generator_function_without_exceptions_without_brackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+    function_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper
+    def function():
+        nonlocal function_flag
+        function_flag = True
+        yield
+
+    for _ in function():
+        pass
+
+    assert before_flag
+    assert not error_flag
+    assert success_flag
+
+    assert not len(logger.data)
+
+    assert function_flag
+
+
+def test_bake_and_call_async_function_without_exceptions_without_brackets():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+    function_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper
+    async def function():
+        nonlocal function_flag
+        function_flag = True
+
+    asyncio.run(function())
+
+    assert before_flag
+    assert not error_flag
+    assert success_flag
+
+    assert not len(logger.data)
+
+    assert function_flag
+
+
+def test_bake_and_call_generator_function_without_exceptions_with_breackets_with_ellipsis():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+    function_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper()
+    def function():
+        nonlocal function_flag
+        function_flag = True
+        yield
+
+    for _ in function():
+        pass
+
+    assert before_flag
+    assert not error_flag
+    assert success_flag
+
+    assert not len(logger.data)
+
+    assert function_flag
+
+
+def test_bake_and_call_async_function_without_exceptions_with_breackets_with_ellipsis():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+    function_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper()
+    async def function():
+        nonlocal function_flag
+        function_flag = True
+
+    asyncio.run(function())
+
+    assert before_flag
+    assert not error_flag
+    assert success_flag
+
+    assert not len(logger.data)
+
+    assert function_flag
+
+
+def test_bake_and_call_generator_function_without_exceptions_with_breackets_with_exception():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+    function_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(NameError)
+    def function():
+        nonlocal function_flag
+        function_flag = True
+        yield
+
+    for _ in function():
+        pass
+
+    assert before_flag
+    assert not error_flag
+    assert success_flag
+
+    assert not len(logger.data)
+
+    assert function_flag
+
+
+def test_bake_and_call_async_function_without_exceptions_with_breackets_with_exception():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+    function_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(NameError)
+    async def function():
+        nonlocal function_flag
+        function_flag = True
+
+    asyncio.run(function())
+
+    assert before_flag
+    assert not error_flag
+    assert success_flag
+
+    assert not len(logger.data)
+
+    assert function_flag
+
+
+def test_bake_and_call_generator_function_without_exceptions_with_breackets_with_two_exceptions():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+    function_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(NameError, RuntimeError)
+    def function():
+        nonlocal function_flag
+        function_flag = True
+        yield
+
+    for _ in function():
+        pass
+
+    assert before_flag
+    assert not error_flag
+    assert success_flag
+
+    assert not len(logger.data)
+
+    assert function_flag
+
+
+def test_bake_and_call_async_function_without_exceptions_with_breackets_with_two_exceptions():
+    before_flag = False
+    error_flag = False
+    success_flag = False
+    function_flag = False
+
+    logger = MemoryLogger()
+
+    def before_callback():
+        nonlocal before_flag
+        before_flag = True
+
+    def error_callback():
+        nonlocal error_flag
+        error_flag = True
+
+    def success_callback():
+        nonlocal success_flag
+        success_flag = True
+
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+
+    @escaper(NameError, RuntimeError)
+    async def function():
+        nonlocal function_flag
+        function_flag = True
+
+    asyncio.run(function())
+
+    assert before_flag
+    assert not error_flag
+    assert success_flag
+
+    assert not len(logger.data)
+
+    assert function_flag
+
+
+def test_baked_escaper_with_default_for_generator_function_without_breackets():
+    escaper = escape.bake(..., default=5)
+
+    with pytest.raises(SetDefaultReturnValueForGeneratorFunctionError, match=full_match('You cannot set the default return value for the generator function. This is only possible for normal and coroutine functions.')):
+        @escaper
+        def function():
+            raise ValueError
+            yield
+
+
+def test_baked_escaper_with_default_for_async_function_without_breackets():
+    escaper = escape.bake(..., default=5)
+
+    @escaper
+    async def function():
+        raise ValueError
+
+    assert asyncio.run(function()) == 5
+
+
+def test_baked_escaper_with_default_for_generator_function_with_empty_breackets():
+    escaper = escape.bake(..., default=5)
+
+    with pytest.raises(SetDefaultReturnValueForGeneratorFunctionError, match=full_match('You cannot set the default return value for the generator function. This is only possible for normal and coroutine functions.')):
+        @escaper()
+        def function():
+            raise ValueError
+            yield
+
+
+def test_baked_escaper_with_default_for_async_function_with_empty_breackets():
+    escaper = escape.bake(..., default=5)
+
+    @escaper()
+    async def function():
+        raise ValueError
+
+    assert asyncio.run(function()) == 5
+
+
+def test_baked_escaper_with_default_for_generator_function_with_breackets_with_escaped_exception():
+    escaper = escape.bake(default=5)
+
+    with pytest.raises(SetDefaultReturnValueForGeneratorFunctionError, match=full_match('You cannot set the default return value for the generator function. This is only possible for normal and coroutine functions.')):
+        @escaper(ValueError)
+        def function():
+            raise ValueError
+            yield
+
+
+def test_baked_escaper_with_default_for_async_function_with_breackets_with_escaped_exception():
+    escaper = escape.bake(default=5)
+
+    @escaper(ValueError)
+    async def function():
+        raise ValueError
+
+    assert asyncio.run(function()) == 5
