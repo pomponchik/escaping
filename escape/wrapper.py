@@ -171,6 +171,7 @@ class Wrapper:
 
     def __exit__(self, exception_type: Optional[Type[BaseException]], exception_value: Optional[BaseException], traceback: Optional[TracebackType]) -> bool:
         result = False
+        wrapped_doc = '' if self.doc is None else f' ({self.doc})'
 
         if exception_type is not None:
             exception_massage = '' if not str(exception_value) else f' ("{exception_value}")'
@@ -178,14 +179,14 @@ class Wrapper:
             for muted_exception_type in self.exceptions:
                 if issubclass(exception_type, muted_exception_type):
                     if self.error_log_message is None:
-                        self.logger.exception(f'The "{exception_type.__name__}"{exception_massage} exception was suppressed inside the context.')
+                        self.logger.exception(f'The "{exception_type.__name__}"{exception_massage} exception was suppressed inside the context{wrapped_doc}.')
                     else:
                         self.logger.exception(self.error_log_message)
                     result = True
 
             if not result:
                 if self.error_log_message is None:
-                    self.logger.error(f'The "{exception_type.__name__}"{exception_massage} exception was not suppressed inside the context.')
+                    self.logger.error(f'The "{exception_type.__name__}"{exception_massage} exception was not suppressed inside the context{wrapped_doc}.')
                 else:
                     self.logger.error(self.error_log_message)
 
@@ -194,7 +195,7 @@ class Wrapper:
         else:
             if self.success_logging:
                 if self.success_log_message is None:
-                    self.logger.info('The code block was executed successfully.')
+                    self.logger.info(f'The code block{wrapped_doc} was executed successfully.')
                 else:
                     self.logger.info(self.success_log_message)
 
