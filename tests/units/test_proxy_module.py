@@ -1189,7 +1189,7 @@ def test_handled_error_in_success_callback_in_usual_function(muted_exceptions, r
 
     function()
 
-    assert logger.data.exception[0].message == f'When executing the callback ("success_callback"), the exception "{raised_exception_type.__name__}" ("text") was suppressed.'
+    assert logger.data.exception[0].message == f'When executing the callback "success_callback", the exception "{raised_exception_type.__name__}" ("text") was suppressed.'
     assert len(logger.data) == 1
 
 
@@ -1216,7 +1216,7 @@ def test_handled_error_in_success_callback_in_generator_function(muted_exception
 
     list(function())
 
-    assert logger.data.exception[0].message == f'When executing the callback ("success_callback"), the exception "{raised_exception_type.__name__}" ("text") was suppressed.'
+    assert logger.data.exception[0].message == f'When executing the callback "success_callback", the exception "{raised_exception_type.__name__}" ("text") was suppressed.'
     assert len(logger.data) == 1
 
 
@@ -1244,7 +1244,7 @@ def test_unhandled_error_in_success_callback_in_usual_function(muted_exceptions,
         function()
 
     assert len(logger.data) == 1
-    assert logger.data.error[0].message == f'When executing the callback ("success_callback"), the exception "{raised_exception_type.__name__}" ("text") was not suppressed.'
+    assert logger.data.error[0].message == f'When executing the callback "success_callback", the exception "{raised_exception_type.__name__}" ("text") was not suppressed.'
 
 
 @pytest.mark.parametrize(
@@ -1271,7 +1271,7 @@ def test_unhandled_error_in_success_callback_in_generator_function(muted_excepti
         list(function())
 
     assert len(logger.data) == 1
-    assert logger.data.error[0].message == f'When executing the callback ("success_callback"), the exception "{raised_exception_type.__name__}" ("text") was not suppressed.'
+    assert logger.data.error[0].message == f'When executing the callback "success_callback", the exception "{raised_exception_type.__name__}" ("text") was not suppressed.'
 
 
 @pytest.mark.parametrize(
@@ -1297,7 +1297,7 @@ def test_handled_error_in_success_callback_in_async_function(muted_exceptions, r
 
     asyncio.run(function())
 
-    assert logger.data.exception[0].message == f'When executing the callback ("success_callback"), the exception "{raised_exception_type.__name__}" ("text") was suppressed.'
+    assert logger.data.exception[0].message == f'When executing the callback "success_callback", the exception "{raised_exception_type.__name__}" ("text") was suppressed.'
     assert len(logger.data) == 1
 
 
@@ -1325,7 +1325,7 @@ def test_unhandled_error_in_success_callback_in_async_function(muted_exceptions,
         asyncio.run(function())
 
     assert len(logger.data) == 1
-    assert logger.data.error[0].message == f'When executing the callback ("success_callback"), the exception "{raised_exception_type.__name__}" ("text") was not suppressed.'
+    assert logger.data.error[0].message == f'When executing the callback "success_callback", the exception "{raised_exception_type.__name__}" ("text") was not suppressed.'
 
 
 @pytest.mark.parametrize(
@@ -1348,7 +1348,7 @@ def test_handled_error_in_success_callback_in_context_manager(muted_exceptions, 
     with escape(*muted_exceptions, success_callback=success_callback, logger=logger):
         pass
 
-    assert logger.data.exception[0].message == f'When executing the callback ("success_callback"), the exception "{raised_exception_type.__name__}" ("text") was suppressed.'
+    assert logger.data.exception[0].message == f'When executing the callback "success_callback", the exception "{raised_exception_type.__name__}" ("text") was suppressed.'
     assert len(logger.data) == 1
 
 
@@ -1373,7 +1373,7 @@ def test_unhandled_error_in_success_callback_in_context_manager(muted_exceptions
             pass
 
     assert len(logger.data) == 1
-    assert logger.data.error[0].message == f'When executing the callback ("success_callback"), the exception "{raised_exception_type.__name__}" ("text") was not suppressed.'
+    assert logger.data.error[0].message == f'When executing the callback "success_callback", the exception "{raised_exception_type.__name__}" ("text") was not suppressed.'
 
 
 def test_user_message_for_error_logging_in_context_manager_if_exception_was_handled():
@@ -4896,3 +4896,608 @@ def test_baked_escaper_with_default_for_async_function_with_breackets_with_escap
         raise ValueError
 
     assert asyncio.run(function()) == 5
+
+
+# Logs with docs:
+# 1. Usual function / generator function / coroutine function / context manager
+# 2. In basic logic / callbacks
+# 2. Expected exception / not expected exception / succes if success_logging on
+# 3. Baked / not baked escapers
+
+
+def test_logging_with_docs_for_basic_logic_of_usual_function_and_expected_exception_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    @escape(ValueError, logger=logger, doc='some doc')
+    def function():
+        raise ValueError('message')
+
+    function()
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'When executing function "function" (some doc), the exception "ValueError" ("message") was suppressed.'
+
+
+def test_logging_with_docs_for_basic_logic_of_generator_function_and_expected_exception_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    @escape(ValueError, logger=logger, doc='some doc')
+    def function():
+        raise ValueError('message')
+        yield
+
+    [x for x in function()]
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'When executing generator function "function" (some doc), the exception "ValueError" ("message") was suppressed.'
+
+
+def test_logging_with_docs_for_basic_logic_of_async_function_and_expected_exception_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    @escape(ValueError, logger=logger, doc='some doc')
+    async def function():
+        raise ValueError('message')
+
+    asyncio.run(function())
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'When executing coroutine function "function" (some doc), the exception "ValueError" ("message") was suppressed.'
+
+
+def test_logging_with_docs_for_basic_logic_of_context_manager_and_expected_exception_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    with escape(ValueError, logger=logger, doc='some doc'):
+        raise ValueError('message')
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'The "ValueError" ("message") exception was suppressed inside the context (some doc).'
+
+
+def test_logging_with_docs_for_before_callback_of_usual_function_and_expected_exception_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    def callback():
+        raise ValueError('message')
+
+    @escape(ValueError, logger=logger, doc='some doc', before=callback)
+    def function():
+        pass
+
+    function()
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'When executing the callback "callback" (some doc), the exception "ValueError" ("message") was suppressed.'
+
+
+def test_logging_with_docs_for_before_callback_of_generator_function_and_expected_exception_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    def callback():
+        raise ValueError('message')
+
+    @escape(ValueError, logger=logger, doc='some doc', before=callback)
+    def function():
+        yield
+
+    [x for x in function()]
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'When executing the callback "callback" (some doc), the exception "ValueError" ("message") was suppressed.'
+
+
+def test_logging_with_docs_for_before_callback_of_async_function_and_expected_exception_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    def callback():
+        raise ValueError('message')
+
+    @escape(ValueError, logger=logger, doc='some doc', before=callback)
+    async def function():
+        pass
+
+    asyncio.run(function())
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'When executing the callback "callback" (some doc), the exception "ValueError" ("message") was suppressed.'
+
+
+def test_logging_with_docs_for_before_callback_of_context_manager_and_expected_exception_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    def callback():
+        raise ValueError('message')
+
+    with escape(ValueError, logger=logger, doc='some doc', before=callback):
+        pass
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'When executing the callback "callback" (some doc), the exception "ValueError" ("message") was suppressed.'
+
+
+def test_logging_with_docs_for_basic_logic_of_usual_function_and_not_expected_exception_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    @escape(ValueError, logger=logger, doc='some doc')
+    def function():
+        raise ZeroDivisionError('message')
+
+    with pytest.raises(ZeroDivisionError, match=full_match('message')):
+        function()
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == 'When executing function "function" (some doc), the exception "ZeroDivisionError" ("message") was not suppressed.'
+
+
+def test_logging_with_docs_for_basic_logic_of_generator_function_and_not_expected_exception_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    @escape(ValueError, logger=logger, doc='some doc')
+    def function():
+        raise ZeroDivisionError('message')
+        yield
+
+    with pytest.raises(ZeroDivisionError, match=full_match('message')):
+        [x for x in function()]
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == 'When executing generator function "function" (some doc), the exception "ZeroDivisionError" ("message") was not suppressed.'
+
+
+def test_logging_with_docs_for_basic_logic_of_async_function_and_not_expected_exception_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    @escape(ValueError, logger=logger, doc='some doc')
+    async def function():
+        raise ZeroDivisionError('message')
+
+    with pytest.raises(ZeroDivisionError, match=full_match('message')):
+        asyncio.run(function())
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == 'When executing coroutine function "function" (some doc), the exception "ZeroDivisionError" ("message") was not suppressed.'
+
+
+def test_logging_with_docs_for_basic_logic_of_context_manager_and_not_expected_exception_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    with pytest.raises(ZeroDivisionError, match=full_match('message')):
+        with escape(ValueError, logger=logger, doc='some doc'):
+            raise ZeroDivisionError('message')
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == 'The "ZeroDivisionError" ("message") exception was not suppressed inside the context (some doc).'
+
+
+def test_logging_with_docs_for_before_callback_of_usual_function_and_not_expected_exception_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    def callback():
+        raise ZeroDivisionError('message')
+
+    @escape(ValueError, logger=logger, doc='some doc', before=callback)
+    def function():
+        pass
+
+    with pytest.raises(ZeroDivisionError, match=full_match('message')):
+        function()
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == 'When executing the callback "callback" (some doc), the exception "ZeroDivisionError" ("message") was not suppressed.'
+
+
+def test_logging_with_docs_for_before_callback_of_generator_function_and_not_expected_exception_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    def callback():
+        raise ZeroDivisionError('message')
+
+    @escape(ValueError, logger=logger, doc='some doc', before=callback)
+    def function():
+        yield
+
+    with pytest.raises(ZeroDivisionError, match=full_match('message')):
+        [x for x in function()]
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == 'When executing the callback "callback" (some doc), the exception "ZeroDivisionError" ("message") was not suppressed.'
+
+
+def test_logging_with_docs_for_before_callback_of_async_function_and_not_expected_exception_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    def callback():
+        raise ZeroDivisionError('message')
+
+    @escape(ValueError, logger=logger, doc='some doc', before=callback)
+    async def function():
+        pass
+
+    with pytest.raises(ZeroDivisionError, match=full_match('message')):
+        asyncio.run(function())
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == 'When executing the callback "callback" (some doc), the exception "ZeroDivisionError" ("message") was not suppressed.'
+
+
+def test_logging_with_docs_for_before_callback_of_context_manager_and_not_expected_exception_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    def callback():
+        raise ZeroDivisionError('message')
+
+    with pytest.raises(ZeroDivisionError, match=full_match('message')):
+        with escape(ValueError, logger=logger, doc='some doc', before=callback):
+            pass
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == 'When executing the callback "callback" (some doc), the exception "ZeroDivisionError" ("message") was not suppressed.'
+
+
+def test_logging_with_docs_for_basic_logic_of_usual_function_and_success_when_success_logging_on_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    @escape(ValueError, logger=logger, doc='some doc', success_logging=True)
+    def function():
+        pass
+
+    function()
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == 'The function "function" (some doc) completed successfully.'
+
+
+def test_logging_with_docs_for_basic_logic_of_generator_function_and_success_when_success_logging_on_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    @escape(ValueError, logger=logger, doc='some doc', success_logging=True)
+    def function():
+        yield
+
+    [x for x in function()]
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == 'The generator function "function" (some doc) completed successfully.'
+
+
+def test_logging_with_docs_for_basic_logic_of_async_function_and_success_when_success_logging_on_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    @escape(ValueError, logger=logger, doc='some doc', success_logging=True)
+    async def function():
+        pass
+
+    asyncio.run(function())
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == 'The coroutine function "function" (some doc) completed successfully.'
+
+
+def test_logging_with_docs_for_basic_logic_of_context_manager_and_success_when_success_logging_on_and_not_baked_escaper():
+    logger = MemoryLogger()
+
+    with escape(ValueError, logger=logger, doc='some doc', success_logging=True):
+        pass
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == 'The code block (some doc) was executed successfully.'
+
+
+def test_logging_with_docs_for_basic_logic_of_usual_function_and_expected_exception_and_baked_escaper():
+    logger = MemoryLogger()
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc')
+
+    @escaper
+    def function():
+        raise ValueError('message')
+
+    function()
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'When executing function "function" (some doc), the exception "ValueError" ("message") was suppressed.'
+
+
+def test_logging_with_docs_for_basic_logic_of_generator_function_and_expected_exception_and_baked_escaper():
+    logger = MemoryLogger()
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc')
+
+    @escaper
+    def function():
+        raise ValueError('message')
+        yield
+
+    [x for x in function()]
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'When executing generator function "function" (some doc), the exception "ValueError" ("message") was suppressed.'
+
+
+def test_logging_with_docs_for_basic_logic_of_async_function_and_expected_exception_and_baked_escaper():
+    logger = MemoryLogger()
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc')
+
+    @escaper
+    async def function():
+        raise ValueError('message')
+
+    asyncio.run(function())
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'When executing coroutine function "function" (some doc), the exception "ValueError" ("message") was suppressed.'
+
+
+def test_logging_with_docs_for_basic_logic_of_context_manager_and_expected_exception_and_baked_escaper():
+    logger = MemoryLogger()
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc')
+
+    with escaper:
+        raise ValueError('message')
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'The "ValueError" ("message") exception was suppressed inside the context (some doc).'
+
+
+def test_logging_with_docs_for_before_callback_of_usual_function_and_expected_exception_and_baked_escaper():
+    logger = MemoryLogger()
+
+    def callback():
+        raise ValueError('message')
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc', before=callback)
+
+    @escaper
+    def function():
+        pass
+
+    function()
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'When executing the callback "callback" (some doc), the exception "ValueError" ("message") was suppressed.'
+
+
+def test_logging_with_docs_for_before_callback_of_generator_function_and_expected_exception_and_baked_escaper():
+    logger = MemoryLogger()
+
+    def callback():
+        raise ValueError('message')
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc', before=callback)
+
+    @escaper
+    def function():
+        yield
+
+    [x for x in function()]
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'When executing the callback "callback" (some doc), the exception "ValueError" ("message") was suppressed.'
+
+
+def test_logging_with_docs_for_before_callback_of_async_function_and_expected_exception_and_baked_escaper():
+    logger = MemoryLogger()
+
+    def callback():
+        raise ValueError('message')
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc', before=callback)
+
+    @escaper
+    async def function():
+        pass
+
+    asyncio.run(function())
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'When executing the callback "callback" (some doc), the exception "ValueError" ("message") was suppressed.'
+
+
+def test_logging_with_docs_for_before_callback_of_context_manager_and_expected_exception_and_baked_escaper():
+    logger = MemoryLogger()
+
+    def callback():
+        raise ValueError('message')
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc', before=callback)
+
+    with escaper:
+        pass
+
+    assert len(logger.data) == 1
+    assert logger.data.exception[0].message == 'When executing the callback "callback" (some doc), the exception "ValueError" ("message") was suppressed.'
+
+
+def test_logging_with_docs_for_basic_logic_of_usual_function_and_not_expected_exception_and_baked_escaper():
+    logger = MemoryLogger()
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc')
+
+    @escaper
+    def function():
+        raise ZeroDivisionError('message')
+
+    with pytest.raises(ZeroDivisionError, match=full_match('message')):
+        function()
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == 'When executing function "function" (some doc), the exception "ZeroDivisionError" ("message") was not suppressed.'
+
+
+def test_logging_with_docs_for_basic_logic_of_generator_function_and_not_expected_exception_and_baked_escaper():
+    logger = MemoryLogger()
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc')
+
+    @escaper
+    def function():
+        raise ZeroDivisionError('message')
+        yield
+
+    with pytest.raises(ZeroDivisionError, match=full_match('message')):
+        [x for x in function()]
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == 'When executing generator function "function" (some doc), the exception "ZeroDivisionError" ("message") was not suppressed.'
+
+
+def test_logging_with_docs_for_basic_logic_of_async_function_and_not_expected_exception_and_baked_escaper():
+    logger = MemoryLogger()
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc')
+
+    @escaper
+    async def function():
+        raise ZeroDivisionError('message')
+
+    with pytest.raises(ZeroDivisionError, match=full_match('message')):
+        asyncio.run(function())
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == 'When executing coroutine function "function" (some doc), the exception "ZeroDivisionError" ("message") was not suppressed.'
+
+
+def test_logging_with_docs_for_basic_logic_of_context_manager_and_not_expected_exception_and_baked_escaper():
+    logger = MemoryLogger()
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc')
+
+    with pytest.raises(ZeroDivisionError, match=full_match('message')):
+        with escaper:
+            raise ZeroDivisionError('message')
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == 'The "ZeroDivisionError" ("message") exception was not suppressed inside the context (some doc).'
+
+
+def test_logging_with_docs_for_before_callback_of_usual_function_and_not_expected_exception_and_baked_escaper():
+    logger = MemoryLogger()
+
+    def callback():
+        raise ZeroDivisionError('message')
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc', before=callback)
+
+    @escaper
+    def function():
+        pass
+
+    with pytest.raises(ZeroDivisionError, match=full_match('message')):
+        function()
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == 'When executing the callback "callback" (some doc), the exception "ZeroDivisionError" ("message") was not suppressed.'
+
+
+def test_logging_with_docs_for_before_callback_of_generator_function_and_not_expected_exception_and_baked_escaper():
+    logger = MemoryLogger()
+
+    def callback():
+        raise ZeroDivisionError('message')
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc', before=callback)
+
+    @escaper
+    def function():
+        yield
+
+    with pytest.raises(ZeroDivisionError, match=full_match('message')):
+        [x for x in function()]
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == 'When executing the callback "callback" (some doc), the exception "ZeroDivisionError" ("message") was not suppressed.'
+
+
+def test_logging_with_docs_for_before_callback_of_async_function_and_not_expected_exception_and_baked_escaper():
+    logger = MemoryLogger()
+
+    def callback():
+        raise ZeroDivisionError('message')
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc', before=callback)
+
+    @escaper
+    async def function():
+        pass
+
+    with pytest.raises(ZeroDivisionError, match=full_match('message')):
+        asyncio.run(function())
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == 'When executing the callback "callback" (some doc), the exception "ZeroDivisionError" ("message") was not suppressed.'
+
+
+def test_logging_with_docs_for_before_callback_of_context_manager_and_not_expected_exception_and_baked_escaper():
+    logger = MemoryLogger()
+
+    def callback():
+        raise ZeroDivisionError('message')
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc', before=callback)
+
+    with pytest.raises(ZeroDivisionError, match=full_match('message')):
+        with escaper:
+            pass
+
+    assert len(logger.data) == 1
+    assert logger.data.error[0].message == 'When executing the callback "callback" (some doc), the exception "ZeroDivisionError" ("message") was not suppressed.'
+
+
+def test_logging_with_docs_for_basic_logic_of_usual_function_and_success_when_success_logging_on_and_baked_escaper():
+    logger = MemoryLogger()
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc', success_logging=True)
+
+    @escaper
+    def function():
+        pass
+
+    function()
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == 'The function "function" (some doc) completed successfully.'
+
+
+def test_logging_with_docs_for_basic_logic_of_generator_function_and_success_when_success_logging_on_and_baked_escaper():
+    logger = MemoryLogger()
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc', success_logging=True)
+
+    @escaper
+    def function():
+        yield
+
+    [x for x in function()]
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == 'The generator function "function" (some doc) completed successfully.'
+
+
+def test_logging_with_docs_for_basic_logic_of_async_function_and_success_when_success_logging_on_and_baked_escaper():
+    logger = MemoryLogger()
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc', success_logging=True)
+
+    @escaper
+    async def function():
+        pass
+
+    asyncio.run(function())
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == 'The coroutine function "function" (some doc) completed successfully.'
+
+
+def test_logging_with_docs_for_basic_logic_of_context_manager_and_success_when_success_logging_on_and_baked_escaper():
+    logger = MemoryLogger()
+
+    escaper = escape.bake(ValueError, logger=logger, doc='some doc', success_logging=True)
+
+    with escaper:
+        pass
+
+    assert len(logger.data) == 1
+    assert logger.data.info[0].message == 'The code block (some doc) was executed successfully.'
