@@ -46,7 +46,6 @@ class BakedEscaper:
         self.wrapper_for_simple_contexts = self.escaper(*(self.args), **(self.kwargs))
 
     def __enter__(self) -> 'ProxyModule':  # type: ignore[name-defined] # noqa: F821
-        print(self.wrapper_for_simple_contexts)
         return self.wrapper_for_simple_contexts.__enter__()
 
     def __exit__(self, exception_type: Optional[Type[BaseException]], exception_value: Optional[BaseException], traceback: Optional[TracebackType]) -> bool:
