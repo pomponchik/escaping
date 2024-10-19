@@ -2566,7 +2566,7 @@ def test_bake_and_call_simple_function_with_handled_exception_and_empty_brackets
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper()
     def function():
@@ -2579,6 +2579,7 @@ def test_bake_and_call_simple_function_with_handled_exception_and_empty_brackets
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_function_with_args_and_kwargs_with_handled_exception_and_empty_brackets():
@@ -2600,7 +2601,7 @@ def test_bake_and_call_function_with_args_and_kwargs_with_handled_exception_and_
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper()
     def function(arg, kwarg=''):
@@ -2613,6 +2614,7 @@ def test_bake_and_call_function_with_args_and_kwargs_with_handled_exception_and_
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_simple_function_with_not_handled_exception_and_empty_brackets():
@@ -2634,7 +2636,7 @@ def test_bake_and_call_simple_function_with_not_handled_exception_and_empty_brac
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper()
     def function():
@@ -2648,6 +2650,7 @@ def test_bake_and_call_simple_function_with_not_handled_exception_and_empty_brac
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_call_function_with_args_and_kwargs_with_not_handled_exception_and_empty_brackets():
@@ -2669,7 +2672,7 @@ def test_bake_and_call_function_with_args_and_kwargs_with_not_handled_exception_
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper()
     def function(arg, kwarg=''):
@@ -2683,6 +2686,7 @@ def test_bake_and_call_function_with_args_and_kwargs_with_not_handled_exception_
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_call_simple_function_with_handled_exception_and_without_breackets():
@@ -2704,7 +2708,7 @@ def test_bake_and_call_simple_function_with_handled_exception_and_without_breack
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper
     def function():
@@ -2717,6 +2721,7 @@ def test_bake_and_call_simple_function_with_handled_exception_and_without_breack
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_function_with_args_and_kwargs_with_handled_exception_and_without_breackets():
@@ -2738,7 +2743,7 @@ def test_bake_and_call_function_with_args_and_kwargs_with_handled_exception_and_
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper
     def function(arg, kwarg=''):
@@ -2751,6 +2756,7 @@ def test_bake_and_call_function_with_args_and_kwargs_with_handled_exception_and_
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_simple_function_with_not_handled_exception_and_without_breackets():
@@ -2772,7 +2778,7 @@ def test_bake_and_call_simple_function_with_not_handled_exception_and_without_br
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper
     def function():
@@ -2786,6 +2792,7 @@ def test_bake_and_call_simple_function_with_not_handled_exception_and_without_br
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_call_function_with_args_and_kwargs_with_not_handled_exception_and_without_breackets():
@@ -2807,7 +2814,7 @@ def test_bake_and_call_function_with_args_and_kwargs_with_not_handled_exception_
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper
     def function(arg, kwarg=''):
@@ -2821,6 +2828,7 @@ def test_bake_and_call_function_with_args_and_kwargs_with_not_handled_exception_
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_call_simple_function_with_handled_exception_and_with_breackets_with_ellipsis():
@@ -2842,7 +2850,7 @@ def test_bake_and_call_simple_function_with_handled_exception_and_with_breackets
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(...)
     def function():
@@ -2855,6 +2863,7 @@ def test_bake_and_call_simple_function_with_handled_exception_and_with_breackets
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_function_with_args_and_kwargs_with_handled_exception_and_with_breackets_with_ellipsis():
@@ -2876,7 +2885,7 @@ def test_bake_and_call_function_with_args_and_kwargs_with_handled_exception_and_
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(...)
     def function(arg, kwarg=''):
@@ -2889,6 +2898,7 @@ def test_bake_and_call_function_with_args_and_kwargs_with_handled_exception_and_
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_simple_function_with_not_handled_exception_and_with_breackets_with_ellipsis():
@@ -2910,7 +2920,7 @@ def test_bake_and_call_simple_function_with_not_handled_exception_and_with_breac
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(...)
     def function():
@@ -2924,6 +2934,7 @@ def test_bake_and_call_simple_function_with_not_handled_exception_and_with_breac
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_call_function_with_args_and_kwargs_with_not_handled_exception_and_with_breackets_with_ellipsis():
@@ -2945,7 +2956,7 @@ def test_bake_and_call_function_with_args_and_kwargs_with_not_handled_exception_
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(...)
     def function(arg, kwarg=''):
@@ -2959,6 +2970,7 @@ def test_bake_and_call_function_with_args_and_kwargs_with_not_handled_exception_
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_call_simple_function_with_handled_exception_that_is_passed_as_argument_and_without_breackets():
@@ -2980,7 +2992,7 @@ def test_bake_and_call_simple_function_with_handled_exception_that_is_passed_as_
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(ValueError)
     def function():
@@ -2993,6 +3005,7 @@ def test_bake_and_call_simple_function_with_handled_exception_that_is_passed_as_
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_simple_function_without_exceptions_and_empty_brackets():
@@ -3015,7 +3028,7 @@ def test_bake_and_call_simple_function_without_exceptions_and_empty_brackets():
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper()
     def function():
@@ -3053,7 +3066,7 @@ def test_bake_and_call_simple_function_without_exceptions_without_brackets():
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper
     def function():
@@ -3091,7 +3104,7 @@ def test_bake_and_call_simple_function_without_exceptions_with_breackets_with_el
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper()
     def function():
@@ -3129,7 +3142,7 @@ def test_bake_and_call_simple_function_without_exceptions_with_breackets_with_ex
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(NameError)
     def function():
@@ -3167,7 +3180,7 @@ def test_bake_and_call_simple_function_without_exceptions_with_breackets_with_tw
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(NameError, RuntimeError)
     def function():
@@ -3204,7 +3217,7 @@ def test_bake_and_use_context_manager_with_handled_exception_and_empty_breackets
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     with escaper():
         raise ValueError
@@ -3214,6 +3227,7 @@ def test_bake_and_use_context_manager_with_handled_exception_and_empty_breackets
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_use_context_manager_with_not_handled_exception_and_empty_breackets():
@@ -3235,7 +3249,7 @@ def test_bake_and_use_context_manager_with_not_handled_exception_and_empty_breac
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     with pytest.raises(ZeroDivisionError):
         with escaper():
@@ -3246,6 +3260,7 @@ def test_bake_and_use_context_manager_with_not_handled_exception_and_empty_breac
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_for_context_manager_with_two_ellipsises_and_handled_exception():
@@ -3267,7 +3282,7 @@ def test_bake_for_context_manager_with_two_ellipsises_and_handled_exception():
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(..., logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(..., logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     with escaper(...):
         raise ValueError
@@ -3277,6 +3292,7 @@ def test_bake_for_context_manager_with_two_ellipsises_and_handled_exception():
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_for_context_manager_one_first_ellipsis_and_handled_exception():
@@ -3298,7 +3314,7 @@ def test_bake_for_context_manager_one_first_ellipsis_and_handled_exception():
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(..., logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(..., logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     with escaper():
         raise ValueError
@@ -3308,6 +3324,7 @@ def test_bake_for_context_manager_one_first_ellipsis_and_handled_exception():
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_for_context_manager_one_second_ellipsis_and_handled_exception():
@@ -3329,7 +3346,7 @@ def test_bake_for_context_manager_one_second_ellipsis_and_handled_exception():
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     with escaper(...):
         raise ValueError
@@ -3339,6 +3356,7 @@ def test_bake_for_context_manager_one_second_ellipsis_and_handled_exception():
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_use_context_manager_with_handled_exception_and_without_breackets():
@@ -3360,7 +3378,7 @@ def test_bake_and_use_context_manager_with_handled_exception_and_without_breacke
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     with escaper:
         raise ValueError
@@ -3370,6 +3388,7 @@ def test_bake_and_use_context_manager_with_handled_exception_and_without_breacke
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_use_context_manager_with_not_handled_exception_and_without_breackets():
@@ -3391,7 +3410,7 @@ def test_bake_and_use_context_manager_with_not_handled_exception_and_without_bre
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     with pytest.raises(ZeroDivisionError):
         with escaper:
@@ -3402,6 +3421,7 @@ def test_bake_and_use_context_manager_with_not_handled_exception_and_without_bre
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_use_context_manager_with_handled_exception_with_breackets_with_ellipsis():
@@ -3423,7 +3443,7 @@ def test_bake_and_use_context_manager_with_handled_exception_with_breackets_with
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     with escaper(...):
         raise ValueError
@@ -3433,6 +3453,7 @@ def test_bake_and_use_context_manager_with_handled_exception_with_breackets_with
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_use_context_manager_with_not_handled_exception_with_breackets_with_ellipsis():
@@ -3454,7 +3475,7 @@ def test_bake_and_use_context_manager_with_not_handled_exception_with_breackets_
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     with pytest.raises(GeneratorExit):
         with escaper(...):
@@ -3465,6 +3486,7 @@ def test_bake_and_use_context_manager_with_not_handled_exception_with_breackets_
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_use_context_manager_with_handled_exception_and_with_breackets_where_is_raised_exception():
@@ -3486,7 +3508,7 @@ def test_bake_and_use_context_manager_with_handled_exception_and_with_breackets_
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     with escaper(ValueError):
         raise ValueError
@@ -3496,6 +3518,7 @@ def test_bake_and_use_context_manager_with_handled_exception_and_with_breackets_
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_baked_escaper_with_default_for_simple_function_without_breackets():
@@ -3547,7 +3570,7 @@ def test_bake_and_call_generator_function_with_handled_exception_and_empty_brack
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper()
     def function():
@@ -3562,6 +3585,7 @@ def test_bake_and_call_generator_function_with_handled_exception_and_empty_brack
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_async_function_with_handled_exception_and_empty_brackets():
@@ -3583,7 +3607,7 @@ def test_bake_and_call_async_function_with_handled_exception_and_empty_brackets(
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper()
     async def function():
@@ -3596,6 +3620,7 @@ def test_bake_and_call_async_function_with_handled_exception_and_empty_brackets(
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_generator_function_with_args_and_kwargs_with_handled_exception_and_empty_brackets():
@@ -3617,7 +3642,7 @@ def test_bake_and_call_generator_function_with_args_and_kwargs_with_handled_exce
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper()
     def function(arg, kwarg=''):
@@ -3632,6 +3657,7 @@ def test_bake_and_call_generator_function_with_args_and_kwargs_with_handled_exce
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_async_function_with_args_and_kwargs_with_handled_exception_and_empty_brackets():
@@ -3653,7 +3679,7 @@ def test_bake_and_call_async_function_with_args_and_kwargs_with_handled_exceptio
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper()
     async def function(arg, kwarg=''):
@@ -3666,6 +3692,7 @@ def test_bake_and_call_async_function_with_args_and_kwargs_with_handled_exceptio
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_generator_function_with_not_handled_exception_and_empty_brackets():
@@ -3687,7 +3714,7 @@ def test_bake_and_call_generator_function_with_not_handled_exception_and_empty_b
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper()
     def function():
@@ -3703,6 +3730,7 @@ def test_bake_and_call_generator_function_with_not_handled_exception_and_empty_b
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_call_async_function_with_not_handled_exception_and_empty_brackets():
@@ -3724,7 +3752,7 @@ def test_bake_and_call_async_function_with_not_handled_exception_and_empty_brack
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper()
     async def function():
@@ -3738,6 +3766,7 @@ def test_bake_and_call_async_function_with_not_handled_exception_and_empty_brack
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_call_generator_function_with_args_and_kwargs_with_not_handled_exception_and_empty_brackets():
@@ -3759,7 +3788,7 @@ def test_bake_and_call_generator_function_with_args_and_kwargs_with_not_handled_
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper()
     def function(arg, kwarg=''):
@@ -3775,6 +3804,7 @@ def test_bake_and_call_generator_function_with_args_and_kwargs_with_not_handled_
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_call_async_function_with_args_and_kwargs_with_not_handled_exception_and_empty_brackets():
@@ -3796,7 +3826,7 @@ def test_bake_and_call_async_function_with_args_and_kwargs_with_not_handled_exce
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper()
     async def function(arg, kwarg=''):
@@ -3810,6 +3840,7 @@ def test_bake_and_call_async_function_with_args_and_kwargs_with_not_handled_exce
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_call_generator_function_with_handled_exception_and_without_breackets():
@@ -3831,7 +3862,7 @@ def test_bake_and_call_generator_function_with_handled_exception_and_without_bre
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper
     def function():
@@ -3846,6 +3877,7 @@ def test_bake_and_call_generator_function_with_handled_exception_and_without_bre
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_async_function_with_handled_exception_and_without_breackets():
@@ -3867,7 +3899,7 @@ def test_bake_and_call_async_function_with_handled_exception_and_without_breacke
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper
     async def function():
@@ -3880,6 +3912,7 @@ def test_bake_and_call_async_function_with_handled_exception_and_without_breacke
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_generator_function_with_args_and_kwargs_with_handled_exception_and_without_breackets():
@@ -3901,7 +3934,7 @@ def test_bake_and_call_generator_function_with_args_and_kwargs_with_handled_exce
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper
     def function(arg, kwarg=''):
@@ -3916,6 +3949,7 @@ def test_bake_and_call_generator_function_with_args_and_kwargs_with_handled_exce
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_async_function_with_args_and_kwargs_with_handled_exception_and_without_breackets():
@@ -3937,7 +3971,7 @@ def test_bake_and_call_async_function_with_args_and_kwargs_with_handled_exceptio
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper
     async def function(arg, kwarg=''):
@@ -3950,6 +3984,7 @@ def test_bake_and_call_async_function_with_args_and_kwargs_with_handled_exceptio
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_generator_function_with_not_handled_exception_and_without_breackets():
@@ -3971,7 +4006,7 @@ def test_bake_and_call_generator_function_with_not_handled_exception_and_without
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper
     def function():
@@ -3987,6 +4022,7 @@ def test_bake_and_call_generator_function_with_not_handled_exception_and_without
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_call_async_function_with_not_handled_exception_and_without_breackets():
@@ -4008,7 +4044,7 @@ def test_bake_and_call_async_function_with_not_handled_exception_and_without_bre
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper
     async def function():
@@ -4022,6 +4058,7 @@ def test_bake_and_call_async_function_with_not_handled_exception_and_without_bre
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_call_generator_function_with_args_and_kwargs_with_not_handled_exception_and_without_breackets():
@@ -4043,7 +4080,7 @@ def test_bake_and_call_generator_function_with_args_and_kwargs_with_not_handled_
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper
     def function(arg, kwarg=''):
@@ -4059,6 +4096,7 @@ def test_bake_and_call_generator_function_with_args_and_kwargs_with_not_handled_
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_call_async_function_with_args_and_kwargs_with_not_handled_exception_and_without_breackets():
@@ -4080,7 +4118,7 @@ def test_bake_and_call_async_function_with_args_and_kwargs_with_not_handled_exce
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper
     async def function(arg, kwarg=''):
@@ -4094,6 +4132,7 @@ def test_bake_and_call_async_function_with_args_and_kwargs_with_not_handled_exce
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_call_generator_function_with_handled_exception_and_with_breackets_with_ellipsis():
@@ -4115,7 +4154,7 @@ def test_bake_and_call_generator_function_with_handled_exception_and_with_breack
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(...)
     def function():
@@ -4130,6 +4169,7 @@ def test_bake_and_call_generator_function_with_handled_exception_and_with_breack
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_async_function_with_handled_exception_and_with_breackets_with_ellipsis():
@@ -4151,7 +4191,7 @@ def test_bake_and_call_async_function_with_handled_exception_and_with_breackets_
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(...)
     async def function():
@@ -4164,6 +4204,7 @@ def test_bake_and_call_async_function_with_handled_exception_and_with_breackets_
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_generator_function_with_args_and_kwargs_with_handled_exception_and_with_breackets_with_ellipsis():
@@ -4185,7 +4226,7 @@ def test_bake_and_call_generator_function_with_args_and_kwargs_with_handled_exce
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(...)
     def function(arg, kwarg=''):
@@ -4200,6 +4241,7 @@ def test_bake_and_call_generator_function_with_args_and_kwargs_with_handled_exce
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_async_function_with_args_and_kwargs_with_handled_exception_and_with_breackets_with_ellipsis():
@@ -4221,7 +4263,7 @@ def test_bake_and_call_async_function_with_args_and_kwargs_with_handled_exceptio
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(...)
     async def function(arg, kwarg=''):
@@ -4234,6 +4276,7 @@ def test_bake_and_call_async_function_with_args_and_kwargs_with_handled_exceptio
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_generator_function_with_not_handled_exception_and_with_breackets_with_ellipsis():
@@ -4255,7 +4298,7 @@ def test_bake_and_call_generator_function_with_not_handled_exception_and_with_br
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(...)
     def function():
@@ -4269,6 +4312,7 @@ def test_bake_and_call_generator_function_with_not_handled_exception_and_with_br
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_call_async_function_with_not_handled_exception_and_with_breackets_with_ellipsis():
@@ -4290,7 +4334,7 @@ def test_bake_and_call_async_function_with_not_handled_exception_and_with_breack
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(...)
     async def function():
@@ -4304,6 +4348,7 @@ def test_bake_and_call_async_function_with_not_handled_exception_and_with_breack
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_call_generator_function_with_args_and_kwargs_with_not_handled_exception_and_with_breackets_with_ellipsis():
@@ -4325,7 +4370,7 @@ def test_bake_and_call_generator_function_with_args_and_kwargs_with_not_handled_
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(...)
     def function(arg, kwarg=''):
@@ -4341,6 +4386,7 @@ def test_bake_and_call_generator_function_with_args_and_kwargs_with_not_handled_
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_call_async_function_with_args_and_kwargs_with_not_handled_exception_and_with_breackets_with_ellipsis():
@@ -4362,7 +4408,7 @@ def test_bake_and_call_async_function_with_args_and_kwargs_with_not_handled_exce
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(...)
     async def function(arg, kwarg=''):
@@ -4376,6 +4422,7 @@ def test_bake_and_call_async_function_with_args_and_kwargs_with_not_handled_exce
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.error[0].message
 
 
 def test_bake_and_call_generator_function_with_handled_exception_that_is_passed_as_argument_and_without_breackets():
@@ -4397,7 +4444,7 @@ def test_bake_and_call_generator_function_with_handled_exception_that_is_passed_
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(ValueError)
     def function():
@@ -4412,6 +4459,7 @@ def test_bake_and_call_generator_function_with_handled_exception_that_is_passed_
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_async_function_with_handled_exception_that_is_passed_as_argument_and_without_breackets():
@@ -4433,7 +4481,7 @@ def test_bake_and_call_async_function_with_handled_exception_that_is_passed_as_a
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(ValueError)
     async def function():
@@ -4446,6 +4494,7 @@ def test_bake_and_call_async_function_with_handled_exception_that_is_passed_as_a
     assert not success_flag
 
     assert len(logger.data)
+    assert '(kek)' in logger.data.exception[0].message
 
 
 def test_bake_and_call_generator_function_without_exceptions_and_empty_brackets():
@@ -4468,7 +4517,7 @@ def test_bake_and_call_generator_function_without_exceptions_and_empty_brackets(
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper()
     def function():
@@ -4508,7 +4557,7 @@ def test_bake_and_call_async_function_without_exceptions_and_empty_brackets():
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper()
     async def function():
@@ -4546,7 +4595,7 @@ def test_bake_and_call_generator_function_without_exceptions_without_brackets():
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper
     def function():
@@ -4586,7 +4635,7 @@ def test_bake_and_call_async_function_without_exceptions_without_brackets():
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper
     async def function():
@@ -4624,7 +4673,7 @@ def test_bake_and_call_generator_function_without_exceptions_with_breackets_with
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper()
     def function():
@@ -4664,7 +4713,7 @@ def test_bake_and_call_async_function_without_exceptions_with_breackets_with_ell
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper()
     async def function():
@@ -4702,7 +4751,7 @@ def test_bake_and_call_generator_function_without_exceptions_with_breackets_with
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(NameError)
     def function():
@@ -4742,7 +4791,7 @@ def test_bake_and_call_async_function_without_exceptions_with_breackets_with_exc
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(NameError)
     async def function():
@@ -4780,7 +4829,7 @@ def test_bake_and_call_generator_function_without_exceptions_with_breackets_with
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(NameError, RuntimeError)
     def function():
@@ -4820,7 +4869,7 @@ def test_bake_and_call_async_function_without_exceptions_with_breackets_with_two
         nonlocal success_flag
         success_flag = True
 
-    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback)
+    escaper = escape.bake(ValueError, ZeroDivisionError, logger=logger, before=before_callback, error_callback=error_callback, success_callback=success_callback, doc='kek')
 
     @escaper(NameError, RuntimeError)
     async def function():
