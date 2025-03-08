@@ -6,7 +6,7 @@ import pytest
 import full_match
 from emptylog import MemoryLogger
 
-import escape
+from escape import escape
 from escape.errors import SetDefaultReturnValueForContextManagerError, SetDefaultReturnValueForGeneratorFunctionError
 
 

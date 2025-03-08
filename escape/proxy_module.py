@@ -1,6 +1,6 @@
 import sys
 from typing import Type, Tuple, Callable, Union, Optional, Any
-from types import TracebackType
+from types import TracebackType, ModuleType
 from inspect import isclass
 from itertools import chain
 
@@ -82,3 +82,7 @@ class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
             doc=doc,
         )
         return escaper
+
+    @property
+    def escape(self) -> ModuleType:
+        return self
