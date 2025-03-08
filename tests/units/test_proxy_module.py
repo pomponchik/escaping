@@ -6,7 +6,7 @@ import pytest
 import full_match
 from emptylog import MemoryLogger
 
-from escape import escape
+from escape import escape  # type: ignore[attr-defined]
 from escape.errors import SetDefaultReturnValueForContextManagerError, SetDefaultReturnValueForGeneratorFunctionError
 
 
