@@ -242,7 +242,15 @@ with escape(success_log_message='Good news, everyone!', success_logging=True, lo
     #> Good news, everyone!
 ```
 
-In addition, if the exception was suppressed inside the `escape`, the log will be recorded using the `exception` method - this means that the trace will be saved. Otherwise, the `error` method will be used - without saving the traceback, because otherwise, if you catch this exception somewhere else and pledge the traceback, there will be several duplicate tracebacks in your log file.
+You can also be content with the standard log message, but add your own comment to it. For this, use the `doc` argument:
+
+```python
+with escape(success_logging=True, logger=logger, doc='Nothing is happening here!'):
+    pass
+    #> The code block (Nothing is happening here!) was executed successfully.
+```
+
+If the exception was suppressed inside the `escape`, the log will be recorded using the `exception` method - this means that the trace will be saved. Otherwise, the `error` method will be used - without saving the traceback, because otherwise, if you catch this exception somewhere else and pledge the traceback, there will be several duplicate tracebacks in your log file.
 
 
 ## Callbacks
