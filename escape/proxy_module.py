@@ -1,6 +1,6 @@
 import sys
 from typing import Type, Tuple, Callable, Union, Optional, Any
-from types import TracebackType
+from types import TracebackType, ModuleType
 from inspect import isclass
 from itertools import chain
 
@@ -18,10 +18,10 @@ from escape.baked_escaper import BakedEscaper
 if sys.version_info < (3, 11):
     muted_by_default_exceptions: Tuple[Type[BaseException], ...] = (Exception,)  # pragma: no cover
 else:
-    muted_by_default_exceptions = (Exception, BaseExceptionGroup)  # pragma: no cover
+    muted_by_default_exceptions = (Exception, BaseExceptionGroup)  # pragma: no cover # noqa: F821
 
 class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
-    def __call__(self, *args: Union[Callable[..., Any], Type[BaseException], EllipsisType], default: Any = None, logger: LoggerProtocol = EmptyLogger(), success_callback: Callable[[], Any] = lambda: None, error_callback: Callable[[], Any] = lambda: None, before: Callable[[], Any] = lambda: None, error_log_message: Optional[str] = None, success_log_message: Optional[str] = None, success_logging: bool = False) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
+    def __call__(self, *args: Union[Callable[..., Any], Type[BaseException], EllipsisType], default: Any = None, logger: LoggerProtocol = EmptyLogger(), success_callback: Callable[[], Any] = lambda: None, error_callback: Callable[[], Any] = lambda: None, before: Callable[[], Any] = lambda: None, error_log_message: Optional[str] = None, success_log_message: Optional[str] = None, success_logging: bool = False, doc: Optional[str] = None) -> Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]:
         """
         https://docs.python.org/3/library/exceptions.html#exception-hierarchy
         """
@@ -33,7 +33,7 @@ class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
             else:
                 exceptions = args  # type: ignore[assignment]
 
-        wrapper_of_wrappers = Wrapper(default, exceptions, logger, success_callback, before, error_log_message, success_logging, success_log_message, error_callback)
+        wrapper_of_wrappers = Wrapper(default, exceptions, logger, success_callback, before, error_log_message, success_logging, success_log_message, error_callback, doc)
 
         if self.are_it_exceptions(args):
             return wrapper_of_wrappers
@@ -67,7 +67,7 @@ class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
     def are_it_function(args: Tuple[Union[Type[BaseException], Callable[..., Any], EllipsisType], ...]) -> bool:
         return len(args) == 1 and callable(args[0]) and not (isclass(args[0]) and issubclass(args[0], BaseException))
 
-    def bake(self, *args: Union[Callable[..., Any], Type[BaseException], EllipsisType], default: Any = None, logger: LoggerProtocol = EmptyLogger(), success_callback: Callable[[], Any] = lambda: None, error_callback: Callable[[], Any] = lambda: None, before: Callable[[], Any] = lambda: None, error_log_message: Optional[str] = None, success_log_message: Optional[str] = None, success_logging: bool = False) -> Callable[..., Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]]:
+    def bake(self, *args: Union[Callable[..., Any], Type[BaseException], EllipsisType], default: Any = None, logger: LoggerProtocol = EmptyLogger(), success_callback: Callable[[], Any] = lambda: None, error_callback: Callable[[], Any] = lambda: None, before: Callable[[], Any] = lambda: None, error_log_message: Optional[str] = None, success_log_message: Optional[str] = None, success_logging: bool = False, doc: Optional[str] = None) -> Callable[..., Union[Callable[..., Any], Callable[[Callable[..., Any]], Callable[..., Any]]]]:
         escaper = BakedEscaper(self)
         escaper.notify_arguments(
             *args,
@@ -79,5 +79,10 @@ class ProxyModule(sys.modules[__name__].__class__):  # type: ignore[misc]
             error_log_message=error_log_message,
             success_log_message=success_log_message,
             success_logging=success_logging,
+            doc=doc,
         )
         return escaper
+
+    @property
+    def escape(self) -> ModuleType:
+        return self

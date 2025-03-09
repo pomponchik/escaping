@@ -114,7 +114,7 @@ def function():
     raise ValueError('oh!')
 
 function()
-# > ValueError: oh!
+#> ValueError: oh!
 ```
 
 If an exception occurred inside the function wrapped by the decorator, it will return the default value - `None`. You can specify your own default value:
@@ -182,7 +182,7 @@ However, as you should understand, the default value cannot be specified in this
 with escape(default='some value'):
     ...
 
-# > escape.errors.SetDefaultReturnValueForContextManagerError: You cannot set a default value for the context manager. This is only possible for the decorator.
+#> escape.errors.SetDefaultReturnValueForContextManagerError: You cannot set a default value for the context manager. This is only possible for the decorator.
 ```
 
 
@@ -221,7 +221,7 @@ If you want the log to be recorded for any outcome, including the one where no e
 ```python
 with escape(success_logging=True, logger=logger):
     pass
-    # > The code block was executed successfully.
+    #> The code block was executed successfully.
 ```
 
 In addition, you can change the standard messages that you see in the logs. Keep in mind that this feature narrows down the variety of standard messages, which differ depending on where the error occurred (in a regular function, in a generator or asynchronous function, or perhaps in a block of code wrapped by a context manager), or whether the error was intercepted. You can define your own messages for only two types of situations: when the code was executed without exceptions, and when with an exception.
@@ -231,7 +231,7 @@ Pass your message as `error_log_message` if you want to see it when an error occ
 ```python
 with escape(..., error_log_message='Oh my God!', logger=logger):
     raise ValueError
-    # > Oh my God!
+    #> Oh my God!
 ```
 
 By analogy, pass `success_log_message` as a message if there are no errors in the code block (but don't forget to set `success_logging=True`!):
@@ -239,10 +239,18 @@ By analogy, pass `success_log_message` as a message if there are no errors in th
 ```python
 with escape(success_log_message='Good news, everyone!', success_logging=True, logger=logger):
     pass
-    # > Good news, everyone!
+    #> Good news, everyone!
 ```
 
-In addition, if the exception was suppressed inside the `escape`, the log will be recorded using the `exception` method - this means that the trace will be saved. Otherwise, the `error` method will be used - without saving the traceback, because otherwise, if you catch this exception somewhere else and pledge the traceback, there will be several duplicate tracebacks in your log file.
+You can also be content with the standard log message, but add your own comment to it. For this, use the `doc` argument:
+
+```python
+with escape(success_logging=True, logger=logger, doc='Nothing is happening here!'):
+    pass
+    #> The code block (Nothing is happening here!) was executed successfully.
+```
+
+If the exception was suppressed inside the `escape`, the log will be recorded using the `exception` method - this means that the trace will be saved. Otherwise, the `error` method will be used - without saving the traceback, because otherwise, if you catch this exception somewhere else and pledge the traceback, there will be several duplicate tracebacks in your log file.
 
 
 ## Callbacks
